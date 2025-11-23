@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8" />
+  <title>Maghettoni • Premium Property Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'golden-brown': {
+              50: '#fdf8f6',
+              100: '#f2e8e5',
+              200: '#eaddd7',
+              300: '#e0cec7',
+              400: '#d2bab0',
+              500: '#bfa094',
+              600: '#a18072',
+              700: '#8b6e5e',
+              800: '#7d5d4f',
+              900: '#603b2b',
+            }
+          },
+          fontFamily: {
+            display: ['Poppins', 'system-ui', 'sans-serif'],
+            body: ['Inter', 'system-ui', 'sans-serif']
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-glow': 'pulse-glow 2s ease-in-out infinite alternate',
+            'text-shimmer': 'text-shimmer 2.5s ease-in-out infinite alternate',
+            'slide-in': 'slide-in 0.5s ease-out forwards',
+            'bounce-gentle': 'bounce-gentle 2s infinite'
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-20px)' }
+            },
+            'pulse-glow': {
+              '0%': { boxShadow: '0 0 20px rgba(245, 158, 11, 0.4)' },
+              '100%': { boxShadow: '0 0 40px rgba(245, 158, 11, 0.8), 0 0 60px rgba(245, 158, 11, 0.6)' }
+            },
+            'text-shimmer': {
+              '0%': { backgroundPosition: '-500% 0' },
+              '100%': { backgroundPosition: '500% 0' }
+            },
+            'slide-in': {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            'bounce-gentle': {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    :root {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: radial-gradient(ellipse at top left, #1a0f0a 0%, #0c0806 40%, #000000 100%);
+      overflow-x: hidden;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1a0f0a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, #f59e0b, #d97706);
+      border-radius: 10px;
+    }
+
+    /* Advanced glassmorphism */
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+    }
+
+    .glass-dark {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Hero background with gradient animation */
+    .hero-bg {
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, #1a0f0a 0%, #2c1a11 30%, #3d2617 60%, #1a0f0a 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Section backgrounds */
+    .section-bg {
+      background: 
+        radial-gradient(ellipse at top right, rgba(120, 53, 15, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom left, rgba(120, 53, 15, 0.2) 0%, transparent 50%),
+        linear-gradient(to bottom, #1a0f0a, #2c1a11, #1a0f0a);
+    }
+
+    /* Floating elements */
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .floating-delayed {
+      animation: float 7s ease-in-out 1s infinite;
+    }
+
+    /* Shimmer text effect */
+    .shimmer-text {
+      background: linear-gradient(90deg, #fef3c7, #f59e0b, #fef3c7);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: text-shimmer 3s ease-in-out infinite;
+    }
+
+    /* Glowing elements */
+    .glow {
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+    }
+
+    .glow:hover {
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 40px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Custom button styles */
+    .mag-btn {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mag-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.7s;
+    }
+
+    .mag-btn:hover::before {
+      left: 100%;
+    }
+
+    .mag-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(217, 119, 6, 0.4);
+    }
+
+    /* Input focus effects */
+    .mag-input {
+      transition: all 0.3s ease;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mag-input:focus {
+      outline: none;
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Card hover effects */
+    .card-hover {
+      transition: all 0.4s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+      width: 0%;
+      transition: width 0.5s ease;
+      border-radius: 3px;
+    }
+
+    /* Particle background */
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s ease;
+    }
+
+    .reveal-left.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.8s ease;
+    }
+
+    .reveal-right.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Option selection */
+    .option-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .option-card:hover {
+      transform: translateY(-5px);
+      border-color: #f59e0b;
+    }
+
+    .option-card.selected {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+      transform: translateY(-5px);
+    }
+
+    /* Form steps */
+    .form-step {
+      display: none;
+    }
+
+    .form-step.active {
+      display: block;
+      animation: slide-in 0.5s ease-out;
+    }
+
+    /* Success animation */
+    @keyframes success {
+      0% { transform: scale(0.8); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-animation {
+      animation: success 0.6s ease-out;
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen relative">
+
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
+
+  <!-- Navigation -->
+  <header class="fixed top-0 left-0 w-full z-50 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="glass rounded-2xl py-3 px-6 flex items-center justify-between border border-white/10 shadow-lg">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white shadow-lg glow">
+            <i class="fa-solid fa-building text-lg"></i>
+          </div>
+          <div>
+            <h1 class="font-display text-xl font-bold bg-gradient-to-r from-amber-200 to-amber-400 bg-clip-text text-transparent">MAGHETTONI</h1>
+            <p class="text-xs text-amber-100/70 -mt-1">Smart Property Management</p>
+          </div>
+        </div>
+
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="#home" class="text-amber-100/80 hover:text-amber-300 transition-colors font-medium text-sm">Home</a>
+          <a href="#assessment" class="text-amber-100/80 hover:text-amber-300 transition-colors font-medium text-sm">Assessment</a>
+          <a href="#features" class="text-amber-100/80 hover:text-amber-300 transition-colors font-medium text-sm">Features</a>
+          <a href="#waitlist" class="text-amber-100/80 hover:text-amber-300 transition-colors font-medium text-sm">Waitlist</a>
+        </nav>
+
+        <div class="flex items-center space-x-4">
+          <a href="#assessment" class="mag-btn px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2">
+            <span>Start Assessment</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+          
+          <button class="md:hidden text-amber-200">
+            <i class="fa-solid fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-bg min-h-screen flex items-center justify-center relative pt-20 overflow-hidden">
+    <div class="absolute top-1/4 left-10 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl floating"></div>
+    <div class="absolute bottom-1/4 right-10 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl floating-delayed"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="reveal">
+          <div class="inline-flex items-center space-x-2 bg-amber-500/20 backdrop-blur-sm rounded-full px-4 py-2 border border-amber-500/30 mb-6">
+            <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+            <span class="text-sm text-amber-200 font-medium">Assessment in under 3 minutes</span>
+          </div>
+
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6">
+            <span class="block text-amber-100">Tayari Kuongeza</span>
+            <span class="block shimmer-text mt-2">Ufanisi Wa Biashara Yako</span>
+            <span class="block text-amber-200 mt-2">Ya Nyumba Za Kupanga?</span>
+          </h1>
+
+          <p class="text-lg text-amber-100/80 max-w-xl mb-8 leading-relaxed">
+            Jibu maswali machache tu upate muongozo wa kukupa mwanga kama mfumo wa Maghettoni unaweza kukusaidia kusimamia mali zako kwa ufanisi zaidi, ukijua wanaodaiwa kodi kwa sekunde.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-10">
+            <a href="#assessment" class="mag-btn px-8 py-4 rounded-xl text-base font-semibold flex items-center space-x-3 group">
+              <span>Anza Assessment Yako</span>
+              <i class="fa-solid fa-play group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            
+            <div class="flex items-center space-x-4 text-amber-100/70">
+              <div class="flex -space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white text-sm font-bold border-2 border-amber-900/50 shadow-lg">
+                  GG
+                </div>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center text-amber-900 text-sm font-bold border-2 border-amber-900/50 shadow-lg">
+                  GC
+                </div>
+              </div>
+              <p class="text-sm max-w-xs">Imeundwa na wataalamu kutoka Tanzania na Marekani</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-6 text-sm">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                <i class="fa-solid fa-stopwatch-20"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-amber-100">Dakika 3 Tu</p>
+                <p class="text-amber-100/70 text-xs">Assessment inafanyika haraka</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-amber-100">Usalama Wa Data</p>
+                <p class="text-amber-100/70 text-xs">Taarifa zako ni siri</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-amber-100">Muongozo Binafsi</p>
+                <p class="text-amber-100/70 text-xs">Mapendekezo yanakufaa wewe</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-right">
+          <div class="glass-dark rounded-2xl p-1 relative">
+            <div class="absolute -inset-1 bg-gradient-to-r from-amber-600 to-amber-800 rounded-2xl blur opacity-30"></div>
+            <div class="relative glass rounded-2xl p-8 border border-amber-500/20">
+              <div class="flex items-center justify-between mb-8">
+                <div>
+                  <h3 class="text-xl font-bold text-amber-100">Muongozo Wa Assessment</h3>
+                  <p class="text-amber-100/70 text-sm mt-1">Jua mapema kama mfumo unakufaa</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white shadow-lg">
+                  <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+              </div>
+
+              <div class="space-y-6">
+                <div class="flex items-start space-x-4 p-4 rounded-xl bg-amber-900/20 border border-amber-500/20 card-hover">
+                  <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    1
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-amber-100 mb-1">Hali Yako Ya Sasa</h4>
+                    <p class="text-amber-100/70 text-sm">Tunaelewa jinsi unavyosimamia mali zako kwa sasa</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start space-x-4 p-4 rounded-xl bg-amber-900/20 border border-amber-500/20 card-hover">
+                  <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    2
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-amber-100 mb-1">Changamoto Zako</h4>
+                    <p class="text-amber-100/70 text-sm">Tambua vikwazo unavyokabiliana navyo</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start space-x-4 p-4 rounded-xl bg-amber-900/20 border border-amber-500/20 card-hover">
+                  <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    3
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-amber-100 mb-1">Malengo Yako</h4>
+                    <p class="text-amber-100/70 text-sm">Eleza unachotaka kufikia na biashara yako</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-8 pt-6 border-t border-amber-500/20">
+                <p class="text-amber-100/70 text-sm text-center">Baada ya kukamilisha, utapata muongozo wa kibinafsi wa kukupa mwanga</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce-gentle">
+      <a href="#assessment" class="flex flex-col items-center text-amber-200/80">
+        <span class="text-sm mb-2">Soma Zaidi</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- Assessment Section -->
+  <section id="assessment" class="section-bg py-20 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-black to-transparent z-10"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+      <div class="text-center mb-16 reveal">
+        <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">
+          <span class="text-amber-100">Assessment Ya </span>
+          <span class="shimmer-text">Maghettoni</span>
+        </h2>
+        <p class="text-lg text-amber-100/80 max-w-2xl mx-auto">
+          Jibu maswali yafuatayo ili upate kufahamu kama mfumo huu unaweza kukusaidia kuendesha biashara yako ya nyumba za kisasa kwa ufanisi mkubwa.
+        </p>
+      </div>
+
+      <div class="glass rounded-2xl p-8 border border-amber-500/20 shadow-2xl reveal">
+        <!-- Progress Bar -->
+        <div class="mb-10">
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-amber-100 font-medium">Maendeleo Yako</span>
+            <span id="progress-percent" class="text-amber-300 font-bold">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Assessment Form -->
+        <form id="assessment-form">
+          <!-- Step 1: Personal Information -->
+          <div class="form-step active" id="step-1">
+            <h3 class="text-2xl font-bold text-amber-100 mb-2">Taarifa Zako Binafsi</h3>
+            <p class="text-amber-100/70 mb-6">Tunahitaji taarifa hizi ili kukupa muongozo unaokufaa</p>
+            
+            <div class="space-y-6">
+              <div>
+                <label class="block text-amber-100 font-medium mb-2">Jina Kamili</label>
+                <input type="text" class="mag-input w-full rounded-xl px-4 py-3" placeholder="Andika jina lako hapa">
+              </div>
+              
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-amber-100 font-medium mb-2">Barua Pepe</label>
+                  <input type="email" class="mag-input w-full rounded-xl px-4 py-3" placeholder="barua@pepe.com">
+                </div>
+                
+                <div>
+                  <label class="block text-amber-100 font-medium mb-2">Nambari Ya Simu</label>
+                  <input type="tel" class="mag-input w-full rounded-xl px-4 py-3" placeholder="+255 ...">
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-amber-100 font-medium mb-2">Mahali Unapoishi</label>
+                <input type="text" class="mag-input w-full rounded-xl px-4 py-3" placeholder="Mji au mkoa">
+              </div>
+            </div>
+            
+            <div class="mt-10 flex justify-end">
+              <button type="button" class="mag-btn next-step px-6 py-3 rounded-xl font-semibold flex items-center space-x-2">
+                <span>Endelea</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Step 2: Current Situation -->
+          <div class="form-step" id="step-2">
+            <h3 class="text-2xl font-bold text-amber-100 mb-2">Hali Yako Ya Sasa</h3>
+            <p class="text-amber-100/70 mb-6">Chagua jinsi unavyosimamia biashara yako ya nyumba za kupanga kwa sasa:</p>
+            
+            <div class="space-y-4">
+              <div class="option-card glass-dark rounded-xl p-5 border border-amber-500/20" data-value="madaftari">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 mr-4">
+                    <i class="fa-solid fa-book"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-amber-100">Nasimamia kutumia madaftari</h4>
+                    <p class="text-amber-100/70 text-sm mt-1">Natumia daftari za kawaida kuhifadhi rekodi zote</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="option-card glass-dark rounded-xl p-5 border border-amber-500/20" data-value="kompyuta">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 mr-4">
+                    <i class="fa-solid fa-laptop"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-amber-100">Nasimamia kutumia mifumo mbalimbali ya kompyuta</h4>
+                    <p class="text-amber-100/70 text-sm mt-1">Natumia programu mbalimbali za kompyuta kusimamia</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="option-card glass-dark rounded-xl p-5 border border-amber-500/20" data-value="mkabidhi">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 mr-4">
+                    <i class="fa-solid fa-user-friends"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-amber-100">Nimemkabidhi mtu anisaidie kusimamia nyumba zangu</h4>
+                    <p class="text-amber-100/70 text-sm mt-1">Nina mtu mwingine anayenisaidia kusimamia nyumba zangu</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <input type="hidden" id="current-situation" name="current-situation">
+            
+            <div class="mt-10 flex justify-between">
+              <button type="button" class="prev-step px-6 py-3 rounded-xl font-semibold border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition-colors flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Nyuma</span>
+              </button>
+              <button type="button" class="mag-btn next-step px-6 py-3 rounded-xl font-semibold flex items-center space-x-2">
+                <span>Endelea</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Step 3: Goals -->
+          <div class="form-step" id="step-3">
+            <h3 class="text-2xl font-bold text-amber-100 mb-2">Malengo Yako</h3>
+            <p class="text-amber-100/70 mb-6">Chagua jinsi ungependa kusimamia biashara yako ya nyumba za kupanga:</p>
+            
+            <div class="space-y-4">
+              <div class="option-card glass-dark rounded-xl p-5 border border-amber-500/20" data-value="kusimamia-mwenyewe">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 mr-4">
+                    <i class="fa-solid fa-user-check"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-amber-100">Kusimamia nyumba zangu mwenyewe nikiwa na mfumo mzuri</h4>
+                    <p class="text-amber-100/70 text-sm mt-1">Ningependa kusimamia mwenyewe kwa mfumo rahisi na wa kisasa</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="option-card glass-dark rounded-xl p-5 border border-amber-500/20" data-value="kukabidhi-mtu">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 mr-4">
+                    <i class="fa-solid fa-user-tie"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-amber-100">Kukabidhi mtu asimamie nyumba yangu huku nikiwa na mfumo unaonihusha moja kwa moja</h4>
+                    <p class="text-amber-100/70 text-sm mt-1">Ningependa mtu asimamie lakini nifuatilie mambo kirahisi</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <input type="hidden" id="goals" name="goals">
+            
+            <div class="mt-10 flex justify-between">
+              <button type="button" class="prev-step px-6 py-3 rounded-xl font-semibold border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition-colors flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Nyuma</span>
+              </button>
+              <button type="button" class="mag-btn next-step px-6 py-3 rounded-xl font-semibold flex items-center space-x-2">
+                <span>Endelea</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Step 4: Challenges -->
+          <div class="form-step" id="step-4">
+            <h3 class="text-2xl font-bold text-amber-100 mb-2">Changamoto Unazokabiliana Nazo</h3>
+            <p class="text-amber-100/70 mb-6">Chagua changamoto zozote unazokabiliana nazo (unaweza kuchagua zaidi ya moja):</p>
+            
+            <div class="space-y-3">
+              <div class="checkbox-option glass-dark rounded-xl p-4 border border-amber-500/20 flex items-center cursor-pointer" data-value="ugumu-rekodi">
+                <div class="w-6 h-6 rounded border border-amber-500/50 flex items-center justify-center mr-4">
+                  <i class="fa-solid fa-check text-amber-400 opacity-0"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium text-amber-100">Ugumu wa kutunza rekodi zako</h4>
+                  <p class="text-amber-100/70 text-sm mt-1">Rekodi zinaweza kuchanganyika au kupotea</p>
+                </div>
+              </div>
+              
+              <div class="checkbox-option glass-dark rounded-xl p-4 border border-amber-500/20 flex items-center cursor-pointer" data-value="wachelewa-kulipa">
+                <div class="w-6 h-6 rounded border border-amber-500/50 flex items-center justify-center mr-4">
+                  <i class="fa-solid fa-check text-amber-400 opacity-0"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium text-amber-100">Wapangaji kuchelewa kulipa kodi</h4>
+                  <p class="text-amber-100/70 text-sm mt-1">Huwezi kuwafuatilia wale wanaokukawia malipo</p>
+                </div>
+              </div>
+              
+              <div class="checkbox-option glass-dark rounded-xl p-4 border border-amber-500/20 flex items-center cursor-pointer" data-value="kukua-taratibu">
+                <div class="w-6 h-6 rounded border border-amber-500/50 flex items-center justify-center mr-4">
+                  <i class="fa-solid fa-check text-amber-400 opacity-0"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium text-amber-100">Biashara yako ya nyumba za kupanga kukua taratibu</h4>
+                  <p class="text-amber-100/70 text-sm mt-1">Huwezi kuona mwelekeo wa ukuaji wa biashara yako</p>
+                </div>
+              </div>
+            </div>
+            
+            <input type="hidden" id="challenges" name="challenges">
+            
+            <div class="mt-10 flex justify-between">
+              <button type="button" class="prev-step px-6 py-3 rounded-xl font-semibold border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition-colors flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Nyuma</span>
+              </button>
+              <button type="button" class="mag-btn next-step px-6 py-3 rounded-xl font-semibold flex items-center space-x-2">
+                <span>Endelea</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Step 5: Final Step -->
+          <div class="form-step" id="step-5">
+            <h3 class="text-2xl font-bold text-amber-100 mb-2">Njia Gani Unaona Inaweza Kukusaidia Kwa Haraka?</h3>
+            <p class="text-amber-100/70 mb-6">Andika maelezo mafupi hapo chini:</p>
+            
+            <div>
+              <textarea id="solution" rows="5" class="mag-input w-full rounded-xl px-4 py-3" placeholder="Andika hapa jinsi unavyoona mfumo wa Maghettoni unaweza kukusaidia..."></textarea>
+            </div>
+            
+            <div class="mt-10 flex justify-between">
+              <button type="button" class="prev-step px-6 py-3 rounded-xl font-semibold border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition-colors flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Nyuma</span>
+              </button>
+              <button type="submit" class="mag-btn px-6 py-3 rounded-xl font-semibold flex items-center space-x-2">
+                <span>Tumiza Tathmini</span>
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Success Message -->
+          <div class="form-step text-center py-10" id="success-message">
+            <div class="w-20 h-20 bg-gradient-to-br from-amber-500 to-amber-700 rounded-full flex items-center justify-center mx-auto mb-6 success-animation">
+              <i class="fa-solid fa-check text-white text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-amber-100 mb-4">Asante Kwa Kujisajili!</h3>
+            <p class="text-amber-100/70 mb-6 max-w-md mx-auto">
+              Tumepokea majibu yako. Tutawasiliana nawe kwa muda mfupi kupitia barua pepe uliyoandika.
+            </p>
+            <a href="#home" class="mag-btn inline-block px-6 py-3 rounded-xl font-semibold">
+              Kurudi Nyumbani
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 bg-gradient-to-b from-amber-900/20 to-black relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16 reveal">
+        <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">
+          <span class="text-amber-100">Vipengele Vya </span>
+          <span class="shimmer-text">Maghettoni</span>
+        </h2>
+        <p class="text-lg text-amber-100/80 max-w-2xl mx-auto">
+          Mfumo wa kisasa wa kusimamia nyumba za kupanga unaokupa uwezo wa kuendesha biashara yako kwa urahisi zaidi.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="glass rounded-2xl p-6 border border-amber-500/20 card-hover reveal">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white mb-6">
+            <i class="fa-solid fa-chart-pie text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-amber-100 mb-3">Ufuatiliaji Wa Malipo</h3>
+          <p class="text-amber-100/70">Tazama orodha ya wapangaji wote na hali ya malipo yao kwa urahisi.</p>
+        </div>
+        
+        <div class="glass rounded-2xl p-6 border border-amber-500/20 card-hover reveal" style="animation-delay: 0.2s">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white mb-6">
+            <i class="fa-solid fa-bell text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-amber-100 mb-3">Arifa Za Kukumbusha</h3>
+          <p class="text-amber-100/70">Pata arifa moja kwa moja unapokaribia kupata malipo au kukosa malipo.</p>
+        </div>
+        
+        <div class="glass rounded-2xl p-6 border border-amber-500/20 card-hover reveal" style="animation-delay: 0.4s">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white mb-6">
+            <i class="fa-solid fa-file-invoice-dollar text-xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-amber-100 mb-3">Taarifa Za Kifedha</h3>
+          <p class="text-amber-100/70">Fuatilia mapato, gharama na faida zako kwa urahisi zaidi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Waitlist Section -->
+  <section id="waitlist" class="py-20 bg-black relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="glass rounded-2xl p-8 border border-amber-500/20 shadow-2xl text-center reveal">
+        <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">
+          <span class="text-amber-100">Jiunge Na </span>
+          <span class="shimmer-text">Waitlist Yetu</span>
+        </h2>
+        <p class="text-lg text-amber-100/80 mb-8 max-w-2xl mx-auto">
+          Kuwa miongoni mwa wa kwanza kutumia mfumo wa Maghettoni na upate faida za kipekee za early access.
+        </p>
+        
+        <div class="max-w-md mx-auto">
+          <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <input type="email" class="mag-input flex-grow rounded-xl px-4 py-3" placeholder="Barua pepe yako">
+            <button class="mag-btn px-6 py-3 rounded-xl font-semibold whitespace-nowrap">
+              Jiunge Sasa
+            </button>
+          </div>
+          <p class="text-amber-100/60 text-sm mt-4">
+            Hakuna malipo yoyote. Tutaarifu tu ukishatengenezwa.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 bg-gradient-to-t from-black to-amber-900/10 border-t border-amber-500/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-6 md:mb-0">
+          <h2 class="text-2xl font-display font-bold bg-gradient-to-r from-amber-200 to-amber-400 bg-clip-text text-transparent">MAGHETTONI</h2>
+          <p class="text-amber-100/70 text-sm mt-1">Smart Property Management for Tanzania</p>
+        </div>
+        
+        <div class="flex space-x-6">
+          <a href="#" class="text-amber-100/70 hover:text-amber-300 transition-colors">
+            <i class="fab fa-facebook-f text-xl"></i>
+          </a>
+          <a href="#" class="text-amber-100/70 hover:text-amber-300 transition-colors">
+            <i class="fab fa-twitter text-xl"></i>
+          </a>
+          <a href="#" class="text-amber-100/70 hover:text-amber-300 transition-colors">
+            <i class="fab fa-instagram text-xl"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="border-t border-amber-500/20 mt-8 pt-8 text-center text-amber-100/60 text-sm">
+        <p>&copy; 2023 Maghettoni. Haki zote zimehifadhiwa. Imeundwa na Godlisten Gerald na Gift Christian.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    // Initialize particles
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: "#f59e0b" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5, random: true },
+        size: { value: 3, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#f59e0b",
+          opacity: 0.2,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 2,
+          direction: "none",
+          random: true,
+          straight: false,
+          out_mode: "out",
+          bounce: false
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        }
+      },
+      retina_detect: true
+    });
+
+    // Scroll reveal animations
+    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const revealOnScroll = () => {
+      const trigger = window.innerHeight * 0.85;
+      reveals.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < trigger) {
+          el.classList.add('active');
+        }
+      });
+    };
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', revealOnScroll);
+
+    // Form navigation
+    const formSteps = document.querySelectorAll('.form-step');
+    const progressFill = document.getElementById('progress-fill');
+    const progressPercent = document.getElementById('progress-percent');
+    let currentStep = 1;
+    const totalSteps = formSteps.length - 1; // Excluding success message
+
+    function updateProgress() {
+      const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+      progressFill.style.width = `${progress}%`;
+      progressPercent.textContent = `${Math.round(progress)}%`;
+    }
+
+    function showStep(stepNumber) {
+      formSteps.forEach(step => {
+        step.classList.remove('active');
+      });
+      document.getElementById(`step-${stepNumber}`).classList.add('active');
+      currentStep = stepNumber;
+      updateProgress();
+    }
+
+    // Next step buttons
+    document.querySelectorAll('.next-step').forEach(button => {
+      button.addEventListener('click', function() {
+        if (currentStep < totalSteps) {
+          showStep(currentStep + 1);
+        }
+      });
+    });
+
+    // Previous step buttons
+    document.querySelectorAll('.prev-step').forEach(button => {
+      button.addEventListener('click', function() {
+        if (currentStep > 1) {
+          showStep(currentStep - 1);
+        }
+      });
+    });
+
+    // Option card selection
+    document.querySelectorAll('.option-card').forEach(card => {
+      card.addEventListener('click', function() {
+        // Remove selection from all cards in this step
+        const parentStep = this.closest('.form-step');
+        parentStep.querySelectorAll('.option-card').forEach(c => {
+          c.classList.remove('selected');
+        });
+        
+        // Select this card
+        this.classList.add('selected');
+        
+        // Update hidden input
+        const hiddenInput = parentStep.querySelector('input[type="hidden"]');
+        if (hiddenInput) {
+          hiddenInput.value = this.getAttribute('data-value');
+        }
+      });
+    });
+
+    // Checkbox option selection
+    document.querySelectorAll('.checkbox-option').forEach(option => {
+      option.addEventListener('click', function() {
+        this.classList.toggle('selected');
+        
+        // Update checkmark
+        const checkIcon = this.querySelector('.fa-check');
+        const checkBox = this.querySelector('.w-6');
+        if (this.classList.contains('selected')) {
+          checkIcon.classList.remove('opacity-0');
+          checkBox.classList.add('bg-amber-500', 'border-amber-500');
+        } else {
+          checkIcon.classList.add('opacity-0');
+          checkBox.classList.remove('bg-amber-500', 'border-amber-500');
+        }
+        
+        // Update hidden input with selected values
+        const parentStep = this.closest('.form-step');
+        const hiddenInput = parentStep.querySelector('input[type="hidden"]');
+        if (hiddenInput) {
+          const selectedValues = [];
+          parentStep.querySelectorAll('.checkbox-option.selected').forEach(opt => {
+            selectedValues.push(opt.getAttribute('data-value'));
+          });
+          hiddenInput.value = selectedValues.join(',');
+        }
+      });
+    });
+
+    // Form submission
+    document.getElementById('assessment-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // In a real application, you would send the form data to a server here
+      // For this demo, we'll just show the success message
+      
+      showStep(formSteps.length); // Show success message
+      progressFill.style.width = '100%';
+      progressPercent.textContent = '100%';
+    });
+
+    // Initialize progress
+    updateProgress();
+  </script>
+</body>
+</html>

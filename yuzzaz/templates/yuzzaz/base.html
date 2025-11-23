@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Login - Yes, Daddy!{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="bg-black" data-user-name="{% if user.is_authenticated %}{{ user.username }}{% else %}None{% endif %}">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <!-- Login Container -->
+        <div class="w-full max-w-md bg-black rounded-2xl border border-gray-700 shadow-2xl p-8">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    {% block scripts %}
+    {% endblock %}
+    
+    {% for message in messages %}
+    <script>
+        Toastify({
+            text: "{{ message }}",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "{% if message.tags == 'error' %}#FF4C4C{% else %}#4BB543{% endif %}",
+            stopOnFocus: true,
+        }).showToast();
+    </script>
+    {% endfor %}
+
+</body>
+</html>

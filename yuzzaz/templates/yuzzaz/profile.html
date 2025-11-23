@@ -1,0 +1,136 @@
+{% extends "content/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-black text-white overflow-hidden relative">
+
+  <!-- Scrollable container with snap -->
+  <div id="scrollContainer" class="relative z-10 h-screen overflow-y-scroll scroll-snap-y scroll-smooth">
+    
+    <!-- Profile Section -->
+    <section class="h-screen flex flex-col items-center justify-center px-4 snap-start">
+      <div class="max-w-md w-full text-center">
+        <div class="relative mb-6 mx-auto w-32 h-32 rounded-full overflow-hidden border-4 border-white">
+          <img src="{% if looking_at.profile_picture %}{{ looking_at.profile_picture.url }}{% else %}{% static 'images/default-profile.jpg' %}{% endif %}" 
+               alt="Profile" class="w-full h-full object-cover">
+        </div>
+        <p class="text-gray-400 mb-3">@{{ looking_at.username }}</p>
+        {% if looking_at.about %}
+        <p class="text-gray-400 text-sm mb-6">{{ looking_at.about }}</p>
+        {% endif %}
+        <!-- Stats -->
+        <div class="flex justify-center space-x-8 mb-8">
+          {% comment %} <div class="text-center"><p class="text-xl font-bold">142</p><p class="text-xs text-gray-400">Following</p></div>
+          <div class="text-center"><p class="text-xl font-bold">1.2K</p><p class="text-xs text-gray-400">Followers</p></div> {% endcomment %}
+          <div class="text-center"><p class="text-xl font-bold">{{ jokess |length }}</p><p class="text-xs text-gray-400">Posts</p></div>
+        </div>
+
+        <div class="flex space-x-3 mb-6">
+          {% if looking_at == logged_in_user %}
+          <button id="toggleUpdate" class="flex-1 bg-white text-black hover:bg-gray-200 py-3 px-4 rounded-lg font-medium transition-colors">Edit Profile</button>
+          {% endif %}
+          <button id="scroll" class="flex-1 bg-white text-black hover:bg-gray-200 py-3 px-4 rounded-lg font-medium transition-colors">
+            <a href="#postsSection">Posts</a>
+          </button>
+          
+          {% if looking_at == logged_in_user %}
+          <form method="POST" action="{% url 'logout' %}" class="flex-1">
+            {% csrf_token %}
+            <button type="submit" class="w-full bg-gray-800 hover:bg-gray-700 py-3 px-4 rounded-lg font-medium transition-colors">Log Out</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Posts Section -->
+    <section class="h-screen flex flex-col items-center justify-center px-4 snap-start" id="postsSection">
+      <div class="max-w-md w-full text-center">
+        <h2 class="text-2xl font-bold mb-8">Your Posts</h2>
+        <div class="max-w-md w-full text-center h-[400px] overflow-y-auto">
+          <div class="grid grid-cols-1 gap-2 mb-4">
+            {% for joke in jokess %}
+            <div class="bg-black rounded-lg overflow-hidden border border-gray-700 flex items-center p-3 hover:bg-gray-800 transition">
+              <!-- Laughing face SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white flex-shrink-0 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h.01M15 10h.01"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 15c1.333 2 6.667 2 8 0"/>
+              </svg>
+              <p class="text-sm text-gray-300 break-words"><a href="/joke/{{ joke.id }}">{{ joke.id }} - {{ joke.content }}</a></p>
+              {% if logged_in_user == joke.joke_by %}
+              <i class="fa fa-trash text-white hover:text-gray-300 cursor-pointer ml-auto transition-colors" onclick="deleteJoke({{ joke.id }})"></i>
+              {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-gray-400">No posts yet.</p>
+            {% endfor %} 
+          </div>
+        </div>
+        
+        <button class="w-full bg-white text-black hover:bg-gray-200 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors"
+        onclick="window.location.href='{% url 'create_joke' %}'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          <span>Create New Post</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Update Form Section -->
+    <section id="updateFormSection" class="h-screen flex items-center justify-center px-4 snap-start hidden">
+      <div class="max-w-md w-full bg-black p-6 rounded-2xl border border-gray-700">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-white">Update Profile</h3>
+          <button id="closeUpdate" class="text-gray-400 hover:text-white transition p-2 rounded-full border border-gray-600 hover:bg-gray-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        
+        {% if looking_at == logged_in_user %}
+        <form method="POST" enctype="multipart/form-data" class="space-y-5" action="{% url 'profile' looking_at.id %}">
+          {% csrf_token %}
+          <div class="flex flex-col items-center space-y-4">
+            <div class="w-full">
+              <label for="{{ form.profile_picture.id_for_label }}" class="block text-gray-300 font-medium mb-1">Profile Picture</label>
+              {{ form.profile_picture|add_class:"w-full text-sm text-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600" }}
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-gray-300 mb-1">Username</label>
+            {{ form.username|add_class:"w-full rounded-lg bg-gray-800 border border-gray-700 py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent" }}
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Email</label>
+            {{ form.email|add_class:"w-full rounded-lg bg-gray-800 border border-gray-700 py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent" }}
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">About You</label>
+            {{ form.about|add_class:"w-full rounded-lg bg-gray-800 border border-gray-700 py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent resize-none" }}
+          </div>
+
+          <button type="submit" class="w-full bg-white text-black hover:bg-gray-200 py-3 rounded-lg font-semibold transition-colors">Save Changes</button>
+        </form>
+        {% endif %}
+      </div>
+    </section>
+  </div>
+</div>
+{% block scripts %}
+<script src="{% static 'js/profile.js' %}"></script>
+{% endblock %}
+
+<style>
+  #scrollContainer { scroll-snap-type: y mandatory; overflow-y: scroll; height: 100vh; }
+  section { scroll-snap-align: start; }
+  #scrollContainer::-webkit-scrollbar { display: none; }
+  #scrollContainer { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+{% endblock %}

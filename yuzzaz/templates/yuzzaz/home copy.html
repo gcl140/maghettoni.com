@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8" />
+  <title>Maghettoni • Assessment & Waitlist</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind config for golden-brown -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'golden-brown': {
+              50: '#fdf8f6',
+              100: '#f2e8e5',
+              200: '#eaddd7',
+              300: '#e0cec7',
+              400: '#d2bab0',
+              500: '#bfa094',
+              600: '#a18072',
+              700: '#8b6e5e',
+              800: '#7d5d4f',
+              900: '#603b2b',
+            }
+          },
+          fontFamily: {
+            display: ['Poppins', 'system-ui', 'sans-serif'],
+            body: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    :root {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: radial-gradient(circle at top left, #fdf8f3 0, #f4ebe4 40%, #23120b 100%);
+    }
+
+    /* Smooth fade / slide for sections */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Subtle glassmorphism */
+    .glass {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Parallax-style hero bg */
+    .hero-bg {
+      background-image: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.65),
+          rgba(96, 59, 43, 0.8)
+        ),
+        url("https://images.pexels.com/photos/534151/pexels-photo-534151.jpeg?auto=compress&cs=tinysrgb&w=1600");
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+    }
+
+    .section-bg {
+      background-image: linear-gradient(
+          120deg,
+          rgba(96, 59, 43, 0.96),
+          rgba(26, 15, 10, 0.98)
+        ),
+        url("https://images.pexels.com/photos/989014/pexels-photo-989014.jpeg?auto=compress&cs=tinysrgb&w=1600");
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+    }
+
+    .tag-pill {
+      letter-spacing: 0.12em;
+    }
+
+    /* Custom accent underline */
+    .accent-underline {
+      position: relative;
+      display: inline-block;
+    }
+    .accent-underline::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -0.4rem;
+      width: 48%;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f9e0b5, #facc6b, #f97316);
+      box-shadow: 0 0 22px rgba(250, 204, 107, 0.55);
+    }
+
+    /* Floating glowing circles for background interest */
+    .orb {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.24;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .orb.orb-1 {
+      width: 280px;
+      height: 280px;
+      background: #facc6b;
+      top: 6%;
+      left: 4%;
+      animation: float 16s ease-in-out infinite;
+    }
+
+    .orb.orb-2 {
+      width: 260px;
+      height: 260px;
+      background: #92400e;
+      bottom: 6%;
+      right: 10%;
+      animation: float 18s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate3d(0, 0, 0);
+      }
+      50% {
+        transform: translate3d(0, -24px, 0);
+      }
+    }
+
+    /* Nice input focus */
+    .mag-input {
+      transition: box-shadow 0.25s ease, transform 0.15s ease, border-color 0.15s ease;
+    }
+    .mag-input:focus {
+      outline: none;
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.7), 0 20px 45px rgba(0, 0, 0, 0.45);
+      transform: translateY(-1px);
+    }
+
+    /* Fake button hover */
+    .mag-btn {
+      transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .mag-btn:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.6);
+      background: linear-gradient(120deg, #facc6b, #f97316);
+    }
+    .mag-btn:active {
+      transform: translateY(0) scale(0.99);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Custom scrollbars (optional) */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1f130d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #5c3a2a;
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #7c4a31;
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen">
+
+  <!-- Floating ambient orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- NAVBAR -->
+  <header class="fixed top-0 left-0 w-full z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between glass rounded-3xl mt-3 border border-white/10 shadow-lg shadow-black/40">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-golden-brown-900 flex items-center justify-center text-amber-300 shadow-lg shadow-amber-900/70 border border-amber-200/40">
+          <i class="fa-solid fa-building-columns text-lg"></i>
+        </div>
+        <div>
+          <p class="font-display text-sm tracking-[0.16em] uppercase text-amber-200/80">Maghettoni</p>
+          <p class="text-[0.7rem] text-amber-100/60 -mt-1">Smart Rental Systems</p>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-7 text-xs tracking-[0.2em] uppercase">
+        <a href="#assessment" class="text-amber-100/80 hover:text-white transition-colors">Assessment</a>
+        <a href="#benefits" class="text-amber-100/60 hover:text-white transition-colors">Benefits</a>
+        <a href="#waitlist" class="text-amber-100/60 hover:text-white transition-colors">Waitlist</a>
+      </nav>
+
+      <a href="#waitlist" class="hidden sm:inline-flex items-center gap-2 text-xs tracking-[0.18em] uppercase px-4 py-2 rounded-full bg-white text-golden-brown-900 mag-btn">
+        <span>Join waitlist</span>
+        <i class="fa-solid fa-arrow-right-long text-[0.75rem]"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero-bg relative pt-28 pb-24 md:pt-32 md:pb-32 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-start gap-16">
+      <!-- Left copy -->
+      <div class="relative z-10 flex-1 reveal">
+        <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/10 border border-amber-200/40 tag-pill text-[0.65rem] uppercase text-amber-100/80 mb-4">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+          <span>Assessment • Under 3 minutes</span>
+        </div>
+
+        <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-tight font-semibold mb-5">
+          <span class="block text-amber-100/90 text-sm tracking-[0.35em] uppercase mb-3">Je, uko tayari?</span>
+          <span class="block accent-underline">Endesha biashara ya nyumba zako</span>
+          <span class="block text-amber-200/90 mt-2">bila stress, ukiwa na kila rekodi kiganjani.</span>
+        </h1>
+
+        <p class="text-sm sm:text-base text-amber-100/80 max-w-xl mb-6">
+          Jibu maswali machache tu ili ugundue kama mfumo wa Maghettoni unaweza kukusaidia
+          kusimamia nyumba za kupanga kwa njia ya kisasa, ukijua wanaodaiwa kodi kwa sekunde chache.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
+          <a href="#assessment" class="mag-btn inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 text-golden-brown-900 font-semibold text-sm uppercase tracking-[0.18em] shadow-xl shadow-black/60">
+            <span>Chukua assessment</span>
+            <i class="fa-solid fa-circle-play text-lg"></i>
+          </a>
+          <div class="flex items-center gap-4 text-xs text-amber-100/70">
+            <div class="flex -space-x-2">
+              <div class="w-7 h-7 rounded-full bg-amber-500/90 border border-amber-100/70 flex items-center justify-center text-[0.7rem] font-semibold">
+                GG
+              </div>
+              <div class="w-7 h-7 rounded-full bg-amber-200/90 border border-amber-100/70 flex items-center justify-center text-[0.7rem] font-semibold text-golden-brown-900">
+                GC
+              </div>
+            </div>
+            <p>Imeundwa na Godlisten &amp; Gift, baada ya research ya mazingira ya Tanzania na Marekani.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-[0.7rem] uppercase tracking-[0.16em] text-amber-100/75">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-stopwatch text-amber-300"></i>
+            <span>&lt; dakika 3</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-emerald-300"></i>
+            <span>Bure kabisa</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-shield-heart text-sky-300"></i>
+            <span>Majibu yako ni private</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right floating card -->
+      <div class="relative z-10 flex-1 max-w-md mx-auto lg:mx-0 reveal">
+        <div class="absolute -top-6 -right-8 w-24 h-24 rounded-3xl bg-gradient-to-tr from-amber-400/70 via-amber-600/70 to-orange-900/70 blur-2xl opacity-60"></div>
+
+        <div class="glass rounded-3xl p-6 md:p-7 shadow-[0_30px_80px_rgba(0,0,0,0.75)] border-amber-50/10">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <p class="text-[0.65rem] uppercase tracking-[0.2em] text-amber-200/80">Maghettoni Snapshot</p>
+              <p class="text-sm text-amber-100/80">Angalia kama uko tayari kupanda level inayofuata.</p>
+            </div>
+            <div class="w-9 h-9 rounded-2xl bg-amber-200/95 flex items-center justify-center text-golden-brown-900">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+          </div>
+
+          <div class="space-y-4 text-xs text-amber-50/90">
+            <div class="flex items-center justify-between bg-white/5 rounded-2xl px-3 py-2.5">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-xl bg-amber-400/90 flex items-center justify-center text-golden-brown-900 text-sm">
+                  1
+                </span>
+                <div>
+                  <p class="font-semibold text-amber-50">Jinsi unavyosimamia leo</p>
+                  <p class="text-[0.7rem] text-amber-100/70">Daftari, Excel, au mtu mwingine?</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-clipboard-list text-amber-300"></i>
+            </div>
+
+            <div class="flex items-center justify-between bg-white/5 rounded-2xl px-3 py-2.5">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-xl bg-amber-400/90 flex items-center justify-center text-golden-brown-900 text-sm">
+                  2
+                </span>
+                <div>
+                  <p class="font-semibold text-amber-50">Changamoto zako kuu</p>
+                  <p class="text-[0.7rem] text-amber-100/70">Rekodi, wapangaji, au kasi ya ukuaji?</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-triangle-exclamation text-amber-300"></i>
+            </div>
+
+            <div class="flex items-center justify-between bg-white/5 rounded-2xl px-3 py-2.5">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-xl bg-amber-400/90 flex items-center justify-center text-golden-brown-900 text-sm">
+                  3
+                </span>
+                <div>
+                  <p class="font-semibold text-amber-50">Matamanio yako</p>
+                  <p class="text-[0.7rem] text-amber-100/70">Kusimamia mwenyewe au kumkabidhi mtu ila ukihusika?</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-stars text-amber-300"></i>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-[0.7rem]">
+            <p class="text-amber-100/70">Utakapotuma assessment hii, utapata mwanga kama Maghettoni ina-fit na safari yako ya sasa.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-6 w-full flex justify-center">
+      <a href="#assessment" class="flex flex-col items-center text-[0.65rem] tracking-[0.2em] uppercase text-amber-100/80">
+        <span>Scroll chini</span>
+        <span class="mt-1 inline-flex flex-col items-center gap-1">
+          <span class="w-px h-4 bg-amber-200/60"></span>
+          <i class="fa-solid fa-chevron-down text-xs animate-bounce"></i>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ASSESSMENT SECTION -->
+  <section id="assessment" class="section-bg relative py-20 md:py-24 border-t border-white/10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-[1.1fr_minmax(0,1.1fr)] gap-14 items-start">
+        <!-- Left copy -->
+        <div class="reveal">
+          <p class="tag-pill text-[0.65rem] text-amber-200/90 mb-2 uppercase">
+            <i class="fa-regular fa-circle-check mr-2"></i>
+            Assessment • Bure kabisa
+          </p>
+          <h2 class="font-display text-3xl sm:text-4xl font-semibold mb-4">
+            Jibu maswali haya ufahamu kama <span class="accent-underline">mfumo huu unakufaa</span>.
+          </h2>
+          <p class="text-sm text-amber-50/80 mb-5">
+            Huu si mtihani; ni ramani ya kukuonyesha mahali ulipo sasa na hatua inayofuata, kulingana na
+            mfumo wa kisasa wa kusimamia nyumba za kupanga.
+          </p>
+
+          <ul class="space-y-3 text-sm text-amber-100/85">
+            <li class="flex gap-3">
+              <span class="mt-1 text-amber-300">
+                <i class="fa-solid fa-check-circle"></i>
+              </span>
+              <span>Chukua chini ya dakika 3 kukamilisha maswali yote muhimu kuhusu biashara yako ya nyumba.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-1 text-amber-300">
+                <i class="fa-solid fa-check-circle"></i>
+              </span>
+              <span>Pata mwanga kama mfumo wa Maghettoni unaweza kukupa kasi, ulinzi wa rekodi na utulivu wa akili.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-1 text-amber-300">
+                <i class="fa-solid fa-check-circle"></i>
+              </span>
+              <span>Utaalikwa kujiunga na waitlist ukituzungumzia changamoto zako kwa ufupi.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Right "form" (non-functional) -->
+        <div class="reveal">
+          <div class="glass rounded-3xl p-6 md:p-7 shadow-[0_30px_80px_rgba(0,0,0,0.85)] border border-amber-50/10">
+            <div class="flex items-center justify-between mb-5">
+              <div>
+                <p class="tag-pill text-[0.6rem] text-amber-200/90 uppercase mb-1">STEP 1 • MAELEZO YA MSIMAMIZI</p>
+                <p class="text-sm text-amber-50/90">Anza kwa kuweka taarifa zako za msingi.</p>
+              </div>
+              <span class="text-[0.7rem] text-amber-100/65"><i class="fa-regular fa-clock mr-1"></i> Dakika 1</span>
+            </div>
+
+            <div class="space-y-4 text-sm">
+              <div>
+                <label class="block text-xs uppercase tracking-[0.16em] text-amber-100/70 mb-1.5">Jina kamili</label>
+                <input type="text" class="w-full rounded-2xl bg-black/40 border border-white/15 px-3 py-2.5 text-xs mag-input" placeholder="Andika jina lako" />
+              </div>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs uppercase tracking-[0.16em] text-amber-100/70 mb-1.5">Email</label>
+                  <input type="email" class="w-full rounded-2xl bg-black/40 border border-white/15 px-3 py-2.5 text-xs mag-input" placeholder="example@domain.com" />
+                </div>
+                <div>
+                  <label class="block text-xs uppercase tracking-[0.16em] text-amber-100/70 mb-1.5">Simu</label>
+                  <input type="tel" class="w-full rounded-2xl bg-black/40 border border-white/15 px-3 py-2.5 text-xs mag-input" placeholder="+255 ..." />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs uppercase tracking-[0.16em] text-amber-100/70 mb-1.5">Eneo / Mji</label>
+                <input type="text" class="w-full rounded-2xl bg-black/40 border border-white/15 px-3 py-2.5 text-xs mag-input" placeholder="Mfano: Dar es Salaam, Mwanza, Dodoma ..." />
+              </div>
+            </div>
+
+            <div class="mt-7 mb-4 border-t border-white/10 pt-4">
+              <p class="tag-pill text-[0.6rem] text-amber-200/90 uppercase mb-1">STEP 2 • HALI YAKO YA SASA</p>
+              <p class="text-xs text-amber-100/75 mb-3">Chagua jinsi unavyosimamia biashara ya nyumba zako sasa.</p>
+
+              <div class="space-y-2 text-xs">
+                <button class="w-full text-left rounded-2xl bg-black/40 border border-white/15 px-3 py-2.5 flex items-center justify-between hover:border-amber-300/80 hover:bg-white/5 transition">
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-book text-amber-300"></i>
+                    <span>Nasimamia kutumia daftari / makaratasi</span>
+                  </span>
+                  <i class="fa-regular fa-circle"></i>
+                </button>
+                <button class="w-full text-left rounded-2xl bg-black/40 border border-white/15 px-3 py-2.5 flex items-center justify-between hover:border-amber-300/80 hover:bg-white/5 transition">
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-laptop-file text-amber-300"></i>
+                    <span>Nasimamia kutumia mfumo wa computer (Excel, softwares n.k.)</span>
+                  </span>
+                  <i class="fa-regular fa-circle"></i>
+                </button>
+                <button class="w-full text-left rounded-2xl bg-black/40 border border-white/15 px-3 py-2.5 flex items-center justify-between hover:border-amber-300/80 hover:bg-white/5 transition">
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-user-tie text-amber-300"></i>
+                    <span>Nimemkabidhi mtu mwingine anisaidie kusimamia nyumba zangu</span>
+                  </span>
+                  <i class="fa-regular fa-circle"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-4">
+              <p class="text-[0.65rem] text-amber-100/70">Ukimaliza hatua hii utaendelea kwenye changamoto zako na matamanio yako.</p>
+              <button class="mag-btn inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500 text-golden-brown-900 text-[0.7rem] uppercase tracking-[0.18em] shadow-lg shadow-black/60">
+                <span>Endelea</span>
+                <i class="fa-solid fa-arrow-right-long text-xs"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS / STORY SECTION -->
+  <section id="benefits" class="relative py-18 md:py-20 bg-gradient-to-b from-black via-[#1b100b] to-golden-brown-900 border-t border-white/5">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-[1.1fr_minmax(0,1fr)] gap-12 items-start">
+        <div class="reveal">
+          <p class="tag-pill text-[0.65rem] text-amber-200/90 mb-2 uppercase">
+            <i class="fa-solid fa-badge-check mr-2"></i>
+            Kwa nini Maghettoni?
+          </p>
+          <h3 class="font-display text-2xl sm:text-3xl font-semibold mb-3">
+            Tofauti ya kutumia <span class="accent-underline">mifumo ya kisasa</span> ikilinganishwa na daftari.
+          </h3>
+          <p class="text-sm text-amber-50/80 mb-4">
+            Utafiti wa mazingira ya biashara ya nyumba za kupanga Tanzania na Marekani umeonyesha kasi kubwa ya
+            ukuaji huko Marekani, kwa sababu ya matumizi ya mifumo iliyopangwa vizuri, yenye takwimu sahihi na taarifa zinazoonekana kwa haraka.
+          </p>
+          <p class="text-sm text-amber-50/80 mb-4">
+            Maghettoni inaleta roho hiyo ya mifumo ya kisasa kwenye mazingira yetu — bila kulazimisha mabadiliko makali,
+            bali kukutana na hali yako ya sasa na kukuinua hatua kwa hatua.
+          </p>
+
+          <div class="grid sm:grid-cols-3 gap-4 mt-6 text-[0.7rem] uppercase tracking-[0.16em]">
+            <div class="glass rounded-2xl px-3 py-3 flex flex-col gap-2 border border-amber-50/10">
+              <span class="text-amber-300 text-xs">
+                <i class="fa-solid fa-bolt"></i> Kasi
+              </span>
+              <p class="font-semibold text-amber-50">Taarifa za wapangaji &amp; wanaodaiwa zinapatikana kwa sekunde chache.</p>
+            </div>
+            <div class="glass rounded-2xl px-3 py-3 flex flex-col gap-2 border border-amber-50/10">
+              <span class="text-amber-300 text-xs">
+                <i class="fa-solid fa-layer-group"></i> Mpangilio
+              </span>
+              <p class="font-semibold text-amber-50">Rekodi zako zinarudi kwenye mfumo mmoja, bila kurasa kupotea.</p>
+            </div>
+            <div class="glass rounded-2xl px-3 py-3 flex flex-col gap-2 border border-amber-50/10">
+              <span class="text-amber-300 text-xs">
+                <i class="fa-solid fa-brain"></i> Utulivu
+              </span>
+              <p class="font-semibold text-amber-50">Unaachana na stress za kukumbuka kila kitu kichwani au ndani ya daftari.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <div class="glass rounded-3xl p-6 shadow-[0_28px_70px_rgba(0,0,0,0.9)] border border-amber-50/10">
+            <p class="tag-pill text-[0.6rem] text-amber-200/90 uppercase mb-2">Kuhusu waasisi</p>
+            <div class="flex items-center gap-4 mb-4">
+              <div class="flex -space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-amber-500/95 flex items-center justify-center text-golden-brown-900 text-xs font-semibold border border-amber-100/80">
+                  GG
+                </div>
+                <div class="w-10 h-10 rounded-2xl bg-amber-200/95 flex items-center justify-center text-golden-brown-900 text-xs font-semibold border border-amber-100/80">
+                  GC
+                </div>
+              </div>
+              <div>
+                <p class="font-semibold text-sm">Godlisten Gerald &amp; Gift Christian</p>
+                <p class="text-[0.7rem] text-amber-100/70">Tanzania &amp; Marekani • Research ya mifumo ya nyumba za kupanga</p>
+              </div>
+            </div>
+            <p class="text-sm text-amber-50/85 mb-3">
+              Mradi wa Maghettoni umetengenezwa baada ya kuangalia jinsi wamiliki wa nyumba wanavyosimamia biashara zao
+              katika mazingira mawili tofauti: Tanzania na Marekani. Wanaofanya vizuri zaidi hutegemea mifumo iliyo digital, inayoonekana kutoka popote.
+            </p>
+            <p class="text-sm text-amber-50/85 mb-5">
+              Kupitia assessment hii, tunakupa nafasi ya kuona kama uko tayari kujiunga na kundi la wamiliki wa nyumba wanaokua kwa kasi,
+              huku ukiwa na udhibiti wa moja kwa moja bila kuongeza stress.
+            </p>
+
+            <div class="flex items-center justify-between text-[0.7rem]">
+              <div class="flex items-center gap-2 text-emerald-300">
+                <i class="fa-solid fa-shield-check"></i>
+                <span>Maelezo yako yanatunzwa kwa usiri.</span>
+              </div>
+              <a href="#waitlist" class="inline-flex items-center gap-1 text-amber-200 hover:text-amber-100">
+                <span>Jiunge na waitlist</span>
+                <i class="fa-solid fa-arrow-right-long text-[0.7rem]"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WAITLIST SECTION -->
+  <section id="waitlist" class="relative py-20 md:py-24 bg-black border-t border-white/10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+      <div class="glass rounded-3xl p-6 sm:p-8 md:p-10 border border-amber-50/10 shadow-[0_32px_80px_rgba(0,0,0,0.95)]">
+        <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-start md:items-center">
+          <div class="flex-1">
+            <p class="tag-pill text-[0.65rem] text-amber-200/90 mb-2 uppercase">
+              <i class="fa-solid fa-bell mr-2"></i>
+              Early access waitlist
+            </p>
+            <h4 class="font-display text-2xl sm:text-3xl font-semibold mb-3">
+              Kuwa miongoni mwa wa kwanza kuonja <span class="accent-underline">Maghettoni</span>.
+            </h4>
+            <p class="text-sm text-amber-50/85 mb-4">
+              Baada ya kujibu assessment, utaweza kuacha maelezo mafupi kuhusu changamoto unazokutana nazo ili tukupe
+              kipaumbele tunapozindua mfumo wa Maghettoni kwa wamiliki wachache wa kwanza.
+            </p>
+            <ul class="space-y-2 text-[0.8rem] text-amber-100/80">
+              <li class="flex gap-2">
+                <span class="mt-[2px] text-emerald-300">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span>Vipengele vya kwanza vitajengwa tukizingatia maoni yako ya kila siku.</span>
+              </li>
+              <li class="flex gap-2">
+                <span class="mt-[2px] text-emerald-300">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span>Unapata nafasi ya kushauri jinsi mfumo utakavyolingana na mazingira ya Tanzania.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="flex-1 w-full">
+            <div class="bg-gradient-to-br from-golden-brown-900/90 to-black rounded-2xl p-4 sm:p-5 border border-amber-50/15">
+              <p class="text-[0.7rem] uppercase tracking-[0.16em] text-amber-100/70 mb-3">
+                Andika changamoto zako kwa ufupi
+              </p>
+              <textarea class="w-full h-28 rounded-2xl bg-black/45 border border-white/15 px-3 py-2.5 text-xs mag-input resize-none" placeholder="Mfano: Ninapata ugumu wa kufuatilia ni mpangaji gani amechelewa kulipa, rekodi zangu zinachanganyikana, siwezi kuona haraka faida niliyopata kwa mwezi n.k."></textarea>
+
+              <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <button class="mag-btn inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 rounded-full bg-amber-500 text-golden-brown-900 text-[0.75rem] uppercase tracking-[0.18em] shadow-lg shadow-black/70">
+                  <span>Jiunge na waitlist</span>
+                  <i class="fa-solid fa-pen-to-square text-xs"></i>
+                </button>
+                <p class="text-[0.65rem] text-amber-100/70">
+                  Hakuna malipo kwa sasa. Tutaonana tukianza majaribio ya kwanza ya mfumo.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <p class="mt-6 text-[0.7rem] text-center text-amber-100/60">
+        © <span class="font-semibold">Maghettoni</span> • Smart Rental Systems for modern Tanzanian landlords.
+      </p>
+    </div>
+  </section>
+
+  <!-- Scroll reveal script -->
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const revealOnScroll = () => {
+      const trigger = window.innerHeight * 0.85;
+      reveals.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < trigger) {
+          el.classList.add('active');
+        }
+      });
+    };
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', revealOnScroll);
+  </script>
+</body>
+</html>
