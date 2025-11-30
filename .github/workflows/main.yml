@@ -16,24 +16,15 @@ jobs:
       with:
         host: ${{ secrets.ssh_host }}
         username: ${{ secrets.ssh_user }}
-        password: ${{ secrets.ssh_password }}
+        key: ${{ secrets.ssh_key }}         # Use SSH key, not password
+        port: 21098       # Your server port (21098)
         script: |
           cd ~/maghettoni.com
-          
-          # Update repository
-          git pull
-          
-          # Activate environment
+          git fetch --all
+          git reset --hard origin/main
           source venv/bin/activate
-          
-          # Install dependencies
+          pip install --upgrade pip
           pip install -r requirements.txt
-          
-          # Run migrations
           python manage.py migrate --noinput
-          
-          # Collect static
           python manage.py collectstatic --noinput
-          
-          # Restart passenger
           touch passenger_wsgi.py
