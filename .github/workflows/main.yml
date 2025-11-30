@@ -24,7 +24,7 @@ jobs:
           git reset --hard origin/main
           source venv/bin/activate
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r req.txt
           python manage.py migrate --noinput
           python manage.py collectstatic --noinput
           touch passenger_wsgi.py
