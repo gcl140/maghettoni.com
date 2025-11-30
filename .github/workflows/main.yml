@@ -1,0 +1,39 @@
+name: Deploy Django via SSH
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: ${{ secrets.ssh_host }}
+        username: ${{ secrets.ssh_user }}
+        password: ${{ secrets.ssh_password }}
+        script: |
+          cd ~/maghettoni.com
+          
+          # Update repository
+          git pull
+          
+          # Activate environment
+          source venv/bin/activate
+          
+          # Install dependencies
+          pip install -r requirements.txt
+          
+          # Run migrations
+          python manage.py migrate --noinput
+          
+          # Collect static
+          python manage.py collectstatic --noinput
+          
+          # Restart passenger
+          touch passenger_wsgi.py
