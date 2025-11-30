@@ -14,10 +14,29 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+from django.views.static import serve
+
+handler404 = 'yuzzaz.views.custom_404_view'
+
+def logout_then_google(request):
+    logout(request)
+    return redirect('/oauth/login/google-oauth2/?next=/profile/')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', include('yuzzaz.urls')),
+    path('accounts/login/', RedirectView.as_view(url='/login/', permanent=True)),
+    path('oauth/login/google/', logout_then_google, name='logout-then-google'),
+    path('oauth/', include('social_django.urls', namespace='social')),
+
+
+
 ]

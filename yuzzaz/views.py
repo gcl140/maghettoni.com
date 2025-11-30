@@ -152,9 +152,9 @@ def login(request):
             auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, "You have successfully logged in.")
             if user.is_staff:
-                return redirect('index')
+                return redirect('home')
             else:
-                return redirect('index')  # Standard redirect — adjust to your default user landing page
+                return redirect('home')  # Standard redirect — adjust to your default user landing page
 
         messages.error(request, "Invalid credentials, please try again.")
 

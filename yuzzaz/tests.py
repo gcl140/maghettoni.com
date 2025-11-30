@@ -1,7 +1,7 @@
 import os
 import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dadjokess.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "maghettoni.settings")
 django.setup()
 
 from content.models import Joke, JokeLike, JokeComment
