@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Login - Maghettoni!{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}" />
     <link
@@ -32,15 +31,44 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brown': {
+                            50: '#fdf8f6',
+                            100: '#f2e8e5',
+                            200: '#eaddd7',
+                            300: '#e0cec7',
+                            400: '#d2bab0',
+                            500: '#bfa094',
+                            600: '#a18072',
+                            700: '#8b6e5e',
+                            800: '#7d5d4f',
+                            900: '#603b2b',
+                        }
+                    },
+                    fontFamily: {
+                        'serif': ['Playfair Display', 'serif'],
+                        'sans': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
   </head>
   <body
-    class="bg-black"
+    class="bg-brown-900 font-sans"
     data-user-name="{% if user.is_authenticated %}{{ user.username }}{% else %}None{% endif %}"
   >
     <div class="min-h-screen flex items-center justify-center p-4">
       <!-- Login Container -->
       <div
-        class="w-full max-w-md bg-black rounded-2xl border border-gray-700 shadow-2xl p-8"
+        class="w-full max-w-md bg-brown-800 rounded-2xl border border-gray-700 shadow-2xl p-8"
       >
         {% block content %}{% endblock %}
       </div>

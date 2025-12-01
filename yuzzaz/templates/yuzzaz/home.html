@@ -1,3 +1,4 @@
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,6 +8,7 @@
     <title>Maghettoni | Simplify Your Rental Property Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -196,17 +198,24 @@
         <div class="container mx-auto px-6 py-16">
             <div class="max-w-3xl mx-auto text-center fade-in">
                 <h1 class="text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight">
-                    Je, Upo Tayari Kuendesha Biashara Yako Ya Nyumba Za Kupanga Bila Stress?
+                    Je, Upo Tayari Kuendesha Uwekezaji Wako Ya Nyumba Za Kupanga Bila Stress?
                 </h1>
                 <p class="text-xl md:text-2xl mb-10 opacity-90">
-                    Rekodi zote unazohitaji kiganjani, na kujua wanaodaiwa kodi kwa sekunde chache
+                  Na Kutengeneza Generational Wealth.
+                </p>
+                <p class="text-xs md:text-sm mb-12 opacity-90">
+                  Jibu Maswali 10 Hapo Chini Ufanye Uwekezaji Wako
+
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="#assessment" class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-brown-50 transition-all duration-300 transform hover:-translate-y-1">
-                        Anza Tathmini Yako <i class="fas fa-arrow-right ml-2"></i>
+                        Bila Stress <i class="fas fa-heart ml-2"></i>
                     </a>
                     <a href="#about" class="border-2 border-white text-white font-semibold py-3 px-8 rounded-lg hover:bg-white hover:text-brown-900 transition-all duration-300">
-                        Jifunze Zaidi
+                        More Cashflow <i class="fas fa-chart-line ml-2"></i>
+                    </a>
+                    <a href="#assessment" class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-brown-50 transition-all duration-300 transform hover:-translate-y-1">
+                        Generational Wealth <i class="fas fa-dollar-sign ml-2"></i>
                     </a>
                 </div>
             </div>
@@ -225,14 +234,15 @@
                 <div class="text-center mb-16 fade-in">
                     <h2 class="text-3xl md:text-4xl font-serif font-bold text-brown-900 mb-4">Kuhusu Sisi</h2>
                     <div class="w-24 h-1 bg-brown-900 mx-auto"></div>
+                    <h2 class="text-base md:text-xl font-serif text-brown-800 mb-4">Ifahamu Maghettoni</h2>
                 </div>
                 
                 <div class="grid md:grid-cols-2 gap-12 items-center">
                     <div class="slide-in-left">
                         <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Tunawezaje Kukusaidia?</h3>
                         <p class="text-lg mb-6">
-                            Maghettoni ni mfumo wa kisasa wa kusimamia biashara ya nyumba za kupanga. 
-                            Tunakusudia kukuwezesha kuendesha biashara yako kwa ufanisi zaidi na kupunguza msongo wa mawazo.
+                            Maghettoni ni kampuni ya KiTanzania yenye viwango vya kimataifa inayowasaidia wawekezaji kwenye nyumba
+                            za kupangisha kutimiza ndoto zao 
                         </p>
                         <p class="text-lg">
                             Kwa kutumia teknolojia ya kisasa, tunakupa uwezo wa kufuatilia malipo, kudhibiti gharama, 
@@ -249,7 +259,7 @@
                                     </div>
                                     <div>
                                         <h4 class="font-bold">Godlisten Gerald</h4>
-                                        <p class="text-brown-200">Kutoka Tanzania</p>
+                                        <p class="text-brown-200">Mwanzilishi - Kutoka Tanzania</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
@@ -258,7 +268,7 @@
                                     </div>
                                     <div>
                                         <h4 class="font-bold">Gift Christian</h4>
-                                        <p class="text-brown-200">Kutoka Marekani</p>
+                                        <p class="text-brown-200">Mwanzilishi - Mtanzania aliepo Marekani</p>
                                     </div>
                                 </div>
                             </div>
