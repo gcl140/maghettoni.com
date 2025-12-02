@@ -88,3 +88,4 @@ celerybeat-schedule
 # dotenv
 .env
 venv/
+junk/

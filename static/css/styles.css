@@ -1,0 +1,189 @@
+:root {
+    --primary-brown: 96, 59, 43;
+    --secondary-white: 255, 255, 255;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+.hero-bg {
+    background: linear-gradient(rgba(96, 59, 43, 0.85), rgba(96, 59, 43, 0.9)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfH3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1973&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.section-bg {
+    background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+}
+
+.fade-in.appear {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.slide-in-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 0.8s ease;
+}
+
+.slide-in-left.appear {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.slide-in-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.8s ease;
+}
+
+.slide-in-right.appear {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scale-in {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.8s ease;
+}
+
+.scale-in.appear {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.parallax {
+    background-attachment: fixed;
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.progress-bar {
+    height: 6px;
+    background-color: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: rgb(96, 59, 43);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.option-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.option-card.selected {
+    border-color: rgb(96, 59, 43);
+    background-color: rgba(96, 59, 43, 0.05);
+}
+
+.checkbox-option {
+    transition: all 0.3s ease;
+}
+
+.checkbox-option:hover {
+    background-color: rgba(96, 59, 43, 0.05);
+}
+
+.checkbox-option.selected {
+    background-color: rgba(96, 59, 43, 0.1);
+    border-color: rgb(96, 59, 43);
+}
+
+/* Add to your existing CSS */
+.option-card.selected {
+    border-color: #78350f;
+    background-color: #fef3c7;
+}
+
+.checkbox-option.selected {
+    border-color: #78350f;
+    background-color: #fef3c7;
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Add to your CSS */
+#verification-modal {
+    animation: fadeIn 0.3s ease;
+}
+
+.verification-digit {
+    transition: all 0.2s ease;
+}
+
+.verification-digit:focus {
+    border-color: #78350f;
+    box-shadow: 0 0 0 3px rgba(120, 53, 15, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

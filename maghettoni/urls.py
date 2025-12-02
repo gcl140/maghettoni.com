@@ -33,6 +33,7 @@ def logout_then_google(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', include('yuzzaz.urls')),
+    path('tathmini/', include('tathmini.urls')),
     path('accounts/login/', RedirectView.as_view(url='/login/', permanent=True)),
     path('oauth/login/google/', logout_then_google, name='logout-then-google'),
     path('oauth/', include('social_django.urls', namespace='social')),

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'yuzzaz',
     'widget_tweaks',
+    'tathmini',
 ]
 
 MIDDLEWARE = [

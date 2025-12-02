@@ -7,165 +7,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maghettoni | Simplify Your Rental Property Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brown': {
-                            50: '#fdf8f6',
-                            100: '#f2e8e5',
-                            200: '#eaddd7',
-                            300: '#e0cec7',
-                            400: '#d2bab0',
-                            500: '#bfa094',
-                            600: '#a18072',
-                            700: '#8b6e5e',
-                            800: '#7d5d4f',
-                            900: '#603b2b',
-                        }
-                    },
-                    fontFamily: {
-                        'serif': ['Playfair Display', 'serif'],
-                        'sans': ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        :root {
-            --primary-brown: 96, 59, 43;
-            --secondary-white: 255, 255, 255;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-        
-        .hero-bg {
-            background: linear-gradient(rgba(96, 59, 43, 0.85), rgba(96, 59, 43, 0.9)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfH3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1973&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        
-        .section-bg {
-            background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-        
-        .fade-in.appear {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .slide-in-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: all 0.8s ease;
-        }
-        
-        .slide-in-left.appear {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .slide-in-right {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: all 0.8s ease;
-        }
-        
-        .slide-in-right.appear {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .scale-in {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.8s ease;
-        }
-        
-        .scale-in.appear {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .parallax {
-            background-attachment: fixed;
-        }
-        
-        .form-step {
-            display: none;
-        }
-        
-        .form-step.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .progress-bar {
-            height: 6px;
-            background-color: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background-color: rgb(96, 59, 43);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        .option-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .option-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .option-card.selected {
-            border-color: rgb(96, 59, 43);
-            background-color: rgba(96, 59, 43, 0.05);
-        }
-        
-        .checkbox-option {
-            transition: all 0.3s ease;
-        }
-        
-        .checkbox-option:hover {
-            background-color: rgba(96, 59, 43, 0.05);
-        }
-        
-        .checkbox-option.selected {
-            background-color: rgba(96, 59, 43, 0.1);
-            border-color: rgb(96, 59, 43);
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/toastify-js"
+    ></script>
+    <script src="{% static 'js/head.js' %}"></script>
+    <link  href="{% static 'css/styles.css' %}" rel="stylesheet">
 </head>
 <body class="bg-white text-gray-800">
     <!-- Navigation -->
@@ -197,7 +55,7 @@
     <section id="home" class="hero-bg min-h-screen flex items-center justify-center text-white pt-20">
         <div class="container mx-auto px-6 py-16">
             <div class="max-w-3xl mx-auto text-center fade-in">
-                <h1 class="text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight">
+                <h1 class="text-2xl md:text-6xl font-serif font-bold mb-6 leading-tight">
                     Je, Upo Tayari Kuendesha Uwekezaji Wako Ya Nyumba Za Kupanga Bila Stress?
                 </h1>
                 <p class="text-xl md:text-2xl mb-10 opacity-90">
@@ -309,6 +167,7 @@
                 
                 <!-- Assessment Form -->
                 <form id="assessment-form" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 scale-in">
+                    {% csrf_token %}
                     <!-- Step 1: Personal Information -->
                     <div class="form-step active" id="step-1">
                         <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Taarifa Zako Binafsi</h3>
@@ -387,7 +246,7 @@
                         
                         <input type="hidden" id="current-situation" name="current-situation">
                         
-                        <div class="mt-8 flex justify-between">
+                        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
                             <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
                                 <i class="fas fa-arrow-left mr-2"></i> Nyuma
                             </button>
@@ -430,7 +289,7 @@
                         
                         <input type="hidden" id="goals" name="goals">
                         
-                        <div class="mt-8 flex justify-between">
+                        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
                             <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
                                 <i class="fas fa-arrow-left mr-2"></i> Nyuma
                             </button>
@@ -499,7 +358,7 @@
                         
                         <input type="hidden" id="challenges" name="challenges">
                         
-                        <div class="mt-8 flex justify-between">
+                        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
                             <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
                                 <i class="fas fa-arrow-left mr-2"></i> Nyuma
                             </button>
@@ -518,7 +377,7 @@
                             <textarea id="solution" rows="5" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="Andika hapa jinsi unavyoona mfumo wa Maghettoni unaweza kukusaidia..."></textarea>
                         </div>
                         
-                        <div class="mt-8 flex justify-between">
+                        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
                             <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
                                 <i class="fas fa-arrow-left mr-2"></i> Nyuma
                             </button>
@@ -568,144 +427,11 @@
                     </div>
                 </div>
                 <div class="border-t border-brown-800 mt-8 pt-8 text-center text-brown-400">
-                    <p>&copy; 2023 Maghettoni. Haki zote zimehifadhiwa.</p>
+                    <p>&copy; 2025 Maghettoni. Haki zote zimehifadhiwa.</p>
                 </div>
             </div>
         </div>
     </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.getElementById('menu-toggle').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        });
-
-        // Scroll animations
-        const fadeElements = document.querySelectorAll('.fade-in');
-        const slideLeftElements = document.querySelectorAll('.slide-in-left');
-        const slideRightElements = document.querySelectorAll('.slide-in-right');
-        const scaleElements = document.querySelectorAll('.scale-in');
-
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('appear');
-                }
-            });
-        }, observerOptions);
-
-        fadeElements.forEach(el => observer.observe(el));
-        slideLeftElements.forEach(el => observer.observe(el));
-        slideRightElements.forEach(el => observer.observe(el));
-        scaleElements.forEach(el => observer.observe(el));
-
-        // Form navigation
-        const formSteps = document.querySelectorAll('.form-step');
-        const progressFill = document.getElementById('progress-fill');
-        const progressPercent = document.getElementById('progress-percent');
-        let currentStep = 1;
-        const totalSteps = formSteps.length - 1; // Excluding success message
-
-        function updateProgress() {
-            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-            progressFill.style.width = `${progress}%`;
-            progressPercent.textContent = `${Math.round(progress)}%`;
-        }
-
-        function showStep(stepNumber) {
-            formSteps.forEach(step => {
-                step.classList.remove('active');
-            });
-            document.getElementById(`step-${stepNumber}`).classList.add('active');
-            currentStep = stepNumber;
-            updateProgress();
-        }
-
-        // Next step buttons
-        document.querySelectorAll('.next-step').forEach(button => {
-            button.addEventListener('click', function() {
-                if (currentStep < totalSteps) {
-                    showStep(currentStep + 1);
-                }
-            });
-        });
-
-        // Previous step buttons
-        document.querySelectorAll('.prev-step').forEach(button => {
-            button.addEventListener('click', function() {
-                if (currentStep > 1) {
-                    showStep(currentStep - 1);
-                }
-            });
-        });
-
-        // Option card selection
-        document.querySelectorAll('.option-card').forEach(card => {
-            card.addEventListener('click', function() {
-                // Remove selection from all cards in this step
-                const parentStep = this.closest('.form-step');
-                parentStep.querySelectorAll('.option-card').forEach(c => {
-                    c.classList.remove('selected');
-                });
-                
-                // Select this card
-                this.classList.add('selected');
-                
-                // Update hidden input
-                const hiddenInput = parentStep.querySelector('input[type="hidden"]');
-                if (hiddenInput) {
-                    hiddenInput.value = this.getAttribute('data-value');
-                }
-            });
-        });
-
-        // Checkbox option selection
-        document.querySelectorAll('.checkbox-option').forEach(option => {
-            option.addEventListener('click', function() {
-                this.classList.toggle('selected');
-                
-                // Update checkmark
-                const checkIcon = this.querySelector('.fa-check');
-                if (this.classList.contains('selected')) {
-                    checkIcon.classList.add('text-brown-900');
-                    this.querySelector('.w-6').classList.add('bg-brown-900', 'border-brown-900');
-                } else {
-                    checkIcon.classList.remove('text-brown-900');
-                    this.querySelector('.w-6').classList.remove('bg-brown-900', 'border-brown-900');
-                }
-                
-                // Update hidden input with selected values
-                const parentStep = this.closest('.form-step');
-                const hiddenInput = parentStep.querySelector('input[type="hidden"]');
-                if (hiddenInput) {
-                    const selectedValues = [];
-                    parentStep.querySelectorAll('.checkbox-option.selected').forEach(opt => {
-                        selectedValues.push(opt.getAttribute('data-value'));
-                    });
-                    hiddenInput.value = selectedValues.join(',');
-                }
-            });
-        });
-
-        // Form submission
-        document.getElementById('assessment-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // In a real application, you would send the form data to a server here
-            // For this demo, we'll just show the success message
-            
-            showStep(formSteps.length); // Show success message
-            progressFill.style.width = '100%';
-            progressPercent.textContent = '100%';
-        });
-
-        // Initialize progress
-        updateProgress();
-    </script>
+    <script src="{% static 'js/home.js' %}"></script>
 </body>
 </html>
