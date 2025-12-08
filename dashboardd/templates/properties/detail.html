@@ -1,0 +1,18 @@
+{% extends 'dashboardd/base.html' %}
+
+{% block title %}Properties - Landlord Management System{% endblock %}
+{% block page_title %}Properties{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Your Properties</h5>
+    </div>
+    {{ property.name }} - Details will go here.
+</div>
+{% endblock %}

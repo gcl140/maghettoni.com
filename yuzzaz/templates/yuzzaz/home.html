@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,216 +24,49 @@
     ></script>
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brown': {
-                            50: '#fdf8f6',
-                            100: '#f2e8e5',
-                            200: '#eaddd7',
-                            300: '#e0cec7',
-                            400: '#d2bab0',
-                            500: '#bfa094',
-                            600: '#a18072',
-                            700: '#8b6e5e',
-                            800: '#7d5d4f',
-                            900: '#603b2b',
-                        }
-                    },
-                    fontFamily: {
-                        'serif': ['Playfair Display', 'serif'],
-                        'sans': ['DM Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
+  theme: {
+    extend: {
+      colors: {
+        brown: {
+          50: "#fdf8f6",
+          100: "#f2e8e5",
+          200: "#eaddd7",
+          300: "#e0cec7",
+          400: "#d2bab0",
+          500: "#bfa094",
+          600: "#a18072",
+          700: "#8b6e5e",
+          800: "#7d5d4f",
+          900: "#603b2b",
+        },
+      },
+      fontFamily: {
+        serif: ["Playfair Display", "serif"],
+        sans: ["DM Sans", "sans-serif"],
+      },
+    },
+  },
+};
     </script>
-    <style>
-        :root {
-            --primary-brown: 96, 59, 43;
-            --secondary-white: 255, 255, 255;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-        
-        .hero-bg {
-            background: linear-gradient(rgba(96, 59, 43, 0.85), rgba(96, 59, 43, 0.9)), url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfH3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1973&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        
-        .section-bg {
-            background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-        
-        .fade-in.appear {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .slide-in-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: all 0.8s ease;
-        }
-        
-        .slide-in-left.appear {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .slide-in-right {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: all 0.8s ease;
-        }
-        
-        .slide-in-right.appear {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .scale-in {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.8s ease;
-        }
-        
-        .scale-in.appear {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .parallax {
-            background-attachment: fixed;
-        }
-        
-        .form-step {
-            display: none;
-        }
-        
-        .form-step.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .progress-bar {
-            height: 6px;
-            background-color: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background-color: rgb(96, 59, 43);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        .option-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .option-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .option-card.selected {
-            border-color: rgb(96, 59, 43);
-            background-color: rgba(96, 59, 43, 0.05);
-        }
-        
-        .checkbox-option {
-            transition: all 0.3s ease;
-        }
-        
-        .checkbox-option:hover {
-            background-color: rgba(96, 59, 43, 0.05);
-        }
-        
-        .checkbox-option.selected {
-            background-color: rgba(96, 59, 43, 0.1);
-            border-color: rgb(96, 59, 43);
-        }
-
-        /* Add to your existing CSS */
-.option-card.selected {
-    border-color: #78350f;
-    background-color: #fef3c7;
-}
-
-.checkbox-option.selected {
-    border-color: #78350f;
-    background-color: #fef3c7;
-}
-
-.form-step {
-    display: none;
-}
-
-.form-step.active {
-    display: block;
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Add to your CSS */
-#verification-modal {
-    animation: fadeIn 0.3s ease;
-}
-
-.verification-digit {
-    transition: all 0.2s ease;
-}
-
-.verification-digit:focus {
-    border-color: #78350f;
-    box-shadow: 0 0 0 3px rgba(120, 53, 15, 0.1);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body class="bg-white text-gray-800">
     <!-- Navigation -->
     <nav class="fixed w-full z-50 bg-white shadow-md transition-all duration-300">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center">
-                <span class="text-2xl font-serif font-bold text-brown-900">MAGHETTONI</span>
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'images/fav.png' %}" alt="Maghettoni Logo" class="h-10 w-10 mr-3"/>
+                </a>
+                <a href="{% url 'home' %}">
+
+                    <span class="text-2xl font-serif font-bold text-brown-900">MAGHETTONI</span>
+                </a>    
             </div>
             <div class="hidden md:flex space-x-8">
-                <a href="#home" class="text-brown-900 hover:text-brown-700 font-medium transition-colors">Home</a>
-                <a href="#about" class="text-brown-900 hover:text-brown-700 font-medium transition-colors">About</a>
-                <a href="#assessment" class="text-brown-900 hover:text-brown-700 font-medium transition-colors">Assessment</a>
+                <a href="#home" class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"><i class="fas fa-home mr-2"></i> Nyumbani</a>
+                <a href="#about" class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"><i class="fas fa-info-circle mr-2"></i> Kuhusu</a>
+                <a href="#assessment" class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"><i class="fas fa-clipboard-list mr-2"></i> Tathmini</a>
             </div>
             <div class="md:hidden">
                 <button id="menu-toggle" class="text-brown-900 focus:outline-none">
@@ -243,44 +76,56 @@
         </div>
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white px-6 py-4 shadow-lg">
-            <a href="#home" class="block py-2 text-brown-900 hover:text-brown-700">Home</a>
-            <a href="#about" class="block py-2 text-brown-900 hover:text-brown-700">About</a>
-            <a href="#assessment" class="block py-2 text-brown-900 hover:text-brown-700">Assessment</a>
+            <a href="#home" class="block py-2 text-brown-900 hover:text-brown-700"><i class="fas fa-home mr-2"></i> Nyumbani</a>
+            <a href="#about" class="block py-2 text-brown-900 hover:text-brown-700"><i class="fas fa-info-circle mr-2"></i> Kuhusu</a>
+            <a href="#assessment" class="block py-2 text-brown-900 hover:text-brown-700"><i class="fas fa-clipboard-list mr-2"></i> Tathmini</a>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section id="home" class="hero-bg min-h-screen flex items-center justify-center text-white pt-20">
-        <div class="container mx-auto px-6 py-16">
-            <div class="max-w-3xl mx-auto text-center fade-in">
-                <h1 class="text-2xl md:text-6xl font-serif font-bold mb-6 leading-tight">
-                    Je, Upo Tayari Kuendesha Uwekezaji Wako Ya Nyumba Za Kupanga Bila Stress?
-                </h1>
-                <p class="text-xl md:text-2xl mb-10 opacity-90">
-                  Na Kutengeneza Generational Wealth.
-                </p>
-                <p class="text-xs md:text-sm mb-12 opacity-90">
-                  Jibu Maswali 10 Hapo Chini Ufanye Uwekezaji Wako
 
-                </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <a href="#assessment" class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-brown-50 transition-all duration-300 transform hover:-translate-y-1">
-                        Bila Stress <i class="fas fa-heart ml-2"></i>
-                    </a>
-                    <a href="#about" class="border-2 border-white text-white font-semibold py-3 px-8 rounded-lg hover:bg-white hover:text-brown-900 transition-all duration-300">
-                        More Cashflow <i class="fas fa-chart-line ml-2"></i>
-                    </a>
-                    <a href="#assessment" class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-lg shadow-lg hover:bg-brown-50 transition-all duration-300 transform hover:-translate-y-1">
-                        Generational Wealth <i class="fas fa-dollar-sign ml-2"></i>
-                    </a>
-                </div>
+    <div class="relative container mx-auto px-6 py-16">
+        <div class="max-w-3xl mx-auto text-center fade-in">
+
+            <h1 class="text-3xl md:text-6xl font-serif font-bold mb-6 leading-tight drop-shadow-lg">
+                Je, Upo Tayari Kuendesha Uwekezaji Wako wa Nyumba Bila Stress?
+            </h1>
+
+            <p class="text-xl md:text-2xl mb-6 opacity-95 font-light">
+                Na Kutengeneza *Generational Wealth* Bila Pressure.
+            </p>
+
+            <p class="text-base md:text-lg mb-12 opacity-90 animate-pulse">
+                Jibu Maswali 10 Chini Hapo 👇 – Upate Mwanga Kabisa
+            </p>
+
+            <!-- FUN BUTTONS -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+
+                <!-- Button 1 -->
+                <span
+                   class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-xl shadow-xl
+                          hover:bg-brown-100 transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 md:flex md:items-center text-center gap-2">
+                    Bila Stress ❤️
+                </span>
+
+                <!-- Button 2 -->
+                <span
+                   class="border-2 border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-white hover:text-brown-900 
+                          transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105  md:flex md:items-center text-center gap-2">
+                    More Cashflow 📈
+                </span>
+
+                <!-- Button 3 -->
+                <span
+                   class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-xl shadow-xl
+                          hover:bg-brown-50 transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 md:flex md:items-center text-center  gap-2">
+                    Generational Wealth 💸
+                </span>
             </div>
         </div>
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2">
-            <a href="#about" class="text-white animate-bounce">
-                <i class="fas fa-chevron-down text-2xl"></i>
-            </a>
-        </div>
+    </div>
     </section>
 
     <!-- About Section -->
@@ -310,16 +155,21 @@
                             <h3 class="text-2xl font-serif font-bold mb-4">Watu Nyuma ya Mradi</h3>
                             <div class="space-y-4">
                                 <div class="flex items-start">
-                                    <div class="bg-brown-700 p-3 rounded-full mr-4">
-                                        <i class="fas fa-user text-white"></i>
+                                    <div class="bg-brown-700 rounded-full mr-4 flex items-center justify-center">
+                                                <img 
+                                                    src="{% static 'images/matowo.jpeg' %}" 
+                                                    alt="Matowo" 
+                                                    class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
+                                                />
                                     </div>
+
                                     <div>
                                         <h4 class="font-bold">Godlisten Gerald</h4>
                                         <p class="text-brown-200">Mwanzilishi - Kutoka Tanzania</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
-                                    <div class="bg-brown-700 p-3 rounded-full mr-4">
+                                    <div class="bg-brown-700 p-5 w-6 h-6 rounded-full mr-4 flex items-center justify-center">
                                         <i class="fas fa-user text-white"></i>
                                     </div>
                                     <div>
@@ -364,258 +214,12 @@
                 </div>
                 
                 <!-- Assessment Form -->
-                <form id="assessment-form" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 scale-in">
-                    {% csrf_token %}
-                    <!-- Step 1: Personal Information -->
-                    <div class="form-step active" id="step-1">
-                        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Taarifa Zako Binafsi</h3>
-                        
-                        <div class="space-y-6">
-                            <div>
-                                <label for="name" class="block text-brown-900 font-medium mb-2">Jina Lako Kamili</label>
-                                <input type="text" id="name" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="Andika jina lako hapa">
-                            </div>
-                            
-                            <div>
-                                <label for="email" class="block text-brown-900 font-medium mb-2">Barua Pepe</label>
-                                <input type="email" id="email" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="barua@pepe.com">
-                            </div>
-                            
-                            <div>
-                                <label for="location" class="block text-brown-900 font-medium mb-2">Mahali Unapoishi</label>
-                                <input type="text" id="location" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="Mji au mkoa">
-                            </div>
-                            
-                            <div>
-                                <label for="phone" class="block text-brown-900 font-medium mb-2">Nambari Ya Simu</label>
-                                <input type="tel" id="phone" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="+255 ...">
-                            </div>
-                        </div>
-                        
-                        <div class="mt-8 flex justify-end">
-                            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
-                Endelea <i class="fas fa-arrow-right ml-2"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 2: Current Situation -->
-                    <div class="form-step" id="step-2">
-                        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Hali Yako Ya Sasa</h3>
-                        <p class="text-brown-700 mb-6">Chagua jinsi unavyosimamia biashara yako ya nyumba za kupanga kwa sasa:</p>
-                        
-                        <div class="space-y-4">
-                            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="madaftari">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
-                                        <i class="fas fa-book text-brown-900"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-brown-900">Nasimamia kutumia madaftari</h4>
-                                        <p class="text-brown-700 text-sm mt-1">Natumia daftari za kawaida kuhifadhi rekodi zote</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="kompyuta">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
-                                        <i class="fas fa-laptop text-brown-900"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-brown-900">Nasimamia kutumia mifumo mbalimbali ya kompyuta</h4>
-                                        <p class="text-brown-700 text-sm mt-1">Natumia programu mbalimbali za kompyuta kusimamia</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="mkabidhi">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
-                                        <i class="fas fa-user-friends text-brown-900"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-brown-900">Nimemkabidhi mtu anisaidie kusimamia</h4>
-                                        <p class="text-brown-700 text-sm mt-1">Nina mtu mwingine anayenisaidia kusimamia nyumba zangu</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <input type="hidden" id="current-situation" name="current-situation">
-                        
-                        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
-                            <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
-                                <i class="fas fa-arrow-left mr-2"></i> Nyuma
-                            </button>
-                            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
-                                Endelea <i class="fas fa-arrow-right ml-2"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 3: Goals -->
-                    <div class="form-step" id="step-3">
-                        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Malengo Yako</h3>
-                        <p class="text-brown-700 mb-6">Chagua jinsi ungependa kusimamia biashara yako ya nyumba za kupanga:</p>
-                        
-                        <div class="space-y-4">
-                            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="kusimamia-mwenyewe">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
-                                        <i class="fas fa-user-check text-brown-900"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-brown-900">Kusimamia nyumba zangu mwenyewe nikiwa na mfumo mzuri</h4>
-                                        <p class="text-brown-700 text-sm mt-1">Ningependa kusimamia mwenyewe kwa mfumo rahisi na wa kisasa</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="kukabidhi-mtu">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
-                                        <i class="fas fa-user-tie text-brown-900"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-brown-900">Kukabidhi mtu asimamie nyumba yangu huku nikiwa na mfumo unaonihusha moja kwa moja</h4>
-                                        <p class="text-brown-700 text-sm mt-1">Ningependa mtu asimamie lakini nifuatilie mambo kirahisi</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <input type="hidden" id="goals" name="goals">
-                        
-                        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
-                            <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
-                                <i class="fas fa-arrow-left mr-2"></i> Nyuma
-                            </button>
-                            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
-                                Endelea <i class="fas fa-arrow-right ml-2"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 4: Challenges -->
-                    <div class="form-step" id="step-4">
-                        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Changamoto Unazokabiliana Nazo</h3>
-                        <p class="text-brown-700 mb-6">Chagua changamoto zozote unazokabiliana nazo (unaweza kuchagua zaidi ya moja):</p>
-                        
-                        <div class="space-y-3">
-                            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="ugumu-rekodi">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="challenge-1" class="hidden">
-                                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                    <label for="challenge-1" class="font-medium text-brown-900 cursor-pointer">Ugumu wa kutunza rekodi zako</label>
-                                </div>
-                            </div>
-                            
-                            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="wachelewa-kulipa">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="challenge-2" class="hidden">
-                                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                    <label for="challenge-2" class="font-medium text-brown-900 cursor-pointer">Wapangaji kuchelewa kulipa kodi</label>
-                                </div>
-                            </div>
-                            
-                            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="kukua-taratibu">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="challenge-3" class="hidden">
-                                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                    <label for="challenge-3" class="font-medium text-brown-900 cursor-pointer">Biashara yako ya nyumba za kupanga kukua taratibu</label>
-                                </div>
-                            </div>
-                            
-                            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="gharama-kubwa">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="challenge-4" class="hidden">
-                                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                    <label for="challenge-4" class="font-medium text-brown-900 cursor-pointer">Gharama kubwa za ukarabati na matengenezo</label>
-                                </div>
-                            </div>
-                            
-                            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="ukosefu-wakati">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="challenge-5" class="hidden">
-                                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                    <label for="challenge-5" class="font-medium text-brown-900 cursor-pointer">Ukosefu wa wakati wa kusimamia vyema</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <input type="hidden" id="challenges" name="challenges">
-                        
-                        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
-                            <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
-                                <i class="fas fa-arrow-left mr-2"></i> Nyuma
-                            </button>
-                            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
-                                Endelea <i class="fas fa-arrow-right ml-2"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 5: Final Step -->
-                    <div class="form-step" id="step-5">
-                        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Njia Gani Unaona Inaweza Kukusaidia Kwa Haraka?</h3>
-                        <p class="text-brown-700 mb-6">Andika maelezo mafupi hapo chini:</p>
-                        
-                        <div>
-                            <textarea id="solution" rows="5" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="Andika hapa jinsi unavyoona mfumo wa Maghettoni unaweza kukusaidia..."></textarea>
-                        </div>
-                        
-                        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
-                            <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
-                                <i class="fas fa-arrow-left mr-2"></i> Nyuma
-                            </button>
-                            <button type="submit" class="bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
-                                Tumiza Tathmini <i class="fas fa-paper-plane ml-2"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Success Message -->
-                    <div class="form-step text-center py-10" id="success-message">
-                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i class="fas fa-check text-green-600 text-3xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-4">Asante Kwa Kujisajili!</h3>
-                        <p class="text-brown-700 mb-6 max-w-md mx-auto">
-                            Tumepokea majibu yako. Tutawasiliana nawe kwa muda mfupi kupitia barua pepe uliyoandika.
-                        </p>
-                        <a href="#home" class="inline-block bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300">
-                            Kurudi Nyumbani
-                        </a>
-                    </div>
-                </form>
+                {% include 'yuzzaz/partials/assessment_form.html' %}
             </div>
         </div>
     </section>
 
-<footer class="bg-brown-900 text-white">
-    <!-- Top Section -->
-    <div class="bg-brown-800 py-12">
-        <div class="container mx-auto px-6">
-            <div class="max-w-6xl mx-auto text-center">
-                <h2 class="text-3xl font-serif font-bold mb-4">Jisajili Kwa Maghettoni Leo</h2>
-                <p class="text-brown-200 mb-8 max-w-2xl mx-auto">Pata mfumo bora wa kusimamia nyumba zako za kupanga na ufanye biashara yako ikue kwa urahisi zaidi.</p>
-                <a href="#assessment-form" class="inline-block bg-brown-700 hover:bg-brown-600 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
-                    Anza Tathmini Bila Malipo <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
-        </div>
-    </div>
+<footer class="bg-brown-900 text-white" id="footer">
 
     <!-- Main Footer Content -->
     <div class="py-16">
@@ -630,17 +234,15 @@
                         </div>
                         <p class="text-brown-300 mb-6 leading-relaxed">Tunabadilisha jinsi wenyeviti wanavyosimamia nyumba zao za kupanga kupitia mfumo wa kisasa unaorahisisha usimamizi na kuongeza mapato.</p>
                         <div class="flex space-x-4">
-                            <a href="#" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="#" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
+                            
+                            <a href="https://www.instagram.com/maghettoni?igsh=d3hheDJkeGJ3NjV3&utm_source=qr" target="_blank" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
                                 <i class="fab fa-instagram"></i>
                             </a>
-                            <a href="#" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
-                                <i class="fab fa-linkedin-in"></i>
+                            <a href="https://www.youtube.com/@BeThatGuyLifestyle" target="_blank" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="tel:+255762082712" target="_blank" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
+                                <i class="fas fa-phone"></i>
                             </a>
                         </div>
                     </div>
@@ -656,15 +258,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#features" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
+                                <a href="#about" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
                                     <i class="fas fa-chevron-right text-xs text-brown-500 mr-3"></i>
-                                    Huduma Zetu
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#how-it-works" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
-                                    <i class="fas fa-chevron-right text-xs text-brown-500 mr-3"></i>
-                                    InafanyaKazi Vipi
+                                    Kuhusu Sisi
                                 </a>
                             </li>
                             <li>
@@ -681,29 +277,12 @@
                         <h3 class="text-xl font-bold mb-6 pb-3 border-b border-brown-800">Rasilimali</h3>
                         <ul class="space-y-3">
                             <li>
-                                <a href="#" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
-                                    <i class="fas fa-book text-brown-500 mr-3"></i>
-                                    Mwongozo Wa Kuanza
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
+                                <a href="https://www.youtube.com/@BeThatGuyLifestyle" target="_blank" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
                                     <i class="fas fa-video text-brown-500 mr-3"></i>
                                     Mafunzo Ya Video
                                 </a>
                             </li>
-                            <li>
-                                <a href="#" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
-                                    <i class="fas fa-question-circle text-brown-500 mr-3"></i>
-                                    Maswali Yanayoulizwa Mara Kwa Mara
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
-                                    <i class="fas fa-newspaper text-brown-500 mr-3"></i>
-                                    Blogu
-                                </a>
-                            </li>
+                            
                         </ul>
                     </div>
 
@@ -717,11 +296,11 @@
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-phone text-brown-400 mr-4"></i>
-                                <span class="text-brown-300">+255 123 456 789</span>
+                                <span class="text-brown-300"><a href="tel:+255762082712" class="hover:underline">+255 762 082 712</a></span>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-envelope text-brown-400 mr-4"></i>
-                                <span class="text-brown-300">info@maghettoni.co.tz</span>
+                                <span class="text-brown-300"><a href="mailto:info@maghettoni.com" class="hover:underline">info@maghettoni.com</a></span>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-clock text-brown-400 mr-4"></i>
@@ -741,11 +320,13 @@
                 <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
                     <div class="text-center lg:text-left">
                         <h3 class="text-xl font-bold mb-2">Jiandikishe Kwa Habari Zetu</h3>
-                        <p class="text-brown-300">Pata vidokezo, ushauri, na habari mpya za biashara ya nyumba za kupanga.</p>
+                        <p class="text-brown-300">Pata vidokezo, ushauri, na habari mpya za biashara juu ya nyumba za kupanga.</p>
                     </div>
-                    <form class="w-full lg:w-auto flex flex-col sm:flex-row gap-4">
+                    <form class="w-full lg:w-auto flex flex-col sm:flex-row gap-4" method="POST" action="{% url 'subscribe' %}">
+                         {% csrf_token %}
                         <input 
                             type="email" 
+                            name="email"
                             placeholder="Barua pepe yako" 
                             class="flex-grow px-6 py-3 rounded-lg bg-brown-800 border border-brown-700 text-white placeholder-brown-500 focus:outline-none focus:border-brown-500 focus:ring-2 focus:ring-brown-700"
                         >
@@ -769,22 +350,12 @@
                     <div class="text-brown-400 text-sm">
                         <p>&copy; 2025 Maghettoni. Haki zote zimehifadhiwa.</p>
                     </div>
-                    <div class="flex flex-wrap justify-center gap-6 text-sm">
-                        <a href="#" class="text-brown-400 hover:text-white transition-colors duration-300">
+                    <div class="flex flex-wrap justify-center gap-2 text-sm">
+                        <button command="show-modal" commandfor="dialog" class="text-brown-400 hover:text-white transition-colors duration-300">
                             Masharti ya Matumizi
-                        </a>
-                        <span class="text-brown-600">|</span>
-                        <a href="#" class="text-brown-400 hover:text-white transition-colors duration-300">
-                            Sera ya Faragha
-                        </a>
-                        <span class="text-brown-600">|</span>
-                        <a href="#" class="text-brown-400 hover:text-white transition-colors duration-300">
-                            Sera ya Vidakuzi
-                        </a>
-                        <span class="text-brown-600">|</span>
-                        <a href="#" class="text-brown-400 hover:text-white transition-colors duration-300">
-                            Rejea Wasambazaji
-                        </a>
+                            <span class="text-brown-600 mx-4">|</span>Sera ya Faragha
+                        </button>
+                        {% include 'yuzzaz/partials/t&c.html' %}
                     </div>
                 </div>
             </div>
@@ -796,690 +367,23 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 </footer>
-
-<!-- Add this JavaScript for Back to Top button -->
-<script>
-    // Back to Top Button
-    const backToTopButton = document.getElementById('back-to-top');
-    
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-            backToTopButton.classList.remove('opacity-0', 'translate-y-10');
-            backToTopButton.classList.add('opacity-100', 'translate-y-0');
-        } else {
-            backToTopButton.classList.remove('opacity-100', 'translate-y-0');
-            backToTopButton.classList.add('opacity-0', 'translate-y-10');
-        }
-    });
-    
-    backToTopButton.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-
-    // Newsletter Form Submission
-    const newsletterForm = document.querySelector('footer form');
-    newsletterForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = newsletterForm.querySelector('input[type="email"]').value;
-        
-        if (email) {
-            // Show success message
-            const originalButtonText = newsletterForm.querySelector('button').innerHTML;
-            newsletterForm.querySelector('button').innerHTML = '<i class="fas fa-check mr-2"></i>Imeandikishwa!';
-            newsletterForm.querySelector('button').classList.add('bg-green-600', 'hover:bg-green-700');
-            
-            // Reset after 3 seconds
-            setTimeout(() => {
-                newsletterForm.querySelector('button').innerHTML = originalButtonText;
-                newsletterForm.querySelector('button').classList.remove('bg-green-600', 'hover:bg-green-700');
-                newsletterForm.reset();
-            }, 3000);
-        }
-    });
-</script>
-
-<script>
-    // Mobile menu toggle
-    document.getElementById('menu-toggle').addEventListener('click', function() {
-        document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-
-    // Scroll animations
-    const fadeElements = document.querySelectorAll('.fade-in');
-    const slideLeftElements = document.querySelectorAll('.slide-in-left');
-    const slideRightElements = document.querySelectorAll('.slide-in-right');
-    const scaleElements = document.querySelectorAll('.scale-in');
-
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('appear');
-            }
-        });
-    }, observerOptions);
-
-    fadeElements.forEach(el => observer.observe(el));
-    slideLeftElements.forEach(el => observer.observe(el));
-    slideRightElements.forEach(el => observer.observe(el));
-    scaleElements.forEach(el => observer.observe(el));
-
-    // Form navigation
-    const formSteps = document.querySelectorAll('.form-step');
-    const progressFill = document.getElementById('progress-fill');
-    const progressPercent = document.getElementById('progress-percent');
-    let currentStep = 1;
-    const totalSteps = formSteps.length - 1;
-
-    // Phone verification modal
-    const verificationModal = document.createElement('div');
-    verificationModal.innerHTML = `
-        <div id="verification-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
-                <div class="text-center mb-6">
-                    <div class="w-16 h-16 bg-brown-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-mobile-alt text-brown-900 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-brown-900 mb-2">Hakiki Nambari Ya Simu</h3>
-                    <p class="text-brown-700" id="verification-message">Tumetuma msimbo wa uthibitisho kwenye nambari yako ya simu.</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div id="verification-error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg hidden"></div>
-                    
-                    <div class="text-center mb-4">
-                        <div class="text-2xl font-mono font-bold text-brown-900 mb-2" id="verification-code-display">-----</div>
-                        <div class="text-sm text-brown-600" id="countdown-timer">Msimbo utaisha muda wake baada ya: <span id="timer">10:00</span></div>
-                    </div>
-                    
-                    <div class="grid grid-cols-6 gap-2 mb-4">
-                        <input type="text" maxlength="1" class="verification-digit h-12 w-12 text-center text-2xl font-bold border-2 border-brown-300 rounded-lg focus:border-brown-700 focus:outline-none" data-index="0">
-                        <input type="text" maxlength="1" class="verification-digit h-12 w-12 text-center text-2xl font-bold border-2 border-brown-300 rounded-lg focus:border-brown-700 focus:outline-none" data-index="1">
-                        <input type="text" maxlength="1" class="verification-digit h-12 w-12 text-center text-2xl font-bold border-2 border-brown-300 rounded-lg focus:border-brown-700 focus:outline-none" data-index="2">
-                        <input type="text" maxlength="1" class="verification-digit h-12 w-12 text-center text-2xl font-bold border-2 border-brown-300 rounded-lg focus:border-brown-700 focus:outline-none" data-index="3">
-                        <input type="text" maxlength="1" class="verification-digit h-12 w-12 text-center text-2xl font-bold border-2 border-brown-300 rounded-lg focus:border-brown-700 focus:outline-none" data-index="4">
-                        <input type="text" maxlength="1" class="verification-digit h-12 w-12 text-center text-2xl font-bold border-2 border-brown-300 rounded-lg focus:border-brown-700 focus:outline-none" data-index="5">
-                    </div>
-                    
-                    <div class="flex space-x-3">
-                        <button type="button" id="resend-code-btn" class="flex-1 text-brown-900 font-semibold py-3 px-4 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fas fa-redo mr-2"></i>Tuma tena
-                        </button>
-                        <button type="button" id="verify-btn" class="flex-1 bg-brown-900 text-white font-semibold py-3 px-4 rounded-lg hover:bg-brown-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fas fa-check mr-2"></i>Hakiki
-                        </button>
-                    </div>
-                    
-                    <button type="button" id="close-verification-btn" class="w-full text-brown-700 font-medium py-2 px-4 rounded-lg hover:bg-brown-50 transition-all duration-300">
-                        Funga
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(verificationModal);
-    const verificationModalElement = document.getElementById('verification-modal');
-    const verificationDigits = verificationModalElement.querySelectorAll('.verification-digit');
-    const verifyBtn = document.getElementById('verify-btn');
-    const resendBtn = document.getElementById('resend-code-btn');
-    const closeBtn = document.getElementById('close-verification-btn');
-    const verificationError = document.getElementById('verification-error');
-    const timerElement = document.getElementById('timer');
-    const verificationCodeDisplay = document.getElementById('verification-code-display');
-
-    let currentPhone = '';
-    let verificationTimer = null;
-    let timeLeft = 600; // 10 minutes in seconds
-
-    // Load form data from localStorage
-    function loadFormData() {
-        const savedData = localStorage.getItem('assessmentFormData');
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            
-            // Fill personal information
-            if (data.name) document.getElementById('name').value = data.name;
-            if (data.email) document.getElementById('email').value = data.email;
-            if (data.location) document.getElementById('location').value = data.location;
-            if (data.phone) {
-                document.getElementById('phone').value = data.phone;
-                // Check if phone was previously verified
-                checkPhoneVerificationStatus(data.phone);
-            }
-            
-            // Fill current situation
-            if (data.currentSituation) {
-                document.getElementById('current-situation').value = data.currentSituation;
-                const situationCard = document.querySelector(`.option-card[data-value="${data.currentSituation}"]`);
-                if (situationCard) situationCard.classList.add('selected');
-            }
-            
-            // Fill goals
-            if (data.goals) {
-                document.getElementById('goals').value = data.goals;
-                const goalCard = document.querySelector(`.option-card[data-value="${data.goals}"]`);
-                if (goalCard) goalCard.classList.add('selected');
-            }
-            
-            // Fill challenges
-            if (data.challenges) {
-                const challengesArray = data.challenges.split(',');
-                document.getElementById('challenges').value = data.challenges;
-                
-                challengesArray.forEach(challenge => {
-                    const option = document.querySelector(`.checkbox-option[data-value="${challenge}"]`);
-                    if (option) {
-                        option.classList.add('selected');
-                        const checkIcon = option.querySelector('.fa-check');
-                        checkIcon.classList.add('text-brown-900');
-                        option.querySelector('.w-6').classList.add('bg-brown-900', 'border-brown-900');
-                    }
-                });
-            }
-            
-            // Fill solution
-            if (data.solution) {
-                document.getElementById('solution').value = data.solution;
-            }
-        }
-    }
-
-    // Save form data to localStorage
-    function saveFormData() {
-        const formData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            location: document.getElementById('location').value,
-            phone: document.getElementById('phone').value,
-            currentSituation: document.getElementById('current-situation').value,
-            goals: document.getElementById('goals').value,
-            challenges: document.getElementById('challenges').value,
-            solution: document.getElementById('solution').value
-        };
-        
-        localStorage.setItem('assessmentFormData', JSON.stringify(formData));
-    }
-
-    function updateProgress() {
-        const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-        progressFill.style.width = `${progress}%`;
-        progressPercent.textContent = `${Math.round(progress)}%`;
-    }
-
-    function showStep(stepNumber) {
-        formSteps.forEach(step => {
-            step.classList.remove('active');
-        });
-        document.getElementById(`step-${stepNumber}`).classList.add('active');
-        currentStep = stepNumber;
-        updateProgress();
-        saveFormData();
-    }
-
-    // Check if phone is verified
-    async function checkPhoneVerificationStatus(phone) {
-        if (!phone) return false;
-        
-        try {
-            const response = await fetch(`/tathmini/api/check-verification/?phone=${encodeURIComponent(phone)}`);
-            const result = await response.json();
-            
-            if (result.success && result.verified) {
-                // Phone is verified, mark as verified in localStorage
-                const savedData = localStorage.getItem('assessmentFormData');
-                if (savedData) {
-                    const data = JSON.parse(savedData);
-                    data.phoneVerified = true;
-                    localStorage.setItem('assessmentFormData', JSON.stringify(data));
-                }
-                return true;
-            }
-        } catch (error) {
-            console.error('Error checking phone verification:', error);
-        }
-        return false;
-    }
-
-    // Show verification modal
-    async function showVerificationModal(phone) {
-        currentPhone = phone;
-        verificationError.classList.add('hidden');
-        verificationCodeDisplay.textContent = '-----';
-        timeLeft = 600;
-        updateTimer();
-        
-        // Clear verification digits
-        verificationDigits.forEach(digit => digit.value = '');
-        
-        // Send verification code
-        try {
-            const response = await fetch('/tathmini/api/send-verification/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify({ phone: phone })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                verificationModalElement.classList.remove('hidden');
-                verificationCodeDisplay.textContent = result.code; // Remove this in production!
-                
-                // Start timer
-                startVerificationTimer();
-            } else {
-                showVerificationError(result.error || 'Hitilafu katika kutuma msimbo.');
-            }
-        } catch (error) {
-            showVerificationError('Hitilafu ya mtandao. Tafadhali jaribu tena.');
-        }
-    }
-
-    // Start verification timer
-    function startVerificationTimer() {
-        if (verificationTimer) clearInterval(verificationTimer);
-        
-        verificationTimer = setInterval(() => {
-            timeLeft--;
-            updateTimer();
-            
-            if (timeLeft <= 0) {
-                clearInterval(verificationTimer);
-                verifyBtn.disabled = true;
-                resendBtn.disabled = false;
-                verificationCodeDisplay.textContent = '-----';
-            }
-        }, 1000);
-    }
-
-    // Update timer display
-    function updateTimer() {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    // Show verification error
-    function showVerificationError(message) {
-        verificationError.textContent = message;
-        verificationError.classList.remove('hidden');
-    }
-
-    // Verify phone with code
-    async function verifyPhone() {
-        const code = Array.from(verificationDigits).map(d => d.value).join('');
-        
-        if (code.length !== 6) {
-            showVerificationError('Tafadhali ingiza msimbo wote (tarakimu 6).');
-            return;
-        }
-        
-        try {
-            verifyBtn.disabled = true;
-            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Inahakiki...';
-            
-            const response = await fetch('/tathmini/api/verify-phone/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify({ phone: currentPhone, code: code })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Phone verified successfully
-                clearInterval(verificationTimer);
-                verificationModalElement.classList.add('hidden');
-                
-                // Mark phone as verified in localStorage
-                const savedData = localStorage.getItem('assessmentFormData');
-                if (savedData) {
-                    const data = JSON.parse(savedData);
-                    data.phoneVerified = true;
-                    localStorage.setItem('assessmentFormData', JSON.stringify(data));
-                }
-                
-                // Allow user to continue to next step
-                showStep(2);
-                
-                // Show success notification
-                showNotification('Nambari ya simu imehakikiwa kikamilifu!', 'success');
-            } else {
-                showVerificationError(result.error || 'Msimbo si sahihi.');
-                verifyBtn.disabled = false;
-            }
-        } catch (error) {
-            showVerificationError('Hitilafu ya mtandao. Tafadhali jaribu tena.');
-            verifyBtn.disabled = false;
-        } finally {
-            verifyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Hakiki';
-        }
-    }
-
-    // Show notification
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${type === 'success' ? 'bg-green-50 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'}`;
-        notification.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-
-    // Verification digit input handling
-    verificationDigits.forEach((digit, index) => {
-        digit.addEventListener('input', (e) => {
-            // Only allow numbers
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-            
-            // Move to next digit if current is filled
-            if (e.target.value.length === 1 && index < verificationDigits.length - 1) {
-                verificationDigits[index + 1].focus();
-            }
-            
-            // Enable verify button if all digits are filled
-            const allFilled = Array.from(verificationDigits).every(d => d.value.length === 1);
-            verifyBtn.disabled = !allFilled;
-        });
-        
-        // Handle backspace
-        digit.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && !digit.value && index > 0) {
-                verificationDigits[index - 1].focus();
-            }
-        });
-        
-        // Handle paste
-        digit.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
-            
-            if (pastedData.length === 6) {
-                const digits = pastedData.split('');
-                digits.forEach((d, i) => {
-                    if (verificationDigits[i]) {
-                        verificationDigits[i].value = d;
-                    }
-                });
-                verifyBtn.disabled = false;
-                verificationDigits[5].focus();
-            }
-        });
-    });
-
-    // Event listeners for verification modal
-    verifyBtn.addEventListener('click', verifyPhone);
-    
-    resendBtn.addEventListener('click', async () => {
-        resendBtn.disabled = true;
-        resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Inatumwa...';
-        
-        try {
-            const response = await fetch('/tathmini/api/send-verification/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify({ phone: currentPhone })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                verificationCodeDisplay.textContent = result.code; // Remove this in production!
-                timeLeft = 600;
-                startVerificationTimer();
-                verifyBtn.disabled = true;
-                showNotification('Msimbo mpya umepelekwa!', 'success');
-            } else {
-                showVerificationError(result.error || 'Hitilafu katika kutuma msimbo.');
-            }
-        } catch (error) {
-            showVerificationError('Hitilafu ya mtandao. Tafadhali jaribu tena.');
-        } finally {
-            resendBtn.disabled = false;
-            resendBtn.innerHTML = '<i class="fas fa-redo mr-2"></i>Tuma tena';
-        }
-    });
-    
-    closeBtn.addEventListener('click', () => {
-        verificationModalElement.classList.add('hidden');
-        clearInterval(verificationTimer);
-    });
-
-    // Next step buttons with phone verification check
-    document.querySelectorAll('.next-step').forEach(button => {
-        button.addEventListener('click', async function() {
-            if (currentStep === 1) {
-                // Check if phone is filled and verified before proceeding
-                const phone = document.getElementById('phone').value.trim();
-                
-                if (!phone) {
-                    // alert('Tafadhali ingiza nambari ya simu kabla ya kuendelea.');
-                    Toastify({
-                            text: 'Tafadhali ingiza nambari ya simu kabla ya kuendelea.',
-                            duration: 5000,
-                            close: false,
-                            gravity: "top",
-                            position: "right",
-                            backgroundColor:
-                            "#FF4C4C",
-                            stopOnFocus: true,
-                        }).showToast();
-                        
-                    document.getElementById('phone').focus();
-                    return;
-                }
-                
-                // Check if phone is already verified
-                const isVerified = await checkPhoneVerificationStatus(phone);
-                
-                if (!isVerified) {
-                    // Show verification modal
-                    await showVerificationModal(phone);
-                    return;
-                }
-            }
-            
-            if (currentStep < totalSteps) {
-                showStep(currentStep + 1);
-            }
-        });
-    });
-
-    // Previous step buttons
-    document.querySelectorAll('.prev-step').forEach(button => {
-        button.addEventListener('click', function() {
-            if (currentStep > 1) {
-                showStep(currentStep - 1);
-            }
-        });
-    });
-
-    // Option card selection
-    document.querySelectorAll('.option-card').forEach(card => {
-        card.addEventListener('click', function() {
-            const parentStep = this.closest('.form-step');
-            parentStep.querySelectorAll('.option-card').forEach(c => {
-                c.classList.remove('selected');
-            });
-            
-            this.classList.add('selected');
-            
-            const hiddenInput = parentStep.querySelector('input[type="hidden"]');
-            if (hiddenInput) {
-                hiddenInput.value = this.getAttribute('data-value');
-            }
-            saveFormData();
-        });
-    });
-
-    // Checkbox option selection
-    document.querySelectorAll('.checkbox-option').forEach(option => {
-        option.addEventListener('click', function() {
-            this.classList.toggle('selected');
-            
-            const checkIcon = this.querySelector('.fa-check');
-            if (this.classList.contains('selected')) {
-                checkIcon.classList.add('text-brown-900');
-                this.querySelector('.w-6').classList.add('bg-brown-900', 'border-brown-900');
-            } else {
-                checkIcon.classList.remove('text-brown-900');
-                this.querySelector('.w-6').classList.remove('bg-brown-900', 'border-brown-900');
-            }
-            
-            const parentStep = this.closest('.form-step');
-            const hiddenInput = parentStep.querySelector('input[type="hidden"]');
-            if (hiddenInput) {
-                const selectedValues = [];
-                parentStep.querySelectorAll('.checkbox-option.selected').forEach(opt => {
-                    selectedValues.push(opt.getAttribute('data-value'));
-                });
-                hiddenInput.value = selectedValues.join(',');
-            }
-            saveFormData();
-        });
-    });
-
-    // Form submission
-    document.getElementById('assessment-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const formData = {
-            name: document.getElementById('name').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            location: document.getElementById('location').value.trim(),
-            phone: document.getElementById('phone').value.trim(),
-            current_situation: document.getElementById('current-situation').value,
-            goals: document.getElementById('goals').value,
-            challenges: document.getElementById('challenges').value,
-            solution: document.getElementById('solution').value.trim()
-        };
-        
-        if (!formData.name || !formData.email || !formData.phone) {
-            // alert('Tafadhali jaza taarifa zako binafsi (jina, barua pepe, na nambari ya simu).');
-            Toastify({
-                text: 'Tafadhali jaza taarifa zako binafsi (jina, barua pepe, na nambari ya simu).',
-                duration: 5000,
-                close: false,
-                gravity: "top",
-                position: "right",
-                backgroundColor:
-                  "#FF4C4C",
-                stopOnFocus: true,
-              }).showToast();
-            showStep(1);
-            return;
-        }
-        
-        try {
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Inatumwa...';
-            submitBtn.disabled = true;
-            
-            const response = await fetch('/tathmini/api/submit-assessment/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify(formData)
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok && result.success) {
-                localStorage.removeItem('assessmentFormData');
-                showSuccessMessage(result.message);
-            } else {
-                throw new Error(result.error || 'Hitilafu imetokea. Tafadhali jaribu tena.');
-            }
-            
-        } catch (error) {
-        Toastify({
-        text: error.message,
-        duration: 10000,
-        close: false,
-        gravity: "top",
-        position: "right",
-        backgroundColor:
-          "#FF4C4C",
-        stopOnFocus: true,
-      }).showToast();
-            
-
-//            alert('Hitilafu: ' + error.message);
-            
-            const submitBtn = document.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = 'Tumiza Tathmini <i class="fas fa-paper-plane ml-2"></i>';
-            submitBtn.disabled = false;
-        }
-    });
-
-    // Helper function to get CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    // Function to show custom success message
-    function showSuccessMessage(message) {
-        const successDiv = document.getElementById('success-message');
-        const messagePara = successDiv.querySelector('p');
-        messagePara.innerHTML = message;
-        
-        formSteps.forEach(step => {
-            step.classList.remove('active');
-        });
-        successDiv.classList.add('active');
-        
-        progressFill.style.width = '100%';
-        progressPercent.textContent = '100%';
-    }
-
-    // Initialize
-    updateProgress();
-    loadFormData();
-
-    // Auto-save on input change
-    document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea').forEach(input => {
-        input.addEventListener('input', saveFormData);
-    });
-</script>
+{% if messages %}
+    <div class="fixed bottom-4 right-4 z-50 space-y-2">
+        {% for message in messages %}
+            <script>
+                Toastify({
+                    text: "{{ message }}",
+                    duration: 15000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "{% if message.tags == 'error' %}#f56565{% elif message.tags == 'success' %}#48bb78{% elif message.tags == 'info' %}#4299e1{% endif %}",
+                    stopOnFocus: true,
+            }).showToast();
+            </script>
+        {% endfor %}
+    </div>
+{% endif %}
+<script src="{% static 'js/home.js' %}"></script>
 </body>
 </html>

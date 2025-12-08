@@ -1,0 +1,145 @@
+{% extends 'dashboardd/base.html' %}
+
+{% block title %}Dashboard - Landlord Management System{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <!-- Statistics Cards -->
+    <div class="col-md-3">
+        <div class="stat-card bg-primary text-white">
+            <i class="fas fa-building"></i>
+            <h4>{{ total_properties }}</h4>
+            <p>Total Properties</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success text-white">
+            <i class="fas fa-home"></i>
+            <h4>{{ total_units }}</h4>
+            <p>Total Units</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-info text-white">
+            <i class="fas fa-percentage"></i>
+            <h4>{{ vacancy_rate }}%</h4>
+            <p>Vacancy Rate</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning text-white">
+            <i class="fas fa-money-bill-wave"></i>
+            <h4>${{ total_revenue }}</h4>
+            <p>Total Revenue</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Payments -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Payments</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_payments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tenant</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in recent_payments %}
+                                <tr>
+                                    <td>{{ payment.tenant.full_name }}</td>
+                                    <td>${{ payment.amount }}</td>
+                                    <td>{{ payment.payment_date }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if payment.status == 'completed' %}success{% else %}warning{% endif %}">
+                                            {{ payment.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No recent payments</p>
+                {% endif %}
+                <a href="{% url 'payments_list' %}" class="btn btn-sm btn-outline-primary">View All Payments</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Properties List -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Your Properties</h5>
+            </div>
+            <div class="card-body">
+                {% if properties %}
+                    <div class="list-group">
+                        {% for property in properties %}
+                        <a href="{% url 'property_detail' property.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ property.name }}</h6>
+                                <small>{{ property.get_property_type_display }}</small>
+                            </div>
+                            <p class="mb-1 small text-muted">{{ property.address|truncatechars:50 }}</p>
+                            <small>{{ property.units }} units</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No properties added yet</p>
+                    <a href="{% url 'add_property' %}" class="btn btn-primary">Add Your First Property</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Quick Actions -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'add_property' %}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-plus-circle me-2"></i> Add Property
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'add_tenant' %}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-user-plus me-2"></i> Add Tenant
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'record_payment' %}" class="btn btn-outline-info w-100">
+                            <i class="fas fa-money-check me-2"></i> Record Payment
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'create_maintenance_request' %}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-tools me-2"></i> Report Maintenance
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

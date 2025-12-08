@@ -4,11 +4,12 @@ from django.views.decorators.http import require_POST, require_GET
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 import json
-from .models import AssessmentSubmission, PhoneVerification
+from .models import AssessmentSubmission, PhoneVerification, Subscriber
 from django.utils import timezone
 from datetime import timedelta
 import logging
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 logger = logging.getLogger(__name__)
@@ -269,3 +270,29 @@ def assessment_dashboard(request):
     }
     
     return render(request, 'assessment/dashboard.html', context)
+
+def subscribe(request):
+    """Subscribe to newsletter"""
+    print("Subscribe view called")
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        if not email:
+            messages.error(request, "Tafadhali ingiza barua pepe.")
+            return redirect('home')
+        
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, "Barua pepe si sahihi. Tafadhali jaribu tena.")
+            return redirect('home')
+            
+        if Subscriber.objects.filter(email=email).exists():
+            messages.info(request, "Barua pepe hii tayari imesajiliwa.")
+            return redirect('home')
+        
+        Subscriber.objects.create(email=email)
+        messages.success(request, "Asante kwa kujisajili kwa habari zetu!")
+        return redirect('home')
+    
+    messages.error(request, "Tafadhali ingiza barua pepe sahihi.")
+    return redirect('home')

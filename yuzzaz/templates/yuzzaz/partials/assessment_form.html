@@ -1,0 +1,239 @@
+<form id="assessment-form" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 scale-in">
+    {% csrf_token %}
+    <!-- Step 1: Personal Information -->
+    <div class="form-step active" id="step-1">
+        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Taarifa Zako Binafsi</h3>
+        
+        <div class="space-y-6">
+            <div>
+                <label for="name" class="block text-brown-900 font-medium mb-2">Jina Lako Kamili</label>
+                <input type="text" id="name" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="Andika jina lako hapa">
+            </div>
+            
+            <div>
+                <label for="email" class="block text-brown-900 font-medium mb-2">Barua Pepe</label>
+                <input type="email" id="email" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="barua@pepe.com">
+            </div>
+            
+            <div>
+                <label for="location" class="block text-brown-900 font-medium mb-2">Mahali Unapoishi</label>
+                <input type="text" id="location" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="Mji au mkoa">
+            </div>
+            
+            <div>
+                <label for="phone" class="block text-brown-900 font-medium mb-2">Nambari Ya Simu</label>
+                <input type="tel" id="phone" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="+255 ...">
+            </div>
+        </div>
+        
+        <div class="mt-8 flex justify-end">
+            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1"
+            onclick="hideStuff()"
+            >
+                Endelea <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 2: Current Situation -->
+    <div class="form-step" id="step-2">
+        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Hali Yako Ya Sasa</h3>
+        <p class="text-brown-700 mb-6">Chagua jinsi unavyosimamia biashara yako ya nyumba za kupanga kwa sasa:</p>
+        
+        <div class="space-y-4">
+            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="madaftari">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-book text-brown-900"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-brown-900">Nasimamia kutumia madaftari</h4>
+                        <p class="text-brown-700 text-sm mt-1">Natumia daftari za kawaida kuhifadhi rekodi zote</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="kompyuta">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-laptop text-brown-900"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-brown-900">Nasimamia kutumia mifumo mbalimbali ya kompyuta</h4>
+                        <p class="text-brown-700 text-sm mt-1">Natumia programu mbalimbali za kompyuta kusimamia</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="mkabidhi">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-user-friends text-brown-900"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-brown-900">Nimemkabidhi mtu anisaidie kusimamia</h4>
+                        <p class="text-brown-700 text-sm mt-1">Nina mtu mwingine anayenisaidia kusimamia nyumba zangu</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <input type="hidden" id="current-situation" name="current-situation">
+        
+        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
+            <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
+                <i class="fas fa-arrow-left mr-2"></i> Nyuma
+            </button>
+            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
+                Endelea <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 3: Goals -->
+    <div class="form-step" id="step-3">
+        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Malengo Yako</h3>
+        <p class="text-brown-700 mb-6">Chagua jinsi ungependa kusimamia biashara yako ya nyumba za kupanga:</p>
+        
+        <div class="space-y-4">
+            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="kusimamia-mwenyewe">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-user-check text-brown-900"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-brown-900">Kusimamia nyumba zangu mwenyewe nikiwa na mfumo mzuri</h4>
+                        <p class="text-brown-700 text-sm mt-1">Ningependa kusimamia mwenyewe kwa mfumo rahisi na wa kisasa</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="option-card border-2 border-brown-200 rounded-xl p-5" data-value="kukabidhi-mtu">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-brown-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-user-tie text-brown-900"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-brown-900">Kukabidhi mtu asimamie nyumba yangu huku nikiwa na mfumo unaonihusha moja kwa moja</h4>
+                        <p class="text-brown-700 text-sm mt-1">Ningependa mtu asimamie lakini nifuatilie mambo kirahisi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <input type="hidden" id="goals" name="goals">
+        
+        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
+            <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
+                <i class="fas fa-arrow-left mr-2"></i> Nyuma
+            </button>
+            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
+                Endelea <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 4: Challenges -->
+    <div class="form-step" id="step-4">
+        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Changamoto Unazokabiliana Nazo</h3>
+        <p class="text-brown-700 mb-6">Chagua changamoto zozote unazokabiliana nazo (unaweza kuchagua zaidi ya moja):</p>
+        
+        <div class="space-y-3">
+            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="ugumu-rekodi">
+                <div class="flex items-center">
+                    <input type="checkbox" id="challenge-1" class="hidden">
+                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <label for="challenge-1" class="font-medium text-brown-900 cursor-pointer">Ugumu wa kutunza rekodi zako</label>
+                </div>
+            </div>
+            
+            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="wachelewa-kulipa">
+                <div class="flex items-center">
+                    <input type="checkbox" id="challenge-2" class="hidden">
+                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <label for="challenge-2" class="font-medium text-brown-900 cursor-pointer">Wapangaji kuchelewa kulipa kodi</label>
+                </div>
+            </div>
+            
+            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="kukua-taratibu">
+                <div class="flex items-center">
+                    <input type="checkbox" id="challenge-3" class="hidden">
+                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <label for="challenge-3" class="font-medium text-brown-900 cursor-pointer">Biashara yako ya nyumba za kupanga kukua taratibu</label>
+                </div>
+            </div>
+            
+            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="gharama-kubwa">
+                <div class="flex items-center">
+                    <input type="checkbox" id="challenge-4" class="hidden">
+                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <label for="challenge-4" class="font-medium text-brown-900 cursor-pointer">Gharama kubwa za ukarabati na matengenezo</label>
+                </div>
+            </div>
+            
+            <div class="checkbox-option border border-brown-200 rounded-lg p-4" data-value="ukosefu-wakati">
+                <div class="flex items-center">
+                    <input type="checkbox" id="challenge-5" class="hidden">
+                    <div class="w-6 h-6 border-2 border-brown-300 rounded flex items-center justify-center mr-3">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                    <label for="challenge-5" class="font-medium text-brown-900 cursor-pointer">Ukosefu wa wakati wa kusimamia vyema</label>
+                </div>
+            </div>
+        </div>
+        
+        <input type="hidden" id="challenges" name="challenges">
+        
+        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
+            <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
+                <i class="fas fa-arrow-left mr-2"></i> Nyuma
+            </button>
+            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
+                Endelea <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Step 5: Final Step -->
+    <div class="form-step" id="step-5">
+        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Njia Gani Unaona Inaweza Kukusaidia Kwa Haraka?</h3>
+        <p class="text-brown-700 mb-6">Andika maelezo mafupi hapo chini:</p>
+        
+        <div>
+            <textarea id="solution" rows="5" class="w-full px-4 py-3 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brown-700 focus:border-transparent transition-all" placeholder="Andika hapa jinsi unavyoona mfumo wa Maghettoni unaweza kukusaidia..."></textarea>
+        </div>
+        
+        <div class="mt-8 flex flex-col md:flex-row gap-3 md:justify-between">
+            <button type="button" class="prev-step text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
+                <i class="fas fa-arrow-left mr-2"></i> Nyuma
+            </button>
+            <button type="submit" class="bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1">
+                Tumiza Tathmini <i class="fas fa-paper-plane ml-2"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Success Message -->
+    <div class="form-step text-center py-10" id="success-message">
+        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-check text-green-600 text-3xl"></i>
+        </div>
+        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-4">Asante Kwa Kujisajili!</h3>
+        <p class="text-brown-700 mb-6 max-w-md mx-auto">
+            Tumepokea majibu yako. Tutawasiliana nawe kwa muda mfupi kupitia barua pepe uliyoandika.
+        </p>
+        <button 
+        onclick="location.reload();"
+        class="inline-block bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300">
+            Kurudi Nyumbani
+        </button>
+    </div>
+</form>

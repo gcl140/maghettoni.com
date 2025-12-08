@@ -99,3 +99,15 @@ class AssessmentSubmission(models.Model):
         """Get Swahili display for goals"""
         choices_dict = dict(self.GOALS_CHOICES)
         return choices_dict.get(self.goals, '')
+    
+class Subscriber(models.Model):
+    email = models.EmailField(unique=True, validators=[EmailValidator()], verbose_name="Barua Pepe")
+    subscribed_at = models.DateTimeField(auto_now_add=True, verbose_name="Imejisajili")
+    
+    class Meta:
+        verbose_name = "Mteja Aliyejisajili"
+        verbose_name_plural = "Wateja Waliyojisajili"
+        ordering = ['-subscribed_at']
+    
+    def __str__(self):
+        return self.email

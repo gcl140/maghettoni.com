@@ -22,6 +22,7 @@ from django.views.generic import RedirectView
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.views.static import serve
+from yuzzaz.views import landing
 
 handler404 = 'yuzzaz.views.custom_404_view'
 
@@ -31,13 +32,16 @@ def logout_then_google(request):
 
 
 urlpatterns = [
+    path('', landing, name='landing'),
     path('admin/', admin.site.urls),
     path('home/', include('yuzzaz.urls')),
     path('tathmini/', include('tathmini.urls')),
+    path('dashboard/', include('dashboardd.urls')),
     path('accounts/login/', RedirectView.as_view(url='/login/', permanent=True)),
     path('oauth/login/google/', logout_then_google, name='logout-then-google'),
     path('oauth/', include('social_django.urls', namespace='social')),
-
-
-
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

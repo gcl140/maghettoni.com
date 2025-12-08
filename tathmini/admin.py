@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AssessmentSubmission, PhoneVerification
+from .models import AssessmentSubmission, PhoneVerification, Subscriber
 
 @admin.register(AssessmentSubmission)
 class AssessmentSubmissionAdmin(admin.ModelAdmin):
@@ -36,3 +36,13 @@ class PhoneVerificationAdmin(admin.ModelAdmin):
     
     def has_add_permission(self, request):
         return False  # Prevent adding verifications from admin
+    
+
+@admin.register(Subscriber)
+class SubscriberAdmin(admin.ModelAdmin):
+    list_display = ('email', 'subscribed_at')
+    search_fields = ('email',)
+    readonly_fields = ('subscribed_at',)
+    
+    def has_add_permission(self, request):
+        return False  # Prevent adding subscribers from admin

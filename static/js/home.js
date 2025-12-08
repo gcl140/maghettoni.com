@@ -1,3 +1,25 @@
+
+
+// Back to Top Button
+const backToTopButton = document.getElementById("back-to-top");
+
+window.addEventListener("scroll", () => {
+  if (window.pageYOffset > 300) {
+    backToTopButton.classList.remove("opacity-0", "translate-y-10");
+    backToTopButton.classList.add("opacity-100", "translate-y-0");
+  } else {
+    backToTopButton.classList.remove("opacity-100", "translate-y-0");
+    backToTopButton.classList.add("opacity-0", "translate-y-10");
+  }
+});
+
+backToTopButton.addEventListener("click", () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+});
+
 // Mobile menu toggle
 document.getElementById("menu-toggle").addEventListener("click", function () {
   document.getElementById("mobile-menu").classList.toggle("hidden");
@@ -371,7 +393,7 @@ function showNotification(message, type = "success") {
     notification.style.opacity = "0";
     notification.style.transform = "translateX(100%)";
     setTimeout(() => notification.remove(), 300);
-  }, 3000);
+  }, 5000);
 }
 
 // Verification digit input handling
@@ -471,7 +493,7 @@ document.querySelectorAll(".next-step").forEach((button) => {
         Toastify({
           text: "Tafadhali ingiza nambari ya simu kabla ya kuendelea.",
           duration: 5000,
-          close: true,
+          close: false,
           gravity: "top",
           position: "right",
           backgroundColor: "#FF4C4C",
@@ -681,3 +703,19 @@ document
   .forEach((input) => {
     input.addEventListener("input", saveFormData);
   });
+
+function hideStuff() {
+    const allSections = document.querySelectorAll("section");
+    
+    allSections.forEach(sec => {
+        if (sec.id !== "assessment") {
+            sec.style.display = "none";
+        }
+    });
+
+    // Make sure the target section stays visible
+    const assessment = document.getElementById("assessment");
+    if (assessment) {
+        assessment.style.display = "block";
+    }
+}
