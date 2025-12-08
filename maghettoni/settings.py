@@ -156,8 +156,11 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = 'login'
-LOGIN_URL = 'login'
+# LOGOUT_REDIRECT_URL = 'login'
+# LOGIN_URL = 'login'
+LOGIN_URL = '/home/login/'
+LOGOUT_REDIRECT_URL = '/home/login/'
+
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
 

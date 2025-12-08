@@ -11,20 +11,12 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('profile/<int:user_id>/', views.profile, name='profile'),
     path('login/google/', views.logout_and_login, name='set_user_type_and_login'),
-
-
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='yuzzaz/password_reset_form.html'), name='password_reset'),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='yuzzaz/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='yuzzaz/password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset_done/', auth_views.PasswordResetCompleteView.as_view(template_name='yuzzaz/password_reset_complete.html'), name='password_reset_complete'),
-
     path('activation-sent/', views.activation_sent, name='activation_sent'),
     path('resend-activation/', views.resend_activation_email, name='resend_activation_email'),
-
-
     path('profile/edit/', views.edit_profile, name='edit_profile'),
-
-
-
     path('company-profile/', views.company_profile, name='company_profile'),
 ]
