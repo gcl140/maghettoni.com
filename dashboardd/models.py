@@ -21,6 +21,7 @@ class Property(models.Model):
     property_type = models.CharField(max_length=50, choices=PROPERTY_TYPES)
     units = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='property_images/', null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:

@@ -1,3 +1,9 @@
+import json
+# settings.py (REQUIRED for safe JSON embedding)
+from django.utils.safestring import mark_safe
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+from .models import Payment
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -41,7 +47,17 @@ def dashboard(request):
         property__owner=request.user,
         status='pending'
     ).count()
-    
+    revenue = (
+        Payment.objects
+        .filter(status="completed")
+        .annotate(month=TruncMonth("payment_date"))
+        .values("month")
+        .annotate(total=Sum("amount"))
+        .order_by("month")
+    )
+
+    labels = [r["month"].strftime("%b %Y") for r in revenue]
+    data = [float(r["total"]) for r in revenue]
     context = {
         'total_properties': total_properties,
         'total_units': total_units,
@@ -51,6 +67,8 @@ def dashboard(request):
         'recent_payments': recent_payments,
         'pending_maintenance': pending_maintenance,
         'properties': properties,
+        "revenue_labels": json.dumps(labels),
+        "revenue_data": json.dumps(data),
     }
     
     return render(request, 'dashboardd/dashboard.html', context)
@@ -215,3 +233,45 @@ def create_maintenance_request(request):
         form = MaintenanceRequestForm(user=request.user)
     
     return render(request, 'maintenance/create.html', {'form': form})
+
+
+
+# views.py
+# views.py
+import matplotlib
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import io
+from django.http import HttpResponse
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
+from .models import Payment
+
+def revenue_trend_graph(request):
+    qs = (
+        Payment.objects
+        .filter(status="completed")
+        .annotate(month=TruncMonth("payment_date"))
+        .values("month")
+        .annotate(total=Sum("amount"))
+        .order_by("month")
+    )
+
+    months = [x["month"].strftime("%b %Y") for x in qs]
+    totals = [float(x["total"]) for x in qs]
+
+    fig, ax = plt.subplots(figsize=(8, 3))
+    ax.plot(months, totals, marker="o")
+    ax.fill_between(months, totals, alpha=0.2)
+    ax.set_title("Revenue Trends")
+    ax.set_xlabel("Month")
+    ax.set_ylabel("Revenue")
+    fig.tight_layout()
+
+    buffer = io.BytesIO()
+    fig.savefig(buffer, format="png")
+    plt.close(fig)
+    buffer.seek(0)
+
+    return HttpResponse(buffer.getvalue(), content_type="image/png")

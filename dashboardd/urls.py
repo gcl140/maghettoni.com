@@ -22,4 +22,6 @@ urlpatterns = [
     # Maintenance
     path('maintenance/', views.maintenance_requests, name='maintenance_requests'),
     path('maintenance/create/', views.create_maintenance_request, name='create_maintenance_request'),
+    path('dashboard/revenue-graph/', views.revenue_trend_graph, name='revenue_graph')
+
 ]

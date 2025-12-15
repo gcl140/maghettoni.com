@@ -16,15 +16,15 @@ def deactivate_selected_users(modeladmin, request, queryset):
 # Admin for CustomUser model
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ['username', 'username', 'email', 'is_active', 'date_joined']
+    list_display = ['username', 'first_name', 'email', 'is_active', 'date_joined']
     list_filter = ['is_staff', 'is_active']
-    search_fields = ['username', 'email', 'username']
+    search_fields = ['username', 'email', 'first_name', 'last_name']
     ordering = ['username']
     actions = [activate_selected_users, deactivate_selected_users]  # <-- Custom actions added here
 
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Personal Info', {'fields': ('email', 'profile_picture')}),
+        (None, {'fields': ('username', 'first_name', 'last_name', 'password')}),
+        ('Personal Info', {'fields': ('email', 'telephone', 'profile_picture')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important Dates', {'fields': ('last_login', 'date_joined')}),
     )

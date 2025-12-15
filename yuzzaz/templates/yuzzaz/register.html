@@ -15,49 +15,80 @@
 <form method="POST" action="{% url 'register' %}" class="space-y-6">
   {% csrf_token %}
 
-  <!-- Username Field -->
-  <div class="space-y-2">
-    <label for="id_username" class="block text-gray-300 font-medium">
-      <i class="fas fa-user mr-2 text-gray-400"></i>
-      Jina la mtumiaji
-    </label>
-    {{ form.username|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} 
-    {% if form.username.errors %}
-    <p class="text-red-400 text-sm mt-1">{{ form.username.errors.0 }}</p>
-    {% endif %}
-  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-  <!-- Email Field -->
-  <div class="space-y-2">
-    <label for="id_email" class="block text-gray-300 font-medium">
-      <i class="fas fa-envelope mr-2 text-gray-400"></i>
-      Barua pepe
-    </label>
-    {{ form.email|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {% if form.email.errors %}
-    <p class="text-red-400 text-sm mt-1">{{ form.email.errors.0 }}</p>
-    {% endif %}
-  </div>
+    <!-- First Name -->
+    <div class="space-y-2">
+      <label for="id_first_name" class="block text-gray-300 font-medium">
+        <i class="fas fa-user mr-2 text-gray-400"></i>
+        Jina la kwanza la mtumiaji
+      </label>
+      {{ form.first_name|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
+      {% if form.first_name.errors %}
+      <p class="text-red-400 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
+      {% endif %}
+    </div>
 
-  <!-- Password Field -->
-  <div class="space-y-2">
-    <label for="id_password1" class="block text-gray-300 font-medium">
-      <i class="fas fa-key mr-2 text-gray-400"></i>
-      Nywila
-    </label>
-    {{ form.password1|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {% if form.password1.errors %}
-    <p class="text-red-400 text-sm mt-1">{{ form.password1.errors.0 }}</p>
-    {% endif %}
-  </div>
+    <!-- Last Name -->
+    <div class="space-y-2">
+      <label for="id_last_name" class="block text-gray-300 font-medium">
+        <i class="fas fa-user mr-2 text-gray-400"></i>
+        Jina la mwisho la mtumiaji
+      </label>
+      {{ form.last_name|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
+      {% if form.last_name.errors %}
+      <p class="text-red-400 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
+      {% endif %}
+    </div>
 
-  <!-- Confirm Password Field -->
-  <div class="space-y-2">
-    <label for="id_password2" class="block text-gray-300 font-medium">
-      <i class="fas fa-lock mr-2 text-gray-400"></i>
-      Thibitisha nywila
-    </label>
-    {{ form.password2|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {% if form.password2.errors %}
-    <p class="text-red-400 text-sm mt-1">{{ form.password2.errors.0 }}</p>
-    {% endif %}
+    <!-- Telephone -->
+    <div class="space-y-2">
+      <label for="id_telephone" class="block text-gray-300 font-medium">
+        <i class="fas fa-phone mr-2 text-gray-400"></i>
+        Nambari ya simu
+      </label>
+      {{ form.telephone|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
+      {% if form.telephone.errors %}
+      <p class="text-red-400 text-sm mt-1">{{ form.telephone.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Email -->
+    <div class="space-y-2">
+      <label for="id_email" class="block text-gray-300 font-medium">
+        <i class="fas fa-envelope mr-2 text-gray-400"></i>
+        Barua pepe (Si lazima)
+      </label>
+      {{ form.email|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
+      {% if form.email.errors %}
+      <p class="text-red-400 text-sm mt-1">{{ form.email.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Password -->
+    <div class="space-y-2">
+      <label for="id_password1" class="block text-gray-300 font-medium">
+        <i class="fas fa-key mr-2 text-gray-400"></i>
+        Nywila
+      </label>
+      {{ form.password1|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
+      {% if form.password1.errors %}
+      <p class="text-red-400 text-sm mt-1">{{ form.password1.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="space-y-2">
+      <label for="id_password2" class="block text-gray-300 font-medium">
+        <i class="fas fa-lock mr-2 text-gray-400"></i>
+        Thibitisha nywila
+      </label>
+      {{ form.password2|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
+      {% if form.password2.errors %}
+      <p class="text-red-400 text-sm mt-1">{{ form.password2.errors.0 }}</p>
+      {% endif %}
+    </div>
+
   </div>
 
   <!-- Submit Button -->
@@ -68,18 +99,8 @@
     <i class="fas fa-user-plus"></i>
     <span>Tengeneza Akaunti</span>
   </button>
-
-  <a
-    href="{% if not user.is_authenticated %}{% url 'social:begin' 'google-oauth2' %}?next={% url 'home' %}{% else %}{% url 'set_user_type_and_login' %}{% endif %}"
-  >
-    <button
-      type="button"
-      class="w-full bg-white text-brown-800 py-3 rounded-lg hover:bg-gray-100 transition flex items-center justify-center my-6"
-    >
-      <i class="fab fa-google mr-2"></i> Endelea na Google
-    </button>
-  </a>
 </form>
+
 
 <!-- Additional Links -->
 <div class="mt-6 text-center">
@@ -93,4 +114,26 @@
     </a>
   </p>
 </div>
+ {% block scripts %}
+<script>
+    const tel = document.getElementById("id_telephone");
+
+    tel.addEventListener("input", () => {
+        let v = tel.value.replace(/\s+/g, "");
+
+        // Always enforce prefix
+        if (!v.startsWith("+255")) {
+            v = v.replace(/^\+?0*/, ""); 
+            v = "+255" + v;
+        }
+
+        // If the user types "+2550", remove the zero
+        if (v.startsWith("+2550")) {
+            v = "+255" + v.slice(5);
+        }
+
+        tel.value = v;
+    });
+</script>
+{% endblock %}
 {% endblock %}

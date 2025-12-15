@@ -39,18 +39,19 @@ def register(request):
             user.save()
 
             # Send activation email
-            current_site = get_current_site(request)
-            message = render_to_string("yuzzaz/activate_account.html", {
-                'user': user,
-                'domain': current_site.domain,
-                'protocol': 'https' if request.is_secure() else 'http',
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-                'current_year': datetime.now().year,
-            })
-            email = EmailMessage("Activate your user account", message, to=[user.email])
-            email.content_subtype = "html"
-            email.send()
+            if user.email:
+                current_site = get_current_site(request)
+                message = render_to_string("yuzzaz/activate_account.html", {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'protocol': 'https' if request.is_secure() else 'http',
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                    'current_year': datetime.now().year,
+                })
+                email = EmailMessage("Activate your user account", message, to=[user.email])
+                email.content_subtype = "html"
+                email.send()
 
             # Store session for resend logic
             request.session['inactive_user_email'] = user.email
@@ -58,7 +59,7 @@ def register(request):
             request.session['email_sent_time'] = now().isoformat()
 
 
-            messages.success(request, f"Dear {user.username}, we have sent an activation link to your email. Please check your email to complete registration (Remember to check your spam too, you can't proceed without that email).")
+            messages.success(request, f"Mpendwa {user.first_name} {user.last_name}, tumetuma kiungo cha kuamilisha kwenye nambari yako ya simu na barua pepe yako. Tafadhali angalia meseji zako au barua pepe yako kukamilisha usajili")
             return redirect('activation_sent')
     else:
         form = UserRegistrationForm()
@@ -73,26 +74,26 @@ def activate(request, uidb64, token):
         user = None
 
     if not user:
-        messages.error(request, "Invalid activation link.")
+        messages.error(request, "Kiungo cha uamilishaji si sahihi.")
         return redirect('home')
 
     if user.is_active:
-        messages.info(request, "Account already activated. You can log in.")
+        messages.info(request, "Akaunti tayari imeamilishwa. Unaweza kuingia.")
         return redirect('login')
 
     if not account_activation_token.check_token(user, token):
-        messages.error(request, "Activation link is invalid or expired.")
+        messages.error(request, "Kiungo cha uamilishaji si sahihi au kimeisha muda.")
         return redirect('home')
 
     user.is_active = True
     user.save()
-    messages.success(request, "Thank you for confirming your email. Your account is now activated, and you can now log in.")
+    messages.success(request, "Asante kwa kuthibitisha barua pepe yako. Akaunti yako sasa imeamilishwa, na unaweza kuingia sasa.")
     return redirect('login')
 
 def activation_sent(request):
     email = request.session.get('inactive_user_email')
     if not email:
-        messages.warning(request, "No activation request found.")
+        messages.warning(request, "Hakuna ombi la uamilishaji lililopatikana.")
         return redirect('login')  # Use your standard register route
 
     if not request.session.get('email_sent_time'):
@@ -108,7 +109,7 @@ def resend_activation_email(request):
     sent_time = request.session.get('email_sent_time')
 
     if not email or not sent_time:
-        messages.error(request, "Session expired. Please register again.")
+        messages.error(request, "Kipindi kimeisha. Tafadhali jisajili tena.")
         return redirect('register')
 
     sent_time = datetime.fromisoformat(sent_time)
@@ -129,9 +130,9 @@ def resend_activation_email(request):
         email_obj.send()
 
         request.session['email_sent_time'] = now().isoformat()
-        messages.success(request, "A new activation link has been sent.")
+        messages.success(request, "Kiungo kipya cha uamilishaji kimetumwa.")
     else:
-        messages.error(request, "No inactive account found with that email.")
+        messages.error(request, "Hakuna akaunti isiyoamilishwa iliyopatikana na barua pepe hiyo.")
 
     return redirect('activation_sent')
 
@@ -146,23 +147,23 @@ def login(request):
             if not user.is_active:
                 request.session['inactive_user_email'] = user.email
                 request.session['email_sent_time'] = now().isoformat()
-                messages.warning(request, "Your account is not activated. Please check your email or resend the activation link.")
+                messages.warning(request, "Akaunti yako haijamilishwa. Tafadhali angalia barua pepe yako au tuma tena kiungo cha uamilishaji.")
                 return redirect('activation_sent')
 
             auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            messages.success(request, "You have successfully logged in.")
+            messages.success(request, "Umefanikiwa kuingia.")
             if user.is_staff:
                 return redirect('home')
             else:
-                return redirect('home')  # Standard redirect — adjust to your default user landing page
+                return redirect('dashboard')  # Standard redirect — adjust to your default user landing page
 
-        messages.error(request, "Invalid credentials, please try again.")
+        messages.error(request, "Taarifa zako si sahihi, tafadhali jaribu tena.")
 
     return render(request, 'yuzzaz/login.html')
 
 def logout(request):
     auth_logout(request)
-    messages.success(request, "You have successfully logged out.")
+    messages.success(request, "Umetoka nje kikamilifu.")
     return redirect('login')
 
 
@@ -173,7 +174,7 @@ def profile(request, user_id):
         form = CustomUserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
-            messages.success(request, "Your profile has been updated!")
+            messages.success(request, "Wasifu wako umesasishwa!")
             return redirect('profile', user_id=user.id)  # Redirect to the same page
         else:
             print(form.errors)
@@ -208,7 +209,7 @@ def edit_profile(request):
         form = CustomUserForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Profile updated successfully!')
+            messages.success(request, 'Wasifu umesasishwa kikamilifu!')
             return redirect('view_profile', id=request.user.id)
     else:
         form = CustomUserForm(instance=request.user)

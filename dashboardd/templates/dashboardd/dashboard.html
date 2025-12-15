@@ -1,145 +1,150 @@
-{% extends 'dashboardd/base.html' %}
 
+{% extends 'dashboardd/base.html' %}
+{% load static %}
 {% block title %}Dashboard - Landlord Management System{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <!-- Statistics Cards -->
-    <div class="col-md-3">
-        <div class="stat-card bg-primary text-white">
-            <i class="fas fa-building"></i>
-            <h4>{{ total_properties }}</h4>
-            <p>Total Properties</p>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card bg-success text-white">
-            <i class="fas fa-home"></i>
-            <h4>{{ total_units }}</h4>
-            <p>Total Units</p>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card bg-info text-white">
-            <i class="fas fa-percentage"></i>
-            <h4>{{ vacancy_rate }}%</h4>
-            <p>Vacancy Rate</p>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card bg-warning text-white">
-            <i class="fas fa-money-bill-wave"></i>
-            <h4>${{ total_revenue }}</h4>
-            <p>Total Revenue</p>
-        </div>
-    </div>
-</div>
+<div class="w-full min-h-screen p-4 lg:p-6 rounded-xl">
+    <!-- Header Row -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 lg:mb-8">
 
-<div class="row">
-    <!-- Recent Payments -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Recent Payments</h5>
-            </div>
-            <div class="card-body">
-                {% if recent_payments %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Tenant</th>
-                                    <th>Amount</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for payment in recent_payments %}
-                                <tr>
-                                    <td>{{ payment.tenant.full_name }}</td>
-                                    <td>${{ payment.amount }}</td>
-                                    <td>{{ payment.payment_date }}</td>
-                                    <td>
-                                        <span class="badge bg-{% if payment.status == 'completed' %}success{% else %}warning{% endif %}">
-                                            {{ payment.status }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <p class="text-muted">No recent payments</p>
-                {% endif %}
-                <a href="{% url 'payments_list' %}" class="btn btn-sm btn-outline-primary">View All Payments</a>
-            </div>
+        <!-- Greeting -->
+        <div class="flex items-center">
+            <h1 id="greetingText" class="text-3xl sm:text-3xl lg:text-4xl font-extrabold text-brown-900 tracking-tight">
+                Habari,
+            </h1>
+            <span class="ml-2 text-3xl sm:text-3xl lg:text-4xl font-extrabold text-brown-600">
+                {{ request.user.first_name }}!
+            </span>
         </div>
+
+<script>
+
+</script>
+
+        <!-- Search Bar -->
+        <div class="relative w-full sm:max-w-md">
+            <input 
+                type="text"
+                placeholder="Tafuta..."
+                class="w-full bg-white rounded-xl py-2 lg:py-3 pl-4 pr-12 shadow-md outline-none text-sm lg:text-base"
+            >
+            <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 text-lg lg:text-xl"></i>
+        </div>
+
+    </div>
+
+
+
+    <!-- Icon Cards - Responsive Grid -->
+    <div class="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-10">
+        {% for property in properties %}
+        <a href="{% url 'property_detail' property.id %}"
+        class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition overflow-hidden cursor-pointer block">
+
+            <!-- Top visual (Instagram-style image area) -->
+            <div class="h-32 bg-gray-100 flex items-center justify-center">
+                {% if property.image %}
+                    <img src="{{ property.image.url }}" alt="{{ property.name }}" class="object-cover w-full h-full">
+                {% else %}
+                    {% if property.property_type == "apartment" %}
+                        <i class="fas fa-building text-4xl text-gray-500"></i>
+                    {% elif property.property_type == "commercial" %}
+                        <i class="fas fa-store text-4xl text-gray-500"></i>
+                    {% elif property.property_type == "condo" %}
+                    <i class="fas fa-city text-4xl text-gray-500"></i>
+                    {% elif property.property_type == "townhouse" %}
+                        <i class="fas fa-house-user text-4xl text-gray-500"></i>
+                    {% else %}
+                        <i class="fas fa-home text-4xl text-gray-500"></i>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- Card content -->
+            <div class="p-4">
+                <h3 class="text-brown-900 font-semibold text-base truncate">
+                    <i class="fas fa-city text-gray-500"></i>
+                    {{ property.name }}
+                </h3>
+
+                <p class="text-gray-500 text-sm mt-1 capitalize">
+                    {{ property.property_type }} • {{ property.units }} unit{{ property.units|pluralize }}
+                </p>
+
+                <p class="text-gray-400 text-xs mt-2 line-clamp-2">
+                    {{ property.address }}
+                </p>
+            </div>
+        </a>
+        {% empty %}
+        <div class="bg-white rounded-2xl p-6 shadow-sm text-center text-gray-500 w-full flex flex-col items-center justify-center">
+            <i class="fas fa-home text-3xl mb-2 text-gray-400"></i>
+            <span>Bado hujajumuishwa nyumba yoyote</span>
+        </div>
+        {% endfor %}
     </div>
     
-    <!-- Properties List -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Your Properties</h5>
-            </div>
-            <div class="card-body">
-                {% if properties %}
-                    <div class="list-group">
-                        {% for property in properties %}
-                        <a href="{% url 'property_detail' property.id %}" class="list-group-item list-group-item-action">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1">{{ property.name }}</h6>
-                                <small>{{ property.get_property_type_display }}</small>
-                            </div>
-                            <p class="mb-1 small text-muted">{{ property.address|truncatechars:50 }}</p>
-                            <small>{{ property.units }} units</small>
-                        </a>
-                        {% endfor %}
-                    </div>
+    <!-- Mobile Property Scroll -->
+    <div class="md:hidden flex gap-4 overflow-x-auto pb-2 mb-6 lg:mb-10 scrollbar-hide">
+        {% for property in properties %}
+        <a href="{% url 'property_detail' property.id %}"
+        class="min-w-[160px] max-w-[160px] bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex-shrink-0">
+
+            <!-- Image / Icon -->
+            <div class="h-28 bg-gray-100 flex items-center justify-center">
+                {% if property.image %}
+                    <img src="{{ property.image.url }}"
+                        alt="{{ property.name }}"
+                        class="object-cover w-full h-full">
                 {% else %}
-                    <p class="text-muted">No properties added yet</p>
-                    <a href="{% url 'add_property' %}" class="btn btn-primary">Add Your First Property</a>
+                    {% if property.property_type == "apartment" %}
+                        <i class="fas fa-building text-2xl text-gray-500"></i>
+                    {% elif property.property_type == "commercial" %}
+                        <i class="fas fa-store text-2xl text-gray-500"></i>
+                    {% elif property.property_type == "condo" %}
+                        <i class="fas fa-city text-2xl text-gray-500"></i>
+                    {% elif property.property_type == "townhouse" %}
+                        <i class="fas fa-house-user text-2xl text-gray-500"></i>
+                    {% else %}
+                        <i class="fas fa-home text-2xl text-gray-500"></i>
+                    {% endif %}
                 {% endif %}
             </div>
+
+            <!-- Content -->
+            <div class="p-2">
+                <h3 class="text-sm font-semibold text-brown-900 truncate">
+                    {{ property.name }}
+                </h3>
+
+                <p class="text-xs text-gray-500 capitalize truncate">
+                    {{ property.property_type }} • {{ property.units }} unit{{ property.units|pluralize }}
+                </p>
+            </div>
+        </a>
+        {% empty %}
+        <div class="bg-white rounded-xl p-4 shadow-sm text-center text-gray-500 min-w-full">
+            Bado hujajumuishwa nyumba yoyote
         </div>
+        {% endfor %}
+    </div>
+
+    <!-- Revenue Chart -->
+    <div class="bg-white rounded-xl p-4 lg:p-6 shadow-md mb-8 lg:mb-12">
+        <h2 class="text-base text-brown-900 lg:text-lg font-semibold mb-3 lg:mb-4">Muenendo wa Mapato</h2>
+        <div class="relative w-full h-[250px] md:h-[500px]">
+  <canvas
+    id="revenueChart"
+    data-labels='{{ revenue_labels|safe }}'
+    data-values='{{ revenue_data|safe }}'
+  ></canvas>
+</div>
+
     </div>
 </div>
 
-<div class="row mt-4">
-    <!-- Quick Actions -->
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <a href="{% url 'add_property' %}" class="btn btn-outline-primary w-100">
-                            <i class="fas fa-plus-circle me-2"></i> Add Property
-                        </a>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="{% url 'add_tenant' %}" class="btn btn-outline-success w-100">
-                            <i class="fas fa-user-plus me-2"></i> Add Tenant
-                        </a>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="{% url 'record_payment' %}" class="btn btn-outline-info w-100">
-                            <i class="fas fa-money-check me-2"></i> Record Payment
-                        </a>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="{% url 'create_maintenance_request' %}" class="btn btn-outline-warning w-100">
-                            <i class="fas fa-tools me-2"></i> Report Maintenance
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}

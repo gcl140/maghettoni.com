@@ -19,7 +19,7 @@
   <div class="space-y-2">
     <label for="username" class="block text-gray-300 font-medium">
       <i class="fas fa-user mr-2 text-gray-400"></i>
-      Jina la mtumiaji
+      Nambari ya simu
     </label>
     <input
       type="text"
@@ -31,21 +31,31 @@
     />
   </div>
 
-  <!-- Password Field -->
-  <div class="space-y-2">
-    <label for="password" class="block text-gray-300 font-medium">
-      <i class="fas fa-key mr-2 text-gray-400"></i>
-      Nywila
-    </label>
+<div class="space-y-2 relative">
+  <label for="password" class="block text-gray-300 font-medium">
+    <i class="fas fa-key mr-2 text-gray-400"></i>
+    Nywila
+  </label>
+
     <input
       type="password"
       id="password"
       name="password"
       required
-      class="w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400"
+      class="w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400"
       placeholder="Weka nywila yako"
     />
+
+    <!-- eye toggle -->
+    <button
+      type="button"
+      id="togglePassword"
+      class="absolute right-4 top-[38px] text-gray-400 hover:text-white"
+    >
+      <i class="fas fa-eye"></i>
+    </button>
   </div>
+
 
   <!-- Submit Button -->
   <button
@@ -56,16 +66,6 @@
     <span>Ingia</span>
   </button>
 
-  <a
-    href="{% if not user.is_authenticated %}{% url 'social:begin' 'google-oauth2' %}?next={% url 'home' %}{% else %}{% url 'set_user_type_and_login' %}{% endif %}"
-  >
-    <button
-      type="button"
-      class="w-full bg-white text-brown-800 py-3 rounded-lg hover:bg-gray-100 transition flex items-center justify-center my-6"
-    >
-      <i class="fab fa-google mr-2"></i> Endelea na Google
-    </button>
-  </a>
 </form>
 
 <!-- Additional Links -->
@@ -88,4 +88,20 @@
     </a>
   </p>
 </div>
+    {% block scripts %}
+    <script>
+        const pwd = document.getElementById("password");
+        const btn = document.getElementById("togglePassword");
+        const icon = btn.querySelector("i");
+
+        btn.addEventListener("click", () => {
+          const isHidden = pwd.type === "password";
+          pwd.type = isHidden ? "text" : "password";
+
+          icon.classList.toggle("fa-eye");
+          icon.classList.toggle("fa-eye-slash");
+        });
+    </script>
+
+    {% endblock %}
 {% endblock %}
