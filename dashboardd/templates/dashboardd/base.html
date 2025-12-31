@@ -1,11 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Landlord Management System{% endblock %}</title>
-
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}" />
@@ -24,157 +23,323 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
       rel="stylesheet"
     />
-    
-
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brown': {
-                            50: '#fdf8f6',
-                            100: '#f2e8e5',
-                            200: '#eaddd7',
-                            300: '#e0cec7',
-                            400: '#d2bab0',
-                            500: '#bfa094',
-                            600: '#a18072',
-                            700: '#8b6e5e',
-                            800: '#7d5d4f',
-                            900: '#603b2b',
-                        }
-                    },
-                    fontFamily: {
-                        'serif': ['DM Sans', 'serif'],
-                        'sans': ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <script src="{% static 'js/head-dashboard.js' %}"></script>
     {% block extra_head %}{% endblock %}
-</head>
+  </head>
 
-<body class="bg-gray-100 text-gray-800 font-serif">
-
+  <body class="bg-gray-100 text-gray-800 font-serif flex flex-col min-h-screen">
     <!-- Mobile Menu Button (visible only on small screens) -->
     <div class="lg:hidden fixed top-4 right-4 z-50">
-        <button id="mobileMenuToggle" class="p-2 text-brown-900 rounded-lg">
-            <i class="fas fa-bars text-xl"></i>
-        </button>
+      <button id="mobileMenuToggle" class="p-2 text-brown-900 rounded-lg">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
     </div>
 
     <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside
+        id="sidebar"
+        class="fixed lg:sticky lg:top-0 left-0 z-40 w-72 h-screen bg-gradient-to-b from-landlord-dark to-landlord-primary text-white flex flex-col transform -translate-x-full lg:translate-x-0 transition-all duration-500 ease-out shadow-2xl"
+      >
+        <!-- Decorative top border -->
+        <div
+          class="h-1 bg-gradient-to-r from-landlord-accent via-brown-500 to-landlord-accent animate-gradient"
+        ></div>
 
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed lg:relative inset-y-0 left-0 z-50 w-60 bg-brown-900 text-gray-200 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
-            <!-- Mobile close button -->
-            <div class="lg:hidden flex justify-end p-4">
-                <button id="closeSidebar" class="p-2 text-gray-400 hover:text-white">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-
-            <div class="px-6 py-6 text-center border-b border-brown-500">
-                <img src="{% static 'images/fav.png' %}" alt="Logo" class="mx-auto mb-2 w-12 h-12">
-                <h1 class="text-2xl font-bold">Maghettoni</h1>
-                <p class="text-gray-400 text-sm">Kwa ajili ya wenye nyumba</p>
-            </div>
-
-            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                <a href="{% url 'dashboard' %}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200
-                   {% if request.path == '/' %}bg-gray-800{% endif %}">
-                    <i class="fas fa-tachometer-alt w-6 text-center"></i> Dashboard
-                </a>
-
-                <a href="{% url 'property_list' %}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200
-                   {% if 'properties' in request.path %}bg-gray-800{% endif %}">
-                    <i class="fas fa-building w-6 text-center"></i> Properties
-                </a>
-
-                <a href="{% url 'tenant_list' %}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200
-                   {% if 'tenants' in request.path %}bg-gray-800{% endif %}">
-                    <i class="fas fa-users w-6 text-center"></i> Tenants
-                </a>
-
-                <a href="{% url 'payments_list' %}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200
-                   {% if 'payments' in request.path %}bg-gray-800{% endif %}">
-                    <i class="fas fa-money-bill-wave w-6 text-center"></i> Payments
-                </a>
-
-                <a href="{% url 'maintenance_requests' %}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200
-                   {% if 'maintenance' in request.path %}bg-gray-800{% endif %}">
-                    <i class="fas fa-tools w-6 text-center"></i> Maintenance
-                </a>
-            </nav>
-
-            <div class="p-4 border-t border-gray-700">
-                <a href="{% url 'admin:logout' %}" 
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors duration-200">
-                    <i class="fas fa-sign-out-alt w-6 text-center"></i> Logout
-                </a>
-            </div>
-        </aside>
-
-        <!-- Overlay for mobile -->
-        <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden hidden"></div>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-4 lg:p-8 w-full lg:w-auto transition-all duration-300">
-            <!-- Header area -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 lg:mb-8">
-                <h2 class="text-xl lg:text-2xl font-bold">{% block page_title %}{% endblock %}</h2>
-
-            </div>
-
-            <!-- Django Messages -->
-            {% if messages %}
-                <div class="space-y-3 mb-4">
-                    {% for message in messages %}
-                        <div class="p-3 rounded-lg text-white text-sm lg:text-base
-                            {% if message.tags == 'success' %}bg-green-600
-                            {% elif message.tags == 'error' %}bg-red-600
-                            {% elif message.tags == 'warning' %}bg-yellow-500
-                            {% else %}bg-blue-600{% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            <!-- Dynamic Page Content -->
-            {% block content %}{% endblock %}
-    <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t shadow-lg">
-        <div class="flex justify-between px-3 py-2 overflow-x-auto text-brown-900">
-            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-home text-base"></i>
-            </div>
-            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-house-user text-base"></i>
-            </div>
-            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-bell text-base"></i>
-            </div>
-            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-wallet text-base"></i>
-            </div>
-            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-user text-base"></i>
-            </div>
+        <!-- Mobile close button -->
+        <div class="lg:hidden flex justify-end p-4">
+          <button
+            id="closeSidebar"
+            class="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+          >
+            <i class="fas fa-times text-xl"></i>
+          </button>
         </div>
+
+        <!-- Brand / User Section (fixed height) -->
+        <div
+          class="px-6 py-8 text-center border-b border-brown-700/50 relative"
+        >
+          <div
+            class="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-landlord-accent to-brown-600 rounded-2xl flex items-center justify-center shadow-lg"
+          >
+          <img src="{% static 'images/fav.png' %}" class="w-10 h-10 object-contain"/>
+            {% comment %} <i class="fas fa-building text-2xl text-white"></i> {% endcomment %}
+          </div>
+
+          <h1 class="text-3xl font-bold mb-1">Maghettoni</h1>
+          <p class="text-brown-300 text-sm mb-6">
+            Simamia mali zako kwa urahisi!
+          </p>
+
+          <div class="p-3 bg-white/5 rounded-xl">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-landlord-accent to-brown-500 flex items-center justify-center"
+              >
+                {% if request.user.profile_picture %}
+                <img
+                  src="{{ request.user.profile_picture.url }}"
+                  class="w-full h-full object-cover"
+                />
+                {% else %}
+                <i class="fas fa-user text-white"></i>
+                {% endif %}
+              </div>
+
+              <div class="flex-1 text-left">
+                <p class="text-sm font-semibold">
+                  {{ request.user.username|default:"Landlord"|slice:":10" }}
+                </p>
+                <p class="text-xs text-brown-300">
+                {{ request.user.telephone |default:"N/A" }}</p>
+              </div>
+
+              <span
+                class="text-xs bg-green-500 text-maroon-300 px-2 py-1 rounded-full"
+              >
+                
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- NAVIGATION (this is the ONLY scrollable part) -->
+        <nav
+          class="flex-1 px-4 py-6 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-brown-700 scrollbar-track-transparent"
+        >
+          <p
+            class="px-3 mb-2 text-xs uppercase tracking-wider text-brown-400 font-semibold"
+          >
+            Dashibodi
+          </p>
+
+          <a
+            href="{% url 'dashboard' %}"
+            class="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-white/10 {% if request.path == '/dashboard/' %}bg-white/10 border-l-4 border-landlord-accent{% endif %}"
+          >
+            <div
+              class="w-8 h-8 bg-brown-700 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform"
+            >
+              <i class="fas fa-tachometer-alt text-white text-sm"></i>
+            </div>
+            <span>Dashibodi</span>
+          </a>
+
+          <p
+            class="px-3 my-6 text-xs uppercase tracking-wider text-brown-400 font-semibold"
+          >
+            Usimamizi
+          </p>
+
+          <a
+            href="{% url 'property_list' %}"
+            class="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-white/10 transition-all duration-300 group hover-lift {% if 'properties' in request.path %}bg-white/10 shadow-lg border-l-4 border-landlord-accent{% endif %}"
+          >
+            <div
+              class="w-8 h-8 bg-brown-700 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform"
+            >
+              <i class="fas fa-building text-white text-sm"></i>
+            </div>
+            <span class="font-medium">Mali</span>
+            <span class="ml-auto text-xs bg-brown-600 px-2 py-1 rounded-full">{% if request.user.properties.count %}{{request.user.properties.count }}{% endif %}</span>
+          </a>
+
+          <a
+            href="{% url 'tenant_list' %}"
+            class="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-white/10 transition-all duration-300 group hover-lift {% if 'tenants' in request.path %}bg-white/10 shadow-lg border-l-4 border-landlord-accent{% endif %}"
+          >
+            <div
+              class="w-8 h-8 bg-brown-700 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform"
+            >
+              <i class="fas fa-users text-white text-sm"></i>
+            </div>
+            <span class="font-medium">Wapangaji</span>
+            <span class="ml-auto text-xs bg-brown-600 px-2 py-1 rounded-full">{% if request.user.properties.count %}{{request.user.properties.count }}{% endif %}</span>
+
+          </a>
+
+          <a
+            href="{% url 'payments_list' %}"
+            class="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-white/10 transition-all duration-300 group hover-lift {% if 'payments' in request.path %}bg-white/10 shadow-lg border-l-4 border-landlord-accent{% endif %}"
+          >
+            <div
+              class="w-8 h-8 bg-brown-800 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform"
+            >
+              <i class="fas fa-money-bill-wave text-white text-sm"></i>
+            </div>
+            <span class="font-medium">Malipo</span>
+            {% if due_payments_count > 0 %}
+            <span class="ml-auto text-xs bg-brown-600 px-2 py-1 rounded-full">{{ due_payments_count }}</span>
+            {% endif %}
+          </a>
+
+          <a
+            href="{% url 'maintenance_requests' %}"
+            class="flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-white/10 transition-all duration-300 group hover-lift {% if 'maintenance' in request.path %}bg-white/10 shadow-lg border-l-4 border-landlord-accent{% endif %}"
+          >
+            <div
+              class="w-8 h-8 bg-brown-700 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform"
+            >
+              <i class="fas fa-tools text-white text-sm"></i>
+            </div>
+            <span class="font-medium">Matengenezo</span>
+            {% if pending_maintenance_count > 0 %}
+            <span class="ml-auto text-xs bg-brown-600 px-2 py-1 rounded-full">{{ pending_maintenance_count }}</span>
+            {% endif %}
+          </a>
+
+          <!-- Spacer so last item doesn’t hide behind footer -->
+          <div class="h-2"></div>
+        </nav>
+
+        <!-- FOOTER (ALWAYS VISIBLE) -->
+        <div class="p-4 border-t border-brown-700/50 shrink-0">
+            <div class="flex gap-3 mb-3">
+                <!-- Settings -->
+                <div
+                class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 flex-1 justify-center"
+                >
+                <i class="fas fa-cog"></i>
+                <p class="text-sm font-medium">Mipangilio</p>
+                </div>
+
+                <!-- Logout -->
+                <a
+                href="{% url 'admin:logout' %}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl flex-1 justify-center bg-gradient-to-r from-red-600/20 to-red-700/20 hover:from-red-600/30 hover:to-red-700/30"
+                >
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Toka</span>
+                </a>
+            </div>
+
+            <p class="mt-2 text-xs text-center text-brown-400">
+                v1.0 • Imefanywa kwa ❤️ na Maghettoni
+            </p>
+        </div>
+
+      </aside>
+      <!-- Overlay for mobile -->
+      <div
+        id="sidebarOverlay"
+        class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden hidden"
+      ></div>
+      <!-- Main Content -->
+      <main
+        class="flex-1 p-4 lg:p-8 w-full lg:w-auto transition-all duration-300 mt-10 mb-32 md:mb-2"
+      >
+        <!-- Django Messages -->
+        {% if messages %}
+        <div class="space-y-3 mb-4">
+          {% for message in messages %}
+          <script>
+            Toastify({
+              text: "{{ message|escapejs }}",
+              duration: 5000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor:
+                "{% if message.tags == 'success' %}#16a34a{% elif message.tags == 'error' %}#dc2626{% elif message.tags == 'warning' %}#f59e0b{% else %}#2563eb{% endif %}",
+            }).showToast();
+          </script>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Dynamic Page Content -->
+         <div class=" animate-slide-in">
+        {% block content %}{% endblock %}
+         </div>
+        <!-- Footer -->
+        <footer class="mt-12 pt-6 border-t border-brown-200">
+          <div
+            class="flex flex-col md:flex-row justify-between items-center gap-4"
+          >
+            <div class="text-center md:text-left">
+              <p class="text-brown-600 text-sm">
+                © {{ year }} Maghettoni
+              </p>
+              <p class="text-brown-400 text-xs mt-1">
+                Kwa sababu kusimamia mali kunapaswa kuwa furaha! 🎉
+              </p>
+            </div>
+            <div class="flex items-center gap-4">
+              <a
+                href="#"
+                class="text-brown-500 hover:text-landlord-primary transition-colors"
+              >
+                <i class="fab fa-x-twitter"></i>
+              </a>
+              <a
+                href="#"
+                class="text-brown-500 hover:text-landlord-primary transition-colors"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+                <a
+                href="#"
+                class="text-brown-500 hover:text-landlord-primary transition-colors"
+              >
+                <i class="fab fa-facebook"></i>
+              </a>
+              <a
+                href="#"
+                class="text-brown-500 hover:text-landlord-primary transition-colors"
+              >
+                <i class="fab fa-linkedin"></i>
+              </a>
+              <a
+                href="{% url 'about' %}"
+                class="text-brown-500 hover:text-landlord-primary transition-colors"
+              >
+                <i class="fas fa-question-circle"></i>
+              </a>
+            </div>
+          </div>
+        </footer>
+        <div
+          class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t shadow-lg"
+        >
+          <div
+            class="flex justify-between px-3 py-2 overflow-x-auto text-brown-900"
+          >
+            <div
+              class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fas fa-home text-base"></i>
+            </div>
+            <div
+              class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fas fa-house-user text-base"></i>
+            </div>
+            <div
+              class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fas fa-bell text-base"></i>
+            </div>
+            <div
+              class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fas fa-wallet text-base"></i>
+            </div>
+            <div
+              class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0"
+            >
+              <i class="fas fa-user text-base"></i>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
-        </main>
-
-    </div>
-
-
     {% block extra_js %}{% endblock %}
-</body>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+  </body>
 </html>

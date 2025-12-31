@@ -74,10 +74,11 @@
       </div>
     </div>
 
-    {% block scripts %} {% endblock %} {% for message in messages %}
+    {% block scripts %} {% endblock %} 
+    {% for message in messages %}
     <script>
       Toastify({
-        text: "{{ message }}",
+        text: "{{ message|escapejs }}",
         duration: 15000,
         close: true,
         gravity: "top",

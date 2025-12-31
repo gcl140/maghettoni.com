@@ -1,0 +1,380 @@
+{% extends 'dashboardd/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}{{ title }} - Landlord Management System{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    {% if is_edit %}
+    <a href="{% url 'property_detail' property.id %}" class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Property
+    </a>
+    {% else %}
+    <a href="{% url 'property_list' %}" class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Properties
+    </a>
+    {% endif %}
+</div>
+
+<div class="max-w-4xl mx-auto">
+    <!-- Form Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <!-- Card Header -->
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 font-sans">{{ title }}</h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                        {% if is_edit %}
+                        Update your property information below
+                        {% else %}
+                        Add a new property to your portfolio
+                        {% endif %}
+                    </p>
+                </div>
+                {% if is_edit %}
+                <div class="flex items-center">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-brown-100 text-brown-800">
+                        <i class="fas fa-id-badge mr-1"></i>
+                        ID: {{ property.id|stringformat:"04d" }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form method="POST" enctype="multipart/form-data" class="p-6">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                    <p class="text-sm text-red-800">{{ form.non_field_errors }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Basic Information Section -->
+            <div class="mb-8">
+                <h4 class="text-lg font-medium text-gray-900 mb-4 pb-3 border-b border-gray-200 font-sans">
+                    <i class="fas fa-info-circle text-brown-600 mr-2"></i>
+                    Basic Information
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Property Name -->
+                    <div>
+                        <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-home mr-1 text-brown-600"></i>
+                            Property Name *
+                        </label>
+                        {% render_field form.name class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="e.g., Sunset Apartments" %}
+                        {% if form.name.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Property Type -->
+                    <div>
+                        <label for="{{ form.property_type.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-tag mr-1 text-brown-600"></i>
+                            Property Type *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.property_type class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.property_type.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.property_type.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address Section -->
+            <div class="mb-8">
+                <h4 class="text-lg font-medium text-gray-900 mb-4 pb-3 border-b border-gray-200 font-sans">
+                    <i class="fas fa-map-marker-alt text-brown-600 mr-2"></i>
+                    Address Information
+                </h4>
+
+                <div class="mb-4">
+                    <label for="addressField" class="block text-sm font-medium text-gray-700 mb-2">
+                        Full Address *
+                    </label>
+
+                    <textarea id="addressField"
+                            rows="2"
+                            class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors"
+                            placeholder="Click 'Use my location' to autofill"></textarea>
+
+                    <p class="mt-2 text-sm text-amber-600 flex items-start gap-2">
+                        <i class="fas fa-exclamation-triangle mt-0.5"></i>
+                        You must be physically present at this exact location. This address will be locked once filled.
+                    </p>
+                </div>
+
+                <button type="button"
+                        onclick="getLocation()"
+                        class="inline-flex items-center px-4 py-2 rounded-lg bg-brown-600 text-white font-medium hover:bg-brown-700 transition">
+                    <i class="fas fa-crosshairs mr-2"></i>
+                    Use my precise location
+                </button>
+            </div>
+
+
+
+
+
+
+            <!-- Units Section -->
+            <div class="mb-8">
+                <h4 class="text-lg font-medium text-gray-900 mb-4 pb-3 border-b border-gray-200 font-sans">
+                    <i class="fas fa-door-open text-brown-600 mr-2"></i>
+                    Unit Information
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Total Units -->
+                    <div>
+                        <label for="{{ form.units.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Total Units *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.units class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="e.g., 4" %}
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <span class="text-gray-500 mr-8">units</span>
+                            </div>
+                        </div>
+                        {% if form.units.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.units.errors.0 }}</p>
+                        {% endif %}
+                        <p class="mt-2 text-sm text-gray-500">
+                            Total number of rental units in this property
+                        </p>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div>
+                        <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-image mr-1 text-brown-600"></i>
+                            Property Image
+                        </label>
+                        {% comment %} <div class="mt-1 flex items-center"> {% endcomment %}
+                        <div class="mt-1 ">
+                            <label for="id_image" class="cursor-pointer">
+                                <div class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg hover:border-brown-500 hover:bg-brown-50 transition-colors">
+                                    <i class="fas fa-cloud-upload-alt text-gray-400 text-2xl mb-2"></i>
+                                    <p class="text-sm text-gray-600">Click to upload image</p>
+                                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                                </div>
+                                {% render_field form.image class="hidden" %}
+                            </label>
+                        </div>
+                        {% if form.image.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.image.errors.0 }}</p>
+                        {% endif %}
+                        
+                        {% if is_edit and property.image %}
+                        <div class="mt-4">
+                            <p class="text-sm font-medium text-gray-700 mb-2">Current Image:</p>
+                            <div class="relative w-32 md:w-full h-32 rounded-lg overflow-hidden border border-gray-200">
+                                <img src="{{ property.image.url }}" alt="{{ property.name }}" class="w-full h-full object-cover">
+                                <div class="absolute top-2 right-2">
+                                    <a href="{{ property.image.url }}" target="_blank" class="bg-black/50 text-white p-1 rounded-full hover:bg-black/70">
+                                        <i class="fas fa-expand text-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            {% if is_edit %}
+            <!-- Additional Information Section -->
+            <div class="mb-8">
+                <h4 class="text-lg font-medium text-gray-900 mb-4 pb-3 border-b border-gray-200 font-sans">
+                    <i class="fas fa-notes-medical text-brown-600 mr-2"></i>
+                    Additional Information
+                </h4>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Created Date (Read-only for edit) -->
+                        {% if is_edit %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-calendar-plus mr-1 text-brown-600"></i>
+                                Created Date
+                            </label>
+                            <input type="text" value="{{ property.created_at|date:'F j, Y, g:i a' }}" 
+                                   class="block w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        {% endif %}
+
+                        <!-- Updated Date (Read-only for edit) -->
+                        {% if is_edit %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-calendar-check mr-1 text-brown-600"></i>
+                                Last Updated
+                            </label>
+                            <input type="text" value="{{ property.updated_at|date:'F j, Y, g:i a' }}" 
+                                   class="block w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Form Actions -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-gray-200">
+                <div class="mb-4 sm:mb-0">
+                    {% if is_edit %}
+                    <a href="{% url 'property_detail' property.id %}" 
+                       class="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                    {% else %}
+                    <a href="{% url 'property_list' %}" 
+                       class="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="flex space-x-3">
+                    {% if is_edit %}
+                    <a href="{% url 'property_detail' property.id %}" 
+                       class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                        <i class="fas fa-eye mr-2"></i>
+                        Preview
+                    </a>
+                    {% endif %}
+                    <button type="submit" 
+                            class="inline-flex items-center px-6 py-3 border border-transparent text-white bg-brown-600 rounded-lg hover:bg-brown-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-colors font-medium">
+                        <i class="fas fa-save mr-2"></i>
+                        {% if is_edit %}Update Property{% else %}Create Property{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Help/Info Card -->
+    <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white">
+            <h3 class="text-lg font-semibold text-gray-800 font-sans">
+                <i class="fas fa-lightbulb text-blue-600 mr-2"></i>
+                Tips & Guidelines
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <h4 class="text-sm font-medium text-gray-900">Best Practices:</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                            Use clear, descriptive property names
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                            Include complete address information
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                            Upload high-quality property photos
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                            Regularly update unit counts as needed
+                        </li>
+                    </ul>
+                </div>
+                <div class="space-y-3">
+                    <h4 class="text-sm font-medium text-gray-900">Need Help?</h4>
+                    <div class="text-sm text-gray-600">
+                        <p class="mb-2">If you need assistance or have questions:</p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <i class="fas fa-book text-brown-600 mr-2"></i>
+                                <a href="#" class="text-brown-600 hover:text-brown-800">View Documentation</a>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-headset text-brown-600 mr-2"></i>
+                                <a href="#" class="text-brown-600 hover:text-brown-800">Contact Support</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if is_edit %}
+    <!-- Danger Zone -->
+    <div class="mt-6 bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-red-200 bg-red-50">
+            <h3 class="text-lg font-semibold text-red-800 font-sans">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                Danger Zone
+            </h3>
+        </div>
+        <div class="p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h4 class="text-sm font-medium text-gray-900">Delete this property</h4>
+                    <p class="text-sm text-gray-600 mt-1">
+                        This action cannot be undone. All units, tenants, and related data will be permanently deleted.
+                    </p>
+                </div>
+                <button type="button" 
+                        onclick="confirmDelete()"
+                        class="mt-4 sm:mt-0 inline-flex items-center px-6 py-3 border border-red-600 text-red-700 bg-white rounded-lg hover:bg-red-50 transition-colors font-medium">
+                    <i class="fas fa-trash-alt mr-2"></i> Delete Property
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+
+<style>
+/* Custom styling for better form appearance */
+select:focus {
+    outline: none;
+    ring-width: 2px;
+}
+
+textarea:focus, input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
+}
+
+/* Improve file upload area */
+input[type="file"] {
+    cursor: pointer;
+}
+
+/* Style for form labels with icons */
+label i {
+    width: 16px;
+    text-align: center;
+}
+</style>
+
+
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/edit.js' %}"></script>
+{% endblock %}

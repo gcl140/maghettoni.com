@@ -1,0 +1,703 @@
+{% extends 'dashboardd/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{{ title }} - Maghettoni{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    {% if is_edit %}
+    <a href="{% url 'payment_detail' payment.id %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
+        <i class="fas fa-arrow-left mr-2"></i> Rudi kwenye Maelezo ya Malipo
+    </a>
+    {% else %}
+    <a href="{% url 'payments_list' %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
+        <i class="fas fa-arrow-left mr-2"></i> Rudi kwenye Orodha ya Malipo
+    </a>
+    {% endif %}
+</div>
+
+<div class="max-w-4xl mx-auto">
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-brown-200 overflow-hidden glass card-shine">
+        <!-- Card Header -->
+        <div class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-brown-50 to-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br 
+                        {% if is_edit %}from-yellow-500 to-yellow-600{% else %}from-green-500 to-green-600{% endif %} 
+                        rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-money-bill-wave text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-landlord-dark font-display">{{ title }}</h3>
+                        <p class="text-brown-600 mt-1 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-landlord-accent"></i>
+                            {% if is_edit %}
+                            Badilisha maelezo ya malipo hapa chini
+                            {% else %}
+                            Rekodi malipo mapya ya kodi ya nyumba
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% if is_edit %}
+                <div class="flex items-center">
+                    <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium 
+                        {% if payment.status == 'completed' %}bg-green-100 text-green-800 border-green-200
+                        {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-800 border-yellow-200
+                        {% elif payment.status == 'failed' %}bg-red-100 text-red-800 border-red-200
+                        {% else %}bg-blue-100 text-blue-800 border-blue-200{% endif %} 
+                        border">
+                        <i class="fas fa-circle text-[6px] mr-2"></i>
+                        {{ payment.get_status_display }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form method="POST" class="p-8">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 mr-3 text-xl"></i>
+                    <div>
+                        {% for error in form.non_field_errors %}
+                        <p class="text-sm text-red-800 font-medium">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Payment Amount Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-dollar-sign text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Kiasi cha Malipo</h4>
+                </div>
+                
+                <div class="max-w-md">
+                    <label for="{{ form.amount.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-money-bill text-brown-600 mr-1"></i>
+                        Kiasi cha Malipo (TZS) *
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500">TZS</span>
+                        </div>
+                        {% render_field form.amount class="block w-full pl-12 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all text-lg font-semibold" %}
+                    </div>
+                    {% if form.amount.errors %}
+                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.amount.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-2 text-xs text-brown-500 flex items-center">
+                        <i class="fas fa-lightbulb mr-1"></i>
+                        Ingiza kiasi kamili cha malipo yaliyolipwa
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tenant & Property Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-user-tie text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Mpangaji na Mali</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Tenant -->
+                    <div>
+                        <label for="{{ form.tenant.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user text-brown-600 mr-1"></i>
+                            Mpangaji *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.tenant class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.tenant.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.tenant.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Property -->
+                    <div>
+                        <label for="{{ form.property.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-building text-brown-600 mr-1"></i>
+                            Mali *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.property.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.property.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dates Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-calendar-alt text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Muda wa Malipo</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Payment Date -->
+                    <div>
+                        <label for="{{ form.payment_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-check text-brown-600 mr-1"></i>
+                            Tarehe ya Malipo *
+                        </label>
+                        {% render_field form.payment_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                        {% if form.payment_date.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.payment_date.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Due Date -->
+                    <div>
+                        <label for="{{ form.due_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-clock text-brown-600 mr-1"></i>
+                            Tarehe ya Malipo Inayotakiwa *
+                        </label>
+                        {% render_field form.due_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                        {% if form.due_date.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.due_date.errors.0 }}
+                        </p>
+                        {% endif %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Tarehe ambayo malipo yanapaswa kulipwa
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method & Status Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-credit-card text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Njia ya Malipo na Hali</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Payment Method -->
+                    <div>
+                        <label for="{{ form.payment_method.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-wallet text-brown-600 mr-1"></i>
+                            Njia ya Malipo *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.payment_method class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.payment_method.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.payment_method.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-tasks text-brown-600 mr-1"></i>
+                            Hali ya Malipo *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.status class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.status.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.status.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-sticky-note text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Maelezo Zaidi</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Reference Number -->
+                    <div>
+                        <label for="{{ form.reference_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-hashtag text-brown-600 mr-1"></i>
+                            Nambari ya Kumbukumbu
+                        </label>
+                        {% render_field form.reference_number class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                        {% if form.reference_number.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.reference_number.errors.0 }}
+                        </p>
+                        {% endif %}
+                        {% if form.reference_number.help_text %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ form.reference_number.help_text }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tenant's Unit Info (Read-only) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-door-open text-brown-600 mr-1"></i>
+                            Chumba/Kiti
+                        </label>
+                        <div id="tenant-unit-info" class="p-4 border border-brown-200 bg-brown-50 rounded-xl">
+                            <p class="text-sm text-gray-500">Chagua mpangaji kwanza</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="mt-6">
+                    <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-edit text-brown-600 mr-1"></i>
+                        Maelezo (Ya Hiari)
+                    </label>
+                    {% render_field form.notes class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                    {% if form.notes.errors %}
+                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.notes.errors.0 }}
+                    </p>
+                    {% endif %}
+                    {% if form.notes.help_text %}
+                    <p class="mt-2 text-xs text-brown-500 flex items-center">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        {{ form.notes.help_text }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-8 border-t border-brown-200">
+                <div class="mb-4 sm:mb-0">
+                    {% if is_edit %}
+                    <a href="{% url 'payment_detail' payment.id %}" 
+                       class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift">
+                        <i class="fas fa-times mr-2"></i>
+                        Ghairi
+                    </a>
+                    {% else %}
+                    <a href="{% url 'payments_list' %}" 
+                       class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift">
+                        <i class="fas fa-times mr-2"></i>
+                        Ghairi
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="flex space-x-4">
+                    {% if is_edit %}
+                    <a href="{% url 'payment_detail' payment.id %}" 
+                       class="inline-flex items-center px-6 py-3 border border-brown-300 text-brown-700 bg-white rounded-xl hover:bg-brown-50 transition-all font-medium hover-lift">
+                        <i class="fas fa-eye mr-2"></i>
+                        Angalia Maelezo
+                    </a>
+                    {% endif %}
+                    <button type="submit" 
+                            class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun">
+                        <i class="fas fa-save mr-2"></i>
+                        {% if is_edit %}Hifadhi Mabadiliko 💰{% else %}Hifadhi Malipo 🎉{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Quick Tips Card -->
+    <div class="mt-8 bg-white rounded-2xl shadow-lg border border-brown-200 overflow-hidden glass">
+        <div class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-green-50 to-white">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-4">
+                    <i class="fas fa-lightbulb text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-landlord-dark font-display">Msaada wa Kurekodi Malipo</h3>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Ushauri wa Kufuata:</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Hakikisha namba ya kumbukumbu ni ya kipekee kwa kila malipo</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Tumia tarehe sahihi za malipo ili kuepuka kuchanganyikiwa</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Weka maelezo yoyote muhimu kuhusu malipo hayo</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Badilisha hali ya malipo iwe "Imekamilika" pale inapolipwa</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Mifano ya Namba za Kumbukumbu:</h4>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-blue-50 rounded-xl">
+                            <div class="flex items-center">
+                                <i class="fas fa-money-bill-wave text-blue-600 mr-3"></i>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Fedha Taslimu</p>
+                                    <p class="text-xs text-gray-600">CASH-2025-001, CASH-2025-002</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-green-50 rounded-xl">
+                            <div class="flex items-center">
+                                <i class="fas fa-mobile-alt text-green-600 mr-3"></i>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Pesa za Simu</p>
+                                    <p class="text-xs text-gray-600">MPESA-7ABC123, TIGO-8XYZ456</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-purple-50 rounded-xl">
+                            <div class="flex items-center">
+                                <i class="fas fa-university text-purple-600 mr-3"></i>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Benki</p>
+                                    <p class="text-xs text-gray-600">CRDB-12345, NMB-67890</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Dynamic tenant and property interaction
+document.addEventListener('DOMContentLoaded', function() {
+    const tenantSelect = document.getElementById('id_tenant');
+    const propertySelect = document.getElementById('id_property');
+    const tenantUnitInfo = document.getElementById('tenant-unit-info');
+    
+    // Fetch tenant details when tenant is selected
+    function updateTenantInfo() {
+        const tenantId = tenantSelect.value;
+        
+        if (!tenantId) {
+            tenantUnitInfo.innerHTML = '<p class="text-sm text-gray-500">Chagua mpangaji kwanza</p>';
+            return;
+        }
+        
+        // Fetch tenant details
+        fetch(`/dashboard/api/tenants/${tenantId}/details/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.unit) {
+                    tenantUnitInfo.innerHTML = `
+                        <div class="flex items-center">
+                            <i class="fas fa-door-open text-brown-600 mr-3"></i>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Chumba ${data.unit.unit_number}</p>
+                                <p class="text-xs text-gray-600">${data.unit.bedrooms} vyumba vya kulala • ${data.unit.bathrooms} bafu</p>
+                                <p class="text-xs font-medium text-gray-800 mt-1">Kodi: TZS ${data.unit.monthly_rent}/mwezi</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    tenantUnitInfo.innerHTML = `
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Hakuna chumba kilichowekwa</p>
+                                <p class="text-xs text-gray-600">Mpangaji huyu hajawekewa chumba bado</p>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Auto-select the tenant's property
+                if (data.property_id && propertySelect) {
+                    propertySelect.value = data.property_id;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading tenant details:', error);
+                tenantUnitInfo.innerHTML = '<p class="text-sm text-red-500">Hitilafu katika kupakia maelezo</p>';
+            });
+    }
+    
+    if (tenantSelect) {
+        tenantSelect.addEventListener('change', updateTenantInfo);
+        
+        // Trigger on page load if tenant is already selected
+        if (tenantSelect.value) {
+            updateTenantInfo();
+        }
+    }
+    
+    // Amount formatting
+    const amountInput = document.getElementById('id_amount');
+    if (amountInput) {
+        amountInput.addEventListener('blur', function() {
+            let value = parseFloat(this.value);
+            if (!isNaN(value) && value >= 0) {
+                this.value = value.toFixed(2);
+            }
+        });
+        
+        // Add thousands separator on focus out
+        amountInput.addEventListener('focusout', function() {
+            let value = this.value.replace(/,/g, '');
+            if (!isNaN(value) && value !== '') {
+                this.value = parseFloat(value).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        });
+        
+        // Remove separators on focus
+        amountInput.addEventListener('focus', function() {
+            this.value = this.value.replace(/,/g, '');
+        });
+    }
+    
+    // Date validation and auto-fill
+    const paymentDateInput = document.getElementById('id_payment_date');
+    const dueDateInput = document.getElementById('id_due_date');
+    
+    if (paymentDateInput && dueDateInput) {
+        // Set max date to today for payment date
+        const today = new Date().toISOString().split('T')[0];
+        paymentDateInput.max = today;
+        
+        // Auto-fill due date if empty when payment date changes
+        paymentDateInput.addEventListener('change', function() {
+            if (paymentDateInput.value && !dueDateInput.value) {
+                const paymentDate = new Date(paymentDateInput.value);
+                const dueDate = new Date(paymentDate);
+                dueDate.setDate(dueDate.getDate() + 30);
+                dueDateInput.value = dueDate.toISOString().split('T')[0];
+            }
+        });
+    }
+    
+    // Status-based styling
+    const statusSelect = document.getElementById('id_status');
+    if (statusSelect) {
+        function updateStatusStyle() {
+            const statusColors = {
+                'completed': 'border-green-500 bg-green-50 text-green-800',
+                'pending': 'border-yellow-500 bg-yellow-50 text-yellow-800',
+                'failed': 'border-red-500 bg-red-50 text-red-800',
+                'refunded': 'border-blue-500 bg-blue-50 text-blue-800'
+            };
+            
+            // Remove all status classes
+            Object.values(statusColors).forEach(colorClass => {
+                statusSelect.classList.remove(...colorClass.split(' '));
+            });
+            
+            // Add appropriate class
+            if (statusColors[statusSelect.value]) {
+                statusSelect.classList.add(...statusColors[statusSelect.value].split(' '));
+            }
+        }
+        
+        statusSelect.addEventListener('change', updateStatusStyle);
+        updateStatusStyle(); // Initial call
+    }
+});
+
+// Form validation
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
+    const requiredFields = form.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('border-red-500', 'bg-red-50');
+            isValid = false;
+            
+            // Add error message if not exists
+            if (!field.nextElementSibling?.classList?.contains('error-message')) {
+                const errorDiv = document.createElement('p');
+                errorDiv.className = 'mt-1 text-sm text-red-600 error-message';
+                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> Sehemu hii inahitajika`;
+                field.parentNode.insertBefore(errorDiv, field.nextSibling);
+            }
+        } else {
+            field.classList.remove('border-red-500', 'bg-red-50');
+            const errorMsg = field.nextElementSibling;
+            if (errorMsg?.classList?.contains('error-message')) {
+                errorMsg.remove();
+            }
+        }
+    });
+    
+    // Validate amount is positive
+    const amountInput = document.getElementById('id_amount');
+    if (amountInput && amountInput.value) {
+        const amount = parseFloat(amountInput.value.replace(/,/g, ''));
+        if (isNaN(amount) || amount <= 0) {
+            amountInput.classList.add('border-red-500', 'bg-red-50');
+            isValid = false;
+            
+            Toastify({
+                text: "Kiasi cha malipo lazima kiwe nambari chanya!",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#dc2626",
+                className: "rounded-xl shadow-lg",
+            }).showToast();
+        }
+    }
+    
+    if (!isValid) {
+        e.preventDefault();
+        // Scroll to first error
+        const firstError = form.querySelector('.border-red-500');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }
+    }
+});
+
+// Confetti on success (for new payments)
+document.addEventListener('DOMContentLoaded', function() {
+    if (!{{ is_edit|yesno:"true,false" }}) {
+        // Set focus to amount field for new payments
+        const amountInput = document.getElementById('id_amount');
+        if (amountInput) {
+            setTimeout(() => {
+                amountInput.focus();
+            }, 300);
+        }
+    }
+});
+</script>
+
+<style>
+/* Custom styling for form elements */
+.form-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
+    border-color: #a18072;
+}
+
+/* Status dropdown styling */
+#id_status option {
+    padding: 8px 12px;
+}
+
+#id_status option[value="completed"] {
+    background-color: #f0fdf4;
+    color: #166534;
+}
+
+#id_status option[value="pending"] {
+    background-color: #fefce8;
+    color: #854d0e;
+}
+
+#id_status option[value="failed"] {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+#id_status option[value="refunded"] {
+    background-color: #eff6ff;
+    color: #1e40af;
+}
+
+/* Payment method icons */
+#id_payment_method option {
+    padding: 8px 12px;
+}
+
+/* Amount input styling */
+#id_amount {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* Date input styling */
+input[type="date"] {
+    cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-color: #a18072;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .grid-cols-1.md\:grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

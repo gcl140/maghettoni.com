@@ -8,11 +8,11 @@ User = get_user_model()
 
 class Property(models.Model):
     PROPERTY_TYPES = [
-        ('house', 'House'),
-        ('apartment', 'Apartment'),
-        ('condo', 'Condo'),
-        ('townhouse', 'Townhouse'),
-        ('commercial', 'Commercial'),
+        ('nyumba', 'Nyumba'),
+        ('ghorofa', 'Ghorofa'),
+        ('kondo', 'Kondo'),
+        ('nyumba_mjini', 'Nyumba ya Mjini'),
+        ('biashara', 'Biashara'),
     ]
     
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='properties')
@@ -57,10 +57,18 @@ class Tenant(models.Model):
     phone = models.CharField(max_length=20)
     emergency_contact = models.CharField(max_length=100, blank=True)
     emergency_phone = models.CharField(max_length=20, blank=True)
-    lease_start_date = models.DateField()
-    lease_end_date = models.DateField()
+    move_in_date = models.DateField()
+    move_out_date = models.DateField(null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='tenant_profiles/', null=True, blank=True)
+    notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    STATUS_CHOICES = [
+        ('active', 'Hai'),
+        ('pending', 'Inasubiri'),
+        ('inactive', 'Haifanyi Kazi'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
     class Meta:
         ordering = ['-created_at']
@@ -70,21 +78,22 @@ class Tenant(models.Model):
     
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+    
 
 class Payment(models.Model):
     PAYMENT_METHODS = [
-        ('cash', 'Cash'),
-        ('check', 'Check'),
-        ('bank_transfer', 'Bank Transfer'),
-        ('credit_card', 'Credit Card'),
-        ('mobile_money', 'Mobile Money'),
+        ('cash', 'Fedha Taslimu'),
+        ('check', 'Hundi'),
+        ('bank_transfer', 'Uhamishaji wa Benki'),
+        ('credit_card', 'Kadi ya Mkopo'),
+        ('mobile_money', 'Pesa za Simu'),
     ]
     
     PAYMENT_STATUS = [
-        ('pending', 'Pending'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed'),
-        ('refunded', 'Refunded'),
+        ('pending', 'Inasubiri'),
+        ('completed', 'Imekamilika'),
+        ('failed', 'Imeshindwa'),
+        ('refunded', 'Imerudishwa'),
     ]
     
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='payments')
@@ -106,17 +115,17 @@ class Payment(models.Model):
 
 class MaintenanceRequest(models.Model):
     PRIORITY_LEVELS = [
-        ('low', 'Low'),
-        ('medium', 'Medium'),
-        ('high', 'High'),
-        ('emergency', 'Emergency'),
+        ('low', 'Chini'),
+        ('medium', 'Wastani'),
+        ('high', 'Juu'),
+        ('emergency', 'Dharura'),
     ]
     
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled'),
+        ('pending', 'Inasubiri'),
+        ('in_progress', 'Inaendelea'),
+        ('completed', 'Imekamilika'),
+        ('cancelled', 'Imefutwa'),
     ]
     
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='maintenance_requests')

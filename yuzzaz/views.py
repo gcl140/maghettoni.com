@@ -153,7 +153,7 @@ def login(request):
             auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, "Umefanikiwa kuingia.")
             if user.is_staff:
-                return redirect('home')
+                return redirect('dashboard')
             else:
                 return redirect('dashboard')  # Standard redirect — adjust to your default user landing page
 

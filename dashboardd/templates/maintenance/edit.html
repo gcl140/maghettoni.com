@@ -1,0 +1,645 @@
+{% extends 'dashboardd/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{{ title }} - Maghettoni{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    {% if is_edit %}
+    <a href="{% url 'maintenance_request_detail' maintenance_request.id %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Request
+    </a>
+    {% else %}
+    <a href="{% url 'maintenance_requests' %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Maintenance
+    </a>
+    {% endif %}
+</div>
+
+<div class="max-w-4xl mx-auto">
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-brown-200 overflow-hidden glass card-shine">
+        <!-- Card Header -->
+        <div class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-brown-50 to-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br 
+                        {% if is_edit %}from-yellow-500 to-yellow-600{% else %}from-blue-500 to-blue-600{% endif %} 
+                        rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-tools text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-landlord-dark font-display">{{ title }}</h3>
+                        <p class="text-brown-600 mt-1 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-landlord-accent"></i>
+                            {% if is_edit %}
+                            Update maintenance request details
+                            {% else %}
+                            Report a new maintenance issue
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% if is_edit %}
+                <div class="flex items-center">
+                    <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium 
+                        {% if maintenance_request.priority == 'emergency' %}bg-red-100 text-red-800 border-red-200
+                        {% elif maintenance_request.priority == 'high' %}bg-orange-100 text-orange-800 border-orange-200
+                        {% elif maintenance_request.priority == 'medium' %}bg-yellow-100 text-yellow-800 border-yellow-200
+                        {% else %}bg-green-100 text-green-800 border-green-200{% endif %} 
+                        border">
+                        <i class="fas fa-flag mr-2"></i>
+                        {{ maintenance_request.get_priority_display }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form method="POST" class="p-8">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 mr-3 text-xl"></i>
+                    <p class="text-sm text-red-800 font-medium">{{ form.non_field_errors }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Basic Information Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-info-circle text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Basic Information</h4>
+                </div>
+                
+                <!-- Title -->
+                <div class="mb-6">
+                    <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-heading text-brown-600 mr-1"></i>
+                        Issue Title *
+                    </label>
+                    {% render_field form.title class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                    {% if form.title.errors %}
+                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.title.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-2 text-xs text-brown-500 flex items-center">
+                        <i class="fas fa-lightbulb mr-1"></i>
+                        Be specific and descriptive (e.g., "Leaking faucet in kitchen sink")
+                    </p>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-align-left text-brown-600 mr-1"></i>
+                        Description *
+                    </label>
+                    {% render_field form.description class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                    {% if form.description.errors %}
+                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.description.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-2 text-xs text-brown-500 flex items-center">
+                        <i class="fas fa-lightbulb mr-1"></i>
+                        Include details about the issue, location, and any observations
+                    </p>
+                </div>
+            </div>
+
+            <!-- Location & Tenant Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-map-marker-alt text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Location & Reporter</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Property -->
+                    <div>
+                        <label for="{{ form.property.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-building text-brown-600 mr-1"></i>
+                            Property *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.property.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.property.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Unit -->
+                    <div>
+                        <label for="{{ form.unit.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-door-open text-brown-600 mr-1"></i>
+                            Unit *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.unit class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.unit.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.unit.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tenant -->
+                    <div class="md:col-span-2">
+                        <label for="{{ form.tenant.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user text-brown-600 mr-1"></i>
+                            Reported By (Tenant) *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.tenant class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.tenant.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.tenant.errors.0 }}
+                        </p>
+                        {% endif %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Select the tenant who reported this issue
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Priority & Status Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-sliders-h text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Priority & Status</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Priority -->
+                    <div>
+                        <label for="{{ form.priority.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-exclamation-triangle text-brown-600 mr-1"></i>
+                            Priority Level *
+                        </label>
+                        <div class="space-y-3">
+                            {% for choice in form.priority.field.choices %}
+                            <div class="flex items-center p-3 border rounded-xl 
+                                {% if form.priority.value == choice.0 %}border-brown-500 bg-brown-50
+                                {% else %}border-brown-200 hover:border-brown-300 hover:bg-brown-50{% endif %}
+                                transition-all cursor-pointer"
+                                onclick="document.getElementById('id_priority_{{ forloop.counter0 }}').checked = true; updatePriorityClass()">
+                                <input type="radio" name="{{ form.priority.name }}" 
+                                       id="id_priority_{{ forloop.counter0 }}" 
+                                       value="{{ choice.0 }}"
+                                       class="hidden" 
+                                       {% if form.priority.value == choice.0 %}checked{% endif %}>
+                                <div class="flex items-center justify-center w-6 h-6 rounded-full border mr-3
+                                    {% if form.priority.value == choice.0 %}border-brown-500 bg-brown-500
+                                    {% else %}border-brown-300{% endif %}">
+                                    {% if form.priority.value == choice.0 %}
+                                    <i class="fas fa-check text-white text-xs"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <span class="text-sm font-medium text-gray-900">{{ choice.1 }}</span>
+                                    <div class="flex items-center mt-1">
+                                        {% if choice.0 == 'emergency' %}
+                                        <span class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">Dharura</span>
+                                        <span class="text-xs text-gray-500 ml-2">Response: Immediate</span>
+                                        {% elif choice.0 == 'high' %}
+                                        <span class="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded-full">Juu</span>
+                                        <span class="text-xs text-gray-500 ml-2">Response: 24 hours</span>
+                                        {% elif choice.0 == 'medium' %}
+                                        <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Wastani</span>
+                                        <span class="text-xs text-gray-500 ml-2">Response: 3-5 days</span>
+                                        {% else %}
+                                        <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Chini</span>
+                                        <span class="text-xs text-gray-500 ml-2">Response: 1-2 weeks</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.priority.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.priority.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-tasks text-brown-600 mr-1"></i>
+                            Status *
+                        </label>
+                        <div class="space-y-3">
+                            {% for choice in form.status.field.choices %}
+                            <div class="flex items-center p-3 border rounded-xl 
+                                {% if form.status.value == choice.0 %}border-brown-500 bg-brown-50
+                                {% else %}border-brown-200 hover:border-brown-300 hover:bg-brown-50{% endif %}
+                                transition-all cursor-pointer"
+                                onclick="document.getElementById('id_status_{{ forloop.counter0 }}').checked = true;">
+                                <input type="radio" name="{{ form.status.name }}" 
+                                       id="id_status_{{ forloop.counter0 }}" 
+                                       value="{{ choice.0 }}"
+                                       class="hidden" 
+                                       {% if form.status.value == choice.0 %}checked{% endif %}>
+                                <div class="flex items-center justify-center w-6 h-6 rounded-full border mr-3
+                                    {% if form.status.value == choice.0 %}
+                                        {% if choice.0 == 'completed' %}border-green-500 bg-green-500
+                                        {% elif choice.0 == 'in_progress' %}border-blue-500 bg-blue-500
+                                        {% elif choice.0 == 'pending' %}border-yellow-500 bg-yellow-500
+                                        {% else %}border-red-500 bg-red-500{% endif %}
+                                    {% else %}border-brown-300{% endif %}">
+                                    {% if form.status.value == choice.0 %}
+                                    <i class="fas fa-check text-white text-xs"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-sm font-medium text-gray-900">{{ choice.1 }}</span>
+                                    {% if choice.0 == 'completed' %}
+                                    <p class="text-xs text-gray-500 mt-1">Issue has been resolved</p>
+                                    {% elif choice.0 == 'in_progress' %}
+                                    <p class="text-xs text-gray-500 mt-1">Work is currently being done</p>
+                                    {% elif choice.0 == 'pending' %}
+                                    <p class="text-xs text-gray-500 mt-1">Waiting for action</p>
+                                    {% else %}
+                                    <p class="text-xs text-gray-500 mt-1">Request has been cancelled</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.status.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.status.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-money-bill-wave text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Repair Cost</h4>
+                </div>
+                
+                <div class="max-w-md">
+                    <label for="{{ form.cost.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-dollar-sign text-brown-600 mr-1"></i>
+                        Estimated/Actual Cost
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500">$</span>
+                        </div>
+                        {% render_field form.cost class="block w-full pl-8 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                    </div>
+                    {% if form.cost.errors %}
+                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.cost.errors.0 }}
+                    </p>
+                    {% endif %}
+                    {% if form.cost.help_text %}
+                    <p class="mt-2 text-xs text-brown-500 flex items-center">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        {{ form.cost.help_text }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-8 border-t border-brown-200">
+                <div class="mb-4 sm:mb-0">
+                    {% if is_edit %}
+                    <a href="{% url 'maintenance_request_detail' maintenance_request.id %}" 
+                       class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                    {% else %}
+                    <a href="{% url 'maintenance_requests' %}" 
+                       class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="flex space-x-4">
+                    {% if is_edit %}
+                    <a href="{% url 'maintenance_request_detail' maintenance_request.id %}" 
+                       class="inline-flex items-center px-6 py-3 border border-brown-300 text-brown-700 bg-white rounded-xl hover:bg-brown-50 transition-all font-medium hover-lift">
+                        <i class="fas fa-eye mr-2"></i>
+                        View Details
+                    </a>
+                    {% endif %}
+                    <button type="submit" 
+                            class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun">
+                        <i class="fas fa-save mr-2"></i>
+                        {% if is_edit %}Update Request 🛠️{% else %}Create Request 🎉{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Quick Reference Card -->
+    <div class="mt-8 bg-white rounded-2xl shadow-lg border border-brown-200 overflow-hidden glass">
+        <div class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-blue-50 to-white">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-4">
+                    <i class="fas fa-book text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-landlord-dark font-display">Priority Guidelines</h3>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">When to use each priority:</h4>
+                    <div class="space-y-4">
+                        <div class="p-3 border border-red-200 bg-red-50 rounded-xl">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+                                <span class="text-sm font-bold text-red-800">Dharura (Emergency)</span>
+                            </div>
+                            <p class="text-xs text-gray-700">• Flooding or major water leaks<br>• No electricity or power outage<br>• Gas leaks or smell of gas<br>• Broken locks or security issues</p>
+                        </div>
+                        <div class="p-3 border border-orange-200 bg-orange-50 rounded-xl">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-exclamation-circle text-orange-600 mr-2"></i>
+                                <span class="text-sm font-bold text-orange-800">Juu (High)</span>
+                            </div>
+                            <p class="text-xs text-gray-700">• Broken appliances (fridge, stove)<br>• Heating/AC not working<br>• Minor plumbing issues<br>• Window/door repairs</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">&nbsp;</h4>
+                    <div class="space-y-4">
+                        <div class="p-3 border border-yellow-200 bg-yellow-50 rounded-xl">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-clock text-yellow-600 mr-2"></i>
+                                <span class="text-sm font-bold text-yellow-800">Wastani (Medium)</span>
+                            </div>
+                            <p class="text-xs text-gray-700">• Painting and cosmetic repairs<br>• Minor electrical issues<br>• Cabinet/drawer repairs<br>• General maintenance</p>
+                        </div>
+                        <div class="p-3 border border-green-200 bg-green-50 rounded-xl">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                <span class="text-sm font-bold text-green-800">Chini (Low)</span>
+                            </div>
+                            <p class="text-xs text-gray-700">• Landscaping and gardening<br>• Cosmetic touch-ups<br>• Preventative maintenance<br>• General inspections</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Dynamic unit and tenant filtering based on property
+document.addEventListener('DOMContentLoaded', function() {
+    const propertySelect = document.getElementById('id_property');
+    const unitSelect = document.getElementById('id_unit');
+    const tenantSelect = document.getElementById('id_tenant');
+    
+    function updateUnitsAndTenants() {
+        const propertyId = propertySelect.value;
+        
+        if (!propertyId) {
+            unitSelect.innerHTML = '<option value="">Select a property first</option>';
+            tenantSelect.innerHTML = '<option value="">Select a property first</option>';
+            unitSelect.disabled = true;
+            tenantSelect.disabled = true;
+            return;
+        }
+        
+        // Fetch units and tenants for this property
+        fetch(`/dashboard/api/properties/${propertyId}/units-tenants/`)
+            .then(response => response.json())
+            .then(data => {
+                // Update units dropdown
+                unitSelect.innerHTML = '<option value="">Select a unit</option>';
+                data.units.forEach(unit => {
+                    const option = document.createElement('option');
+                    option.value = unit.id;
+                    option.textContent = `Unit ${unit.unit_number} (${unit.bedrooms} bed, ${unit.bathrooms} bath)`;
+                    option.selected = unit.id == {{ form.unit.value|default:"null" }};
+                    unitSelect.appendChild(option);
+                });
+                unitSelect.disabled = false;
+                
+                // Update tenants dropdown
+                tenantSelect.innerHTML = '<option value="">Select a tenant</option>';
+                data.tenants.forEach(tenant => {
+                    const option = document.createElement('option');
+                    option.value = tenant.id;
+                    option.textContent = `${tenant.first_name} ${tenant.last_name} - Unit ${tenant.unit_number || 'N/A'}`;
+                    option.selected = tenant.id == {{ form.tenant.value|default:"null" }};
+                    tenantSelect.appendChild(option);
+                });
+                tenantSelect.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+                unitSelect.innerHTML = '<option value="">Error loading units</option>';
+                tenantSelect.innerHTML = '<option value="">Error loading tenants</option>';
+            });
+    }
+    
+    if (propertySelect) {
+        propertySelect.addEventListener('change', updateUnitsAndTenants);
+        
+        // Trigger on page load if property is already selected
+        if (propertySelect.value) {
+            updateUnitsAndTenants();
+        }
+    }
+    
+    // Update form based on priority selection
+    function updatePriorityClass() {
+        const priorityRadios = document.querySelectorAll('input[name="priority"]');
+        priorityRadios.forEach(radio => {
+            const parentDiv = radio.parentElement;
+            if (radio.checked) {
+                parentDiv.classList.add('border-brown-500', 'bg-brown-50');
+                parentDiv.classList.remove('border-brown-200');
+            } else {
+                parentDiv.classList.remove('border-brown-500', 'bg-brown-50');
+                parentDiv.classList.add('border-brown-200');
+            }
+        });
+    }
+    
+    // Initialize priority styling
+    updatePriorityClass();
+    
+    // Add click handlers to all priority options
+    document.querySelectorAll('input[name="priority"]').forEach(radio => {
+        radio.addEventListener('change', updatePriorityClass);
+    });
+    
+    // Cost input formatting
+    const costInput = document.getElementById('id_cost');
+    if (costInput) {
+        costInput.addEventListener('blur', function() {
+            let value = parseFloat(this.value);
+            if (!isNaN(value) && value >= 0) {
+                this.value = value.toFixed(2);
+            } else if (this.value.trim() === '') {
+                this.value = '';
+            }
+        });
+    }
+    
+    // Auto-focus title field for new requests
+    if (!{{ is_edit|yesno:"true,false" }}) {
+        const titleInput = document.getElementById('id_title');
+        if (titleInput) {
+            titleInput.focus();
+        }
+    }
+});
+
+// Form validation
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
+    const requiredFields = form.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim() && field.type !== 'radio' && field.type !== 'checkbox') {
+            field.classList.add('border-red-500', 'bg-red-50');
+            isValid = false;
+        } else {
+            field.classList.remove('border-red-500', 'bg-red-50');
+        }
+    });
+    
+    // Check radio buttons
+    const prioritySelected = document.querySelector('input[name="priority"]:checked');
+    const statusSelected = document.querySelector('input[name="status"]:checked');
+    
+    if (!prioritySelected) {
+        Toastify({
+            text: "Please select a priority level!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#dc2626",
+            className: "rounded-xl shadow-lg",
+        }).showToast();
+        isValid = false;
+    }
+    
+    if (!statusSelected) {
+        Toastify({
+            text: "Please select a status!",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#dc2626",
+            className: "rounded-xl shadow-lg",
+        }).showToast();
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        e.preventDefault();
+        // Scroll to first error
+        const firstError = form.querySelector('.border-red-500') || 
+                          document.querySelector('input[name="priority"]')?.parentElement ||
+                          document.querySelector('input[name="status"]')?.parentElement;
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+});
+</script>
+
+<style>
+/* Custom radio button styling */
+input[type="radio"]:checked + div {
+    background-color: #603b2b;
+    border-color: #603b2b;
+}
+
+/* Priority-specific border colors */
+.border-red-500 { border-color: #ef4444 !important; }
+.border-orange-500 { border-color: #f97316 !important; }
+.border-yellow-500 { border-color: #eab308 !important; }
+.border-green-500 { border-color: #22c55e !important; }
+
+/* Hover effects for select options */
+.form-input option:hover {
+    background-color: #f2e8e5;
+}
+
+/* Focus styles */
+.form-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
+    border-color: #a18072;
+}
+
+/* Transition for radio button groups */
+.radio-group {
+    transition: all 0.3s ease;
+}
+
+.radio-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Cost input styling */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 2em;
+}
+</style>
+{% endblock %}

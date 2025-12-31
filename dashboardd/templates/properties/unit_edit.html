@@ -1,0 +1,465 @@
+{% extends 'dashboardd/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{{ title }} - Maghettoni{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="{% url 'property_units' property.id %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Units
+    </a>
+</div>
+
+<div class="max-w-4xl mx-auto">
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-brown-200 overflow-hidden glass card-shine">
+        <!-- Card Header -->
+        <div class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-brown-50 to-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br 
+                        {% if is_edit %}from-yellow-500 to-yellow-600{% else %}from-green-500 to-green-600{% endif %} 
+                        rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-door-open text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-landlord-dark font-display">{{ title }}</h3>
+                        <p class="text-brown-600 mt-1 flex items-center gap-2">
+                            <i class="fas fa-home text-landlord-accent"></i>
+                            {{ property.name }}
+                        </p>
+                    </div>
+                </div>
+                {% if is_edit %}
+                <div class="flex items-center">
+                    <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-brown-100 text-brown-800 border border-brown-200">
+                        <i class="fas fa-hashtag mr-2"></i>
+                        Unit {{ unit.unit_number }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form method="POST" class="p-8">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 mr-3 text-xl"></i>
+                    <div>
+                        <p class="text-sm text-red-800 font-medium">{{ form.non_field_errors }}</p>
+                        {% if duplicate_error %}
+                        <p class="text-sm text-red-800 mt-1">{{ duplicate_error }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Unit Information Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-info-circle text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Unit Information</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Unit Number -->
+                    <div>
+                        <label for="{{ form.unit_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-hashtag text-brown-600 mr-1"></i>
+                            Unit Number *
+                        </label>
+                        {% render_field form.unit_number class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                        {% if form.unit_number.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.unit_number.errors.0 }}
+                        </p>
+                        {% endif %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-lightbulb mr-1"></i>
+                            Example: A101, Ground-1, Suite 2B
+                        </p>
+                    </div>
+
+                    <!-- Monthly Rent -->
+                    <div>
+                        <label for="{{ form.monthly_rent.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-money-bill-wave text-brown-600 mr-1"></i>
+                            Monthly Rent *
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500">$</span>
+                            </div>
+                            {% render_field form.monthly_rent class="block w-full pl-8 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                        </div>
+                        {% if form.monthly_rent.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.monthly_rent.errors.0 }}
+                        </p>
+                        {% endif %}
+                        {% if form.monthly_rent.help_text %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ form.monthly_rent.help_text }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specifications Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-expand-arrows-alt text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Specifications</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Bedrooms -->
+                    <div>
+                        <label for="{{ form.bedrooms.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-bed text-brown-600 mr-1"></i>
+                            Bedrooms *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.bedrooms class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-gray-500">beds</span>
+                            </div>
+                        </div>
+                        {% if form.bedrooms.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.bedrooms.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Bathrooms -->
+                    <div>
+                        <label for="{{ form.bathrooms.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-bath text-brown-600 mr-1"></i>
+                            Bathrooms *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.bathrooms class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-gray-500">baths</span>
+                            </div>
+                        </div>
+                        {% if form.bathrooms.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.bathrooms.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Square Feet -->
+                    <div>
+                        <label for="{{ form.square_feet.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-ruler-combined text-brown-600 mr-1"></i>
+                            Square Feet
+                        </label>
+                        <div class="relative">
+                            {% render_field form.square_feet class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-gray-500">sqft</span>
+                            </div>
+                        </div>
+                        {% if form.square_feet.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.square_feet.errors.0 }}
+                        </p>
+                        {% endif %}
+                        {% if form.square_feet.help_text %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ form.square_feet.help_text }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status & Description Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-sliders-h text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Status & Description</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Occupancy Status -->
+                    <div>
+                        <label for="{{ form.is_occupied.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user-check text-brown-600 mr-1"></i>
+                            Occupancy Status *
+                        </label>
+                        <div class="p-4 border border-brown-200 rounded-xl bg-brown-50">
+                            <div class="flex items-center">
+                                <div class="flex items-center h-5">
+                                    {% render_field form.is_occupied class="h-5 w-5 text-brown-600 border-brown-300 rounded focus:ring-brown-500" %}
+                                </div>
+                                <div class="ml-3">
+                                    <label for="{{ form.is_occupied.id_for_label }}" class="text-sm font-medium text-gray-700">
+                                        Mark as occupied
+                                    </label>
+                                    <p class="text-xs text-brown-500 mt-1">
+                                        {% if is_edit and unit.is_occupied %}
+                                        Currently occupied by a tenant
+                                        {% else %}
+                                        Uncheck to mark as available for rent
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.is_occupied.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.is_occupied.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Property Display (Read-only) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-building text-brown-600 mr-1"></i>
+                            Property
+                        </label>
+                        <div class="p-4 border border-brown-200 bg-brown-50 rounded-xl">
+                            <p class="text-sm font-medium text-gray-900">{{ property.name }}</p>
+                            <p class="text-xs text-brown-500 mt-1">{{ property.address|truncatechars:40 }}</p>
+                        </div>
+                        <input type="hidden" name="property" value="{{ property.id }}">
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mt-6">
+                    <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-sticky-note text-brown-600 mr-1"></i>
+                        Description (Optional)
+                    </label>
+                    {% render_field form.description class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" rows="4" %}
+                    {% if form.description.errors %}
+                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.description.errors.0 }}
+                    </p>
+                    {% endif %}
+                    <p class="mt-2 text-xs text-brown-500 flex items-center">
+                        <i class="fas fa-lightbulb mr-1"></i>
+                        Add any special features, amenities, or notes about this unit
+                    </p>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-8 border-t border-brown-200">
+                <div class="mb-4 sm:mb-0">
+                    <a href="{% url 'property_units' property.id %}" 
+                       class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                </div>
+                <div class="flex space-x-4">
+                    {% if is_edit %}
+                    <a href="{% url 'property_units' property.id %}" 
+                       class="inline-flex items-center px-6 py-3 border border-brown-300 text-brown-700 bg-white rounded-xl hover:bg-brown-50 transition-all font-medium hover-lift">
+                        <i class="fas fa-eye mr-2"></i>
+                        View All Units
+                    </a>
+                    {% endif %}
+                    <button type="submit" 
+                            class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun">
+                        <i class="fas fa-save mr-2"></i>
+                        {% if is_edit %}Update Unit 🚀{% else %}Create Unit 🎉{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Quick Tips Card -->
+    <div class="mt-8 bg-white rounded-2xl shadow-lg border border-brown-200 overflow-hidden glass">
+        <div class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-green-50 to-white">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-4">
+                    <i class="fas fa-lightbulb text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-landlord-dark font-display">Quick Tips for Unit Setup</h3>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Best Practices:</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Use consistent unit numbering (e.g., A101, A102, B101)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Set realistic market-based rent prices</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Include detailed descriptions for better marketing</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Update occupancy status regularly</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Common Unit Types:</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center p-3 bg-blue-50 rounded-xl">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <span class="text-xs font-bold text-blue-600">S</span>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">Studio (0 bed, 1 bath)</span>
+                        </div>
+                        <div class="flex items-center p-3 bg-green-50 rounded-xl">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <span class="text-xs font-bold text-green-600">1B</span>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">1 Bedroom (1 bed, 1 bath)</span>
+                        </div>
+                        <div class="flex items-center p-3 bg-yellow-50 rounded-xl">
+                            <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                                <span class="text-xs font-bold text-yellow-600">2B</span>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">2 Bedroom (2 bed, 1-2 bath)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-format rent input
+const rentInput = document.getElementById('id_monthly_rent');
+if (rentInput) {
+    rentInput.addEventListener('blur', function() {
+        let value = parseFloat(this.value);
+        if (!isNaN(value) && value >= 0) {
+            this.value = value.toFixed(2);
+        }
+    });
+}
+
+// Dynamic price suggestions based on bedrooms
+const bedroomsInput = document.getElementById('id_bedrooms');
+if (bedroomsInput) {
+    const priceSuggestions = {
+        0: '800 - 1200',  // Studio
+        1: '1200 - 1800', // 1 bedroom
+        2: '1800 - 2500', // 2 bedrooms
+        3: '2500 - 3500', // 3 bedrooms
+        4: '3500 - 5000'  // 4+ bedrooms
+    };
+    
+    bedroomsInput.addEventListener('change', function() {
+        const beds = parseInt(this.value) || 0;
+        const suggestion = priceSuggestions[beds] || priceSuggestions[4];
+        
+        // Show suggestion tooltip
+        let tooltip = document.getElementById('price-suggestion');
+        if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.id = 'price-suggestion';
+            tooltip.className = 'mt-2 p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800';
+            rentInput.parentNode.appendChild(tooltip);
+        }
+        tooltip.innerHTML = `
+            <i class="fas fa-lightbulb mr-1"></i>
+            <strong>Market suggestion:</strong> $${suggestion} per month for ${beds} bedroom${beds !== 1 ? 's' : ''}
+        `;
+    });
+}
+
+// Form validation
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim() && field.type !== 'checkbox') {
+                field.classList.add('border-red-500', 'bg-red-50');
+                isValid = false;
+            } else {
+                field.classList.remove('border-red-500', 'bg-red-50');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            // Scroll to first error
+            const firstError = form.querySelector('.border-red-500');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+            
+            // Show error message
+            Toastify({
+                text: "Please fill in all required fields!",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#dc2626",
+                className: "rounded-xl shadow-lg",
+            }).showToast();
+        }
+    });
+});
+</script>
+
+<style>
+/* Custom checkbox styling */
+input[type="checkbox"] {
+    accent-color: #603b2b;
+}
+
+/* Number input styling */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 2em;
+}
+
+/* Focus styles */
+.form-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
+    border-color: #a18072;
+}
+</style>
+{% endblock %}

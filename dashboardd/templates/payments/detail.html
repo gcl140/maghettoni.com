@@ -1,0 +1,285 @@
+{% extends 'dashboardd/base.html' %}
+
+{% block title %}Payment {{ payment.reference_number }} - Landlord Management System{% endblock %}
+{% block page_title %}Payment Details{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="{% url 'payments_list' %}" class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Payments
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Details -->
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 font-sans">Payment Details</h3>
+                        <p class="text-sm text-gray-600 mt-1">Reference: {{ payment.reference_number|default:"N/A" }}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
+                            {% if payment.status == 'completed' %}bg-green-100 text-green-800
+                            {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-800
+                            {% elif payment.status == 'failed' %}bg-red-100 text-red-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            <i class="fas fa-circle text-[6px] mr-1"></i>
+                            {{ payment.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <!-- Amount Card -->
+                <div class="mb-6 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border border-green-200">
+                    <div class="text-center">
+                        <p class="text-sm font-medium text-green-800 mb-2">Payment Amount</p>
+                        <p class="text-4xl font-bold text-green-900">${{ payment.amount }}</p>
+                    </div>
+                </div>
+                
+                <!-- Details Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-4">Payment Information</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs text-gray-500">Payment Date</p>
+                                <p class="text-sm font-medium text-gray-900">{{ payment.payment_date|date:"F j, Y" }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Due Date</p>
+                                <p class="text-sm font-medium {% if is_overdue %}text-red-600{% else %}text-gray-900{% endif %}">
+                                    {{ payment.due_date|date:"F j, Y" }}
+                                    {% if is_overdue %}
+                                    <span class="ml-2 text-xs font-medium bg-red-100 text-red-800 px-2 py-1 rounded">OVERDUE</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Payment Method</p>
+                                <p class="text-sm font-medium text-gray-900">{{ payment.get_payment_method_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-4">Related Information</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs text-gray-500">Tenant</p>
+                                <div class="flex items-center mt-1">
+                                    <div class="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-blue-600"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium text-gray-900">{{ payment.tenant.full_name }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Property</p>
+                                <div class="flex items-center mt-1">
+                                    <div class="flex-shrink-0 h-8 w-8 bg-brown-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-home text-brown-600"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium text-gray-900">{{ payment.property.name }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Recorded On</p>
+                                <p class="text-sm font-medium text-gray-900">{{ payment.created_at|date:"F j, Y, g:i a" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notes Section -->
+                {% if payment.notes %}
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Notes</h4>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-700 whitespace-pre-line">{{ payment.notes }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Actions Card -->
+        <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <h3 class="text-lg font-semibold text-gray-800 font-sans">Quick Actions</h3>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-wrap gap-3">
+                    {% if payment.status == 'pending' %}
+                    <form method="POST" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" name="mark_paid" 
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Mark as Paid
+                        </button>
+                    </form>
+                    {% endif %}
+                    
+                    <form method="POST" class="inline">
+                        {% csrf_token %}
+                        <select name="status" 
+                                onchange="if(this.value) this.form.submit()"
+                                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brown-500 focus:border-brown-500">
+                            <option value="">Change Status</option>
+                            <option value="pending" {% if payment.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="completed" {% if payment.status == 'completed' %}selected{% endif %}>Completed</option>
+                            <option value="failed" {% if payment.status == 'failed' %}selected{% endif %}>Failed</option>
+                            <option value="refunded" {% if payment.status == 'refunded' %}selected{% endif %}>Refunded</option>
+                        </select>
+                    </form>
+                    
+                    <a href="#" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-print mr-2"></i>
+                        Print Receipt
+                    </a>
+                    
+                    <a href="#" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Send Reminder
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="space-y-6">
+        <!-- Tenant Info Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white">
+                <h3 class="text-lg font-semibold text-gray-800 font-sans">Tenant Information</h3>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-sm font-semibold text-gray-900">{{ payment.tenant.full_name }}</h4>
+                        <p class="text-xs text-gray-500">Tenant ID: {{ payment.tenant.id|stringformat:"04d" }}</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-xs text-gray-500">Email</p>
+                        <a href="mailto:{{ payment.tenant.user.email }}" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+                            {{ payment.tenant.user.email }}
+                        </a>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Phone</p>
+                        <a href="tel:{{ payment.tenant.user.phone }}" class="text-sm text-gray-900">
+                            {{ payment.tenant.user.phone }}
+                        </a>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Current Unit</p>
+                        <p class="text-sm font-medium text-gray-900">
+                            {% if payment.tenant.unit %}
+                            Unit {{ payment.tenant.unit.unit_number }}
+                            {% else %}
+                            Not assigned
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <a href="{% url 'tenant_detail' payment.tenant.id %}" 
+                       class="inline-flex items-center text-sm text-brown-600 hover:text-brown-800 font-medium">
+                        <i class="fas fa-external-link-alt mr-2"></i>
+                        View Tenant Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Property Info Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
+                <h3 class="text-lg font-semibold text-gray-800 font-sans">Property Information</h3>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-home text-brown-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-sm font-semibold text-gray-900">{{ payment.property.name }}</h4>
+                        <p class="text-xs text-gray-500">{{ payment.property.get_property_type_display }}</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-xs text-gray-500">Address</p>
+                        <p class="text-sm text-gray-900">{{ payment.property.address|truncatechars:50 }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Total Units</p>
+                        <p class="text-sm font-medium text-gray-900">{{ payment.property.units }} units</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <a href="{% url 'property_detail' payment.property.id %}" 
+                       class="inline-flex items-center text-sm text-brown-600 hover:text-brown-800 font-medium">
+                        <i class="fas fa-external-link-alt mr-2"></i>
+                        View Property Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Timeline Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <h3 class="text-lg font-semibold text-gray-800 font-sans">Payment Timeline</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-8 w-8 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                            <i class="fas fa-check text-green-600 text-xs"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-900">Record Created</p>
+                            <p class="text-xs text-gray-500">{{ payment.created_at|date:"M d, Y g:i a" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-8 w-8 
+                            {% if payment.status == 'completed' %}bg-green-100 text-green-600
+                            {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-600
+                            {% else %}bg-gray-100 text-gray-600{% endif %} 
+                            rounded-full flex items-center justify-center mt-1">
+                            <i class="fas fa-circle text-xs"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-900">Current Status</p>
+                            <p class="text-xs text-gray-500">{{ payment.get_status_display }} - {{ payment.payment_date|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

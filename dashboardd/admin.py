@@ -17,8 +17,8 @@ class UnitAdmin(admin.ModelAdmin):
 
 @admin.register(Tenant)
 class TenantAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'property', 'unit', 'email', 'phone', 'lease_start_date']
-    list_filter = ['property', 'lease_start_date']
+    list_display = ['first_name', 'last_name', 'property', 'unit', 'email', 'phone', 'move_in_date']
+    list_filter = ['property', 'move_in_date']
     search_fields = ['first_name', 'last_name', 'email', 'phone']
     raw_id_fields = ['property', 'unit', 'user']
 

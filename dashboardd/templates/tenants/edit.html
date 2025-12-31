@@ -1,0 +1,606 @@
+{% extends 'dashboardd/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}{{ title }} - Maghettoni{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    {% if is_edit %}
+    <a href="{% url 'tenant_detail' tenant.id %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Tenant Profile
+    </a>
+    {% else %}
+    <a href="{% url 'tenant_list' %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Tenants
+    </a>
+    {% endif %}
+</div>
+
+<div class="max-w-4xl mx-auto">
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-brown-200 overflow-hidden glass card-shine">
+        <!-- Card Header -->
+        <div class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-brown-50 to-white">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-brown-600 to-brown-700 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user-plus text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-landlord-dark font-display">{{ title }}</h3>
+                        <p class="text-brown-600 mt-1 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-landlord-accent"></i>
+                            {% if is_edit %}
+                            Update tenant information below
+                            {% else %}
+                            Add a new tenant to your property
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% if is_edit %}
+                <div class="flex items-center">
+                    <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-brown-100 text-brown-800 border border-brown-200">
+                        <i class="fas fa-id-badge mr-2"></i>
+                        ID: {{ tenant.id|stringformat:"04d" }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form method="POST" enctype="multipart/form-data" class="p-8">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 mr-3 text-xl"></i>
+                    <p class="text-sm text-red-800 font-medium">{{ form.non_field_errors }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Personal Information Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Personal Information</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- First Name -->
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-signature text-brown-600 mr-1"></i>
+                            First Name *
+                        </label>
+                        {% render_field form.first_name class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                        {% if form.first_name.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.first_name.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-signature text-brown-600 mr-1"></i>
+                            Last Name *
+                        </label>
+                        {% render_field form.last_name class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                        {% if form.last_name.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.last_name.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-address-card text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Contact Information</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Email -->
+                    <div>
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-envelope text-brown-600 mr-1"></i>
+                            Email Address *
+                        </label>
+                        {% render_field form.email class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                        {% if form.email.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.email.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-phone text-brown-600 mr-1"></i>
+                            Phone Number *
+                        </label>
+                        {% render_field form.phone class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                        {% if form.phone.help_text %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ form.phone.help_text }}
+                        </p>
+                        {% endif %}
+                        {% if form.phone.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.phone.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Assignment Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-home text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Property Assignment</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Property -->
+                    <div>
+                        <label for="{{ form.property.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-building text-brown-600 mr-1"></i>
+                            Property *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.property.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.property.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Unit -->
+                    <div>
+                        <label for="{{ form.unit.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-door-open text-brown-600 mr-1"></i>
+                            Unit (Optional)
+                        </label>
+                        <div class="relative">
+                            {% render_field form.unit class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Only available units are shown
+                        </p>
+                        {% if form.unit.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.unit.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tenancy Dates Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-calendar-alt text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Tenancy Period</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Move-in Date -->
+                    <div>
+                        <label for="{{ form.move_in_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-sign-in-alt text-brown-600 mr-1"></i>
+                            Move-in Date *
+                        </label>
+                        {% render_field form.move_in_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                        {% if form.move_in_date.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.move_in_date.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Move-out Date -->
+                    <div>
+                        <label for="{{ form.move_out_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-sign-out-alt text-brown-600 mr-1"></i>
+                            Move-out Date
+                        </label>
+                        {% render_field form.move_out_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all optional-date" %}
+                        {% if form.move_out_date.help_text %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ form.move_out_date.help_text }}
+                        </p>
+                        {% endif %}
+                        {% if form.move_out_date.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.move_out_date.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contact Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-first-aid text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Emergency Contact</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Emergency Contact Name -->
+                    <div>
+                        <label for="{{ form.emergency_contact.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user-friends text-brown-600 mr-1"></i>
+                            Emergency Contact
+                        </label>
+                        {% render_field form.emergency_contact class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                        {% if form.emergency_contact.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.emergency_contact.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Emergency Phone -->
+                    <div>
+                        <label for="{{ form.emergency_phone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-phone-alt text-brown-600 mr-1"></i>
+                            Emergency Phone
+                        </label>
+                        {% render_field form.emergency_phone class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+                        {% if form.emergency_phone.help_text %}
+                        <p class="mt-2 text-xs text-brown-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ form.emergency_phone.help_text }}
+                        </p>
+                        {% endif %}
+                        {% if form.emergency_phone.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.emergency_phone.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information Section -->
+            <div class="mb-10">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-gradient-to-br from-brown-600 to-brown-700 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-sticky-note text-white text-sm"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-landlord-dark font-display">Additional Information</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Status -->
+                    <div>
+                        <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-circle text-brown-600 mr-1"></i>
+                            Tenant Status *
+                        </label>
+                        <div class="relative">
+                            {% render_field form.status class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        {% if form.status.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.status.errors.0 }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Profile Picture -->
+                    <div>
+                        <label for="{{ form.profile_picture.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-camera text-brown-600 mr-1"></i>
+                            Profile Picture
+                        </label>
+                        <div class="mt-1 flex items-center">
+                            <label for="id_profile_picture" class="cursor-pointer w-full">
+                                <div class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-brown-300 rounded-xl hover:border-brown-500 hover:bg-brown-50 transition-all duration-300">
+                                    <i class="fas fa-cloud-upload-alt text-brown-400 text-3xl mb-2"></i>
+                                    <p class="text-sm text-brown-600 font-medium">Click to upload photo</p>
+                                    <p class="text-xs text-brown-500 mt-1">JPG, PNG up to 5MB</p>
+                                </div>
+                                {% render_field form.profile_picture class="hidden" %}
+                            </label>
+                        </div>
+                        {% if form.profile_picture.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            {{ form.profile_picture.errors.0 }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if is_edit and tenant.profile_picture %}
+                        <div class="mt-4">
+                            <p class="text-sm font-medium text-gray-700 mb-2">Current Photo:</p>
+                            <div class="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-brown-200 shadow">
+                                <img src="{{ tenant.profile_picture.url }}" alt="{{ tenant.full_name }}" class="w-full h-full object-cover">
+                                <div class="absolute top-2 right-2">
+                                    <a href="{{ tenant.profile_picture.url }}" target="_blank" 
+                                       class="bg-black/70 text-white p-1.5 rounded-full hover:bg-black/90 transition-all">
+                                        <i class="fas fa-expand text-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="mt-6">
+                    <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-edit text-brown-600 mr-1"></i>
+                        Additional Notes
+                    </label>
+                    {% render_field form.notes class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" placeholder="Any special notes about this tenant..." %}
+                    {% if form.notes.errors %}
+                    <p class="mt-2 text-sm text-red-600 flex items-center">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ form.notes.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-8 border-t border-brown-200">
+                <div class="mb-4 sm:mb-0">
+                    {% if is_edit %}
+                    <a href="{% url 'tenant_detail' tenant.id %}" 
+                       class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                    {% else %}
+                    <a href="{% url 'tenant_list' %}" 
+                       class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="flex space-x-4">
+                    {% if is_edit %}
+                    <a href="{% url 'tenant_detail' tenant.id %}" 
+                       class="inline-flex items-center px-6 py-3 border border-brown-300 text-brown-700 bg-white rounded-xl hover:bg-brown-50 transition-all font-medium hover-lift">
+                        <i class="fas fa-eye mr-2"></i>
+                        Preview
+                    </a>
+                    {% endif %}
+                    <button type="submit" 
+                            class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun">
+                        <i class="fas fa-save mr-2"></i>
+                        {% if is_edit %}Update Tenant 🚀{% else %}Create Tenant 🎉{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tips & Guidelines Card -->
+    <div class="mt-8 bg-white rounded-2xl shadow-lg border border-brown-200 overflow-hidden glass">
+        <div class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-brown-50 to-white">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-4">
+                    <i class="fas fa-lightbulb text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-landlord-dark font-display">Tips & Best Practices</h3>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">For Best Results:</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Use complete contact information for easy communication</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Always add emergency contact details for safety</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Upload a clear profile picture for easy identification</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"></i>
+                            <span class="text-sm text-gray-700">Keep move-in/out dates accurate for lease tracking</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions:</h4>
+                    <div class="space-y-3">
+                        <a href="#" class="flex items-center p-3 bg-brown-50 rounded-xl hover:bg-brown-100 transition-colors group">
+                            <div class="w-8 h-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-file-contract text-brown-600"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">Generate Lease Agreement</span>
+                        </a>
+                        <a href="#" class="flex items-center p-3 bg-green-50 rounded-xl hover:bg-green-100 transition-colors group">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-envelope-open-text text-green-600"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">Send Welcome Email</span>
+                        </a>
+                        <a href="#" class="flex items-center p-3 bg-brown-50 rounded-xl hover:bg-brown-100 transition-colors group">
+                            <div class="w-8 h-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-qrcode text-brown-600"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">Create Tenant QR Code</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Dynamic unit filtering based on selected property
+document.addEventListener('DOMContentLoaded', function() {
+    const propertySelect = document.getElementById('id_property');
+    const unitSelect = document.getElementById('id_unit');
+    
+    if (propertySelect && unitSelect) {
+        propertySelect.addEventListener('change', function() {
+            const propertyId = this.value;
+            
+            // Disable unit select while loading
+            unitSelect.disabled = true;
+            unitSelect.innerHTML = '<option value="">Loading units...</option>';
+            
+            // Fetch available units for this property
+            fetch(`/dashboard/api/properties/${propertyId}/units/available/`)
+                .then(response => response.json())
+                .then(data => {
+                    unitSelect.innerHTML = '<option value="">Select a unit (optional)</option>';
+                    data.units.forEach(unit => {
+                        const option = document.createElement('option');
+                        option.value = unit.id;
+                        option.textContent = `Unit ${unit.unit_number} (${unit.bedrooms} bed, ${unit.bathrooms} bath) - $${unit.monthly_rent}`;
+                        option.selected = unit.id == {{ form.unit.value|default:"null" }};
+                        unitSelect.appendChild(option);
+                    });
+                    unitSelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error loading units:', error);
+                    unitSelect.innerHTML = '<option value="">Error loading units</option>';
+                    unitSelect.disabled = false;
+                });
+        });
+        
+        // Trigger change event on page load if property is already selected
+        if (propertySelect.value) {
+            propertySelect.dispatchEvent(new Event('change'));
+        }
+    }
+    
+    // Date picker improvements
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    dateInputs.forEach(input => {
+        // Set min date to today for move-in date
+        if (input.id === 'id_move_in_date') {
+            const today = new Date().toISOString().split('T')[0];
+            input.min = today;
+        }
+        
+        // Style date inputs
+        input.classList.add('cursor-pointer');
+    });
+});
+
+// Form validation feedback
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
+    const requiredFields = form.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('border-red-500', 'bg-red-50');
+            isValid = false;
+            
+            // Add error message if not exists
+            if (!field.nextElementSibling?.classList?.contains('error-message')) {
+                const errorDiv = document.createElement('p');
+                errorDiv.className = 'mt-1 text-sm text-red-600 error-message';
+                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> This field is required`;
+                field.parentNode.insertBefore(errorDiv, field.nextSibling);
+            }
+        } else {
+            field.classList.remove('border-red-500', 'bg-red-50');
+            const errorMsg = field.nextElementSibling;
+            if (errorMsg?.classList?.contains('error-message')) {
+                errorMsg.remove();
+            }
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        // Scroll to first error
+        const firstError = form.querySelector('.border-red-500');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }
+    }
+});
+</script>
+
+<style>
+/* Custom styles for better UX */
+.optional-date:not(:valid) {
+    color: #a18072;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
+}
+
+/* Animation for new tenant creation */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.success-animation {
+    animation: successPulse 0.5s ease;
+}
+</style>
+{% endblock %}

@@ -1,18 +1,642 @@
-{% extends 'dashboardd/base.html' %}
-
-{% block title %}Properties - Landlord Management System{% endblock %}
-{% block page_title %}Properties{% endblock %}
-
-{% block content %}
-<div class="mb-4">
-    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Dashboard
+{% extends 'dashboardd/base.html' %} {% block title %}{{ property.name }} -
+Landlord Management System{% endblock %} {% block page_title %}{{ property.name
+}}{% endblock %} {% block content %}
+<div
+  class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+>
+  <div>
+    <a
+      href="{% url 'property_list' %}"
+      class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors"
+    >
+      <i class="fas fa-arrow-left mr-2"></i> Back to Properties
     </a>
-</div>
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title mb-0">Your Properties</h5>
+    <div class="flex items-center mt-2">
+      <h2 class="text-2xl font-bold text-gray-800 font-sans">
+        {{ property.name }}
+      </h2>
+      <span
+        class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if property.property_type == 'house' %}bg-blue-100 text-blue-800{% elif property.property_type == 'apartment' %}bg-purple-100 text-purple-800{% elif property.property_type == 'condo' %}bg-green-100 text-green-800{% elif property.property_type == 'townhouse' %}bg-yellow-100 text-yellow-800{% elif property.property_type == 'commercial' %}bg-red-100 text-red-800{% else %}bg-gray-100 text-gray-800{% endif %}"
+      >
+        <i class="fas fa-tag mr-1"></i>
+        {{ property.get_property_type_display }}
+      </span>
     </div>
-    {{ property.name }} - Details will go here.
+    <p class="text-gray-600 mt-1 flex items-center">
+      <i class="fas fa-map-marker-alt text-brown-500 mr-2"></i>
+      {{ property.address }}
+    </p>
+  </div>
+  <div class="flex space-x-3">
+    <a
+      href="{% url 'property_edit' property.id %}"
+      class="inline-flex items-center px-4 py-2 border border-brown-600 text-brown-700 bg-white rounded-lg hover:bg-brown-50 transition-colors font-medium"
+    >
+      <i class="fas fa-edit mr-2"></i> Edit Property
+    </a>
+    <button
+      class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors font-medium"
+      style="width: fit-content"
+    >
+      <i class="fas fa-plus mr-2"></i> Add Unit
+    </button>
+  </div>
+</div>
+
+<!-- Property Overview Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+    <div class="flex items-center">
+      <div
+        class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center"
+      >
+        <i class="fas fa-door-open text-blue-600 text-xl"></i>
+      </div>
+      <div class="ml-4">
+        <h4 class="text-sm font-medium text-gray-600">Total Units</h4>
+        <p class="text-2xl font-bold text-gray-900">{{ total_units }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+    <div class="flex items-center">
+      <div
+        class="flex-shrink-0 h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center"
+      >
+        <i class="fas fa-users text-green-600 text-xl"></i>
+      </div>
+      <div class="ml-4">
+        <h4 class="text-sm font-medium text-gray-600">Occupied Units</h4>
+        <p class="text-2xl font-bold text-gray-900">{{ occupied_units }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+    <div class="flex items-center">
+      <div
+        class="flex-shrink-0 h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center"
+      >
+        <i class="fas fa-bed text-yellow-600 text-xl"></i>
+      </div>
+      <div class="ml-4">
+        <h4 class="text-sm font-medium text-gray-600">Vacancy Rate</h4>
+        <p class="text-2xl font-bold text-gray-900">{{ vacancy_rate }}%</p>
+      </div>
+    </div>
+  </div>
+  <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+    <div class="flex items-center">
+      <div
+        class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-lg flex items-center justify-center"
+      >
+        <i class="fas fa-calendar-alt text-brown-600 text-xl"></i>
+      </div>
+      <div class="ml-4">
+        <h4 class="text-sm font-medium text-gray-600">Since</h4>
+        <p class="text-lg font-bold text-gray-900">
+          {{ property.created_at|date:"M d, Y" }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Left Column: Property Details & Units -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- Property Information Card -->
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <div
+        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-800 font-sans">
+            Property Information
+          </h3>
+          <a
+            href="#"
+            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
+          >
+            <i class="fas fa-edit mr-1"></i> Edit
+          </a>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-4">
+              Basic Details
+            </h4>
+            <div class="space-y-4">
+              <div>
+                <p class="text-xs text-gray-500">Property Name</p>
+                <p class="text-sm font-medium text-gray-900">
+                  {{ property.name }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Property Type</p>
+                <p class="text-sm font-medium text-gray-900">
+                  {{ property.get_property_type_display }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Total Capacity</p>
+                <p class="text-sm font-medium text-gray-900">
+                  {{ property.units }} units
+                </p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-4">Address</h4>
+            <div class="p-4 bg-gray-50 rounded-lg">
+              <p class="text-sm text-gray-900 whitespace-pre-line">
+                {{ property.address }}
+              </p>
+            </div>
+            <div class="mt-4">
+              <button
+                class="inline-flex items-center text-sm text-brown-600 hover:text-brown-800"
+              >
+                <i class="fas fa-map-marked-alt mr-2"></i>
+                View on Map
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {% if property.image %}
+        <div class="mt-6">
+          <h4 class="text-sm font-medium text-gray-700 mb-3">Property Image</h4>
+          <div class="relative h-64 rounded-lg overflow-hidden">
+            <img
+              src="{{ property.image.url }}"
+              alt="{{ property.name }}"
+              class="w-full h-full object-cover"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"
+            ></div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Units Section -->
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <div
+        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-800 font-sans">
+            Units ({{ units.count }})
+          </h3>
+          <a
+            href="{% url 'property_units' property.id %}"
+            class="inline-flex items-center text-sm text-brown-600 hover:text-brown-800 font-medium"
+          >
+            <i class="fas fa-plus mr-1"></i> Add Unit
+          </a>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        {% if units %}
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
+              >
+                Unit Number
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
+              >
+                Details
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
+              >
+                Rent
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
+              >
+                Status
+              </th>
+              <th
+                scope="col"
+                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for unit in units %}
+            <tr class="hover:bg-brown-50 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center">
+                  <div
+                    class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center"
+                  >
+                    <i class="fas fa-door-closed text-gray-600"></i>
+                  </div>
+                  <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-900">
+                      Unit {{ unit.unit_number }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                      {{ unit.square_feet|default:"N/A" }} sqft
+                    </p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm">
+                  <p class="text-gray-900">
+                    {{ unit.bedrooms }} bed, {{ unit.bathrooms }} bath
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    {{ unit.description|truncatechars:30|default:"No description" }}
+                  </p>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <p class="text-sm font-semibold text-gray-900">
+                  ${{ unit.monthly_rent }}/month
+                </p>
+              </td>
+              <td class="px-6 py-4">
+                {% if unit.is_occupied %}
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                >
+                  <i class="fas fa-user mr-1"></i>
+                  Occupied
+                </span>
+                {% else %}
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                >
+                  <i class="fas fa-bed mr-1"></i>
+                  Vacant
+                </span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex space-x-2">
+                  <a href="#" class="text-gray-400 hover:text-brown-600">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a href="#" class="text-gray-400 hover:text-brown-600">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  {% if not unit.is_occupied %}
+                  <a href="#" class="text-gray-400 hover:text-green-600">
+                    <i class="fas fa-user-plus"></i>
+                  </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="text-center py-8">
+          <div
+            class="mx-auto w-16 h-16 bg-brown-100 rounded-full flex items-center justify-center mb-4"
+          >
+            <i class="fas fa-door-closed text-brown-600 text-xl"></i>
+          </div>
+          <h4 class="text-sm font-medium text-gray-900 mb-2">
+            No units added yet
+          </h4>
+          <p class="text-sm text-gray-600 mb-4">
+            Add units to start renting out this property
+          </p>
+          <a
+            href="{% url 'property_units' property.id %}"
+            class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors text-sm font-medium"
+          >
+            <i class="fas fa-plus mr-2"></i> Add First Unit
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Activity & Quick Actions -->
+  <div class="space-y-6">
+    <!-- Tenants Card -->
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <div
+        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-800 font-sans">
+            Tenants ({{ tenants.count }})
+          </h3>
+          <a
+            href="#"
+            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
+          >
+            View All
+          </a>
+        </div>
+      </div>
+      <div class="p-4">
+        {% if tenants %}
+        <div class="space-y-4">
+          {% for tenant in tenants|slice:":3" %}
+          <div
+            class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-brown-50 transition-colors"
+          >
+            <div
+              class="flex-shrink-0 h-10 w-10 bg-green-100 rounded-full flex items-center justify-center"
+            >
+              {% if tenant.user.profile_picture %}
+              <img
+                src="{{ tenant.user.profile_picture.url }}"
+                alt="{{ tenant.full_name }}"
+                class="h-8 w-8 rounded-full"
+              />
+              {% else %}
+              <i class="fas fa-user text-green-600"></i>
+              {% endif %}
+            </div>
+            <div class="ml-3 flex-1">
+              <p class="text-sm font-medium text-gray-900">
+                {{ tenant.full_name }}
+              </p>
+              <p class="text-xs text-gray-500">
+                Unit {{ tenant.unit.unit_number }}
+              </p>
+            </div>
+            <a href="#" class="text-gray-400 hover:text-brown-600">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+          <div
+            class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3"
+          >
+            <i class="fas fa-users text-gray-400"></i>
+          </div>
+          <p class="text-sm text-gray-600">No tenants yet</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Recent Payments -->
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <div
+        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-800 font-sans">
+            Recent Payments
+          </h3>
+          <a
+            href="#"
+            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
+          >
+            View All
+          </a>
+        </div>
+      </div>
+      <div class="p-4">
+        {% if recent_payments %}
+        <div class="space-y-3">
+          {% for payment in recent_payments %}
+          <div
+            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+          >
+            <div>
+              <p class="text-sm font-medium text-gray-900">
+                ${{ payment.amount }}
+              </p>
+              <p class="text-xs text-gray-500">
+                {{ payment.tenant.full_name }}
+              </p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-gray-500">
+                {{ payment.payment_date|date:"M d" }}
+              </p>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {% if payment.status == 'imekamilika' %}bg-green-100 text-green-800{% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}"
+              >
+                {{ payment.get_status_display }}
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+          <div
+            class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3"
+          >
+            <i class="fas fa-money-bill-wave text-gray-400"></i>
+          </div>
+          <p class="text-sm text-gray-600">No recent payments</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Maintenance Requests -->
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <div
+        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-800 font-sans">
+            Maintenance
+          </h3>
+          <a
+            href="#"
+            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
+          >
+            View All
+          </a>
+        </div>
+      </div>
+      <div class="p-4">
+        {% if maintenance_requests %}
+        <div class="space-y-3">
+          {% for request in maintenance_requests %}
+          <div class="p-3 bg-gray-50 rounded-lg">
+            <div class="flex items-start justify-between mb-2">
+              <p class="text-sm font-medium text-gray-900 truncate">
+                {{ request.title }}
+              </p>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {% if request.status == 'open' %}bg-red-100 text-red-800{% elif request.status == 'in_progress' %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}"
+              >
+                {{ request.get_status_display }}
+              </span>
+            </div>
+            <p class="text-xs text-gray-500">
+              {{ request.unit.unit_number }} • {{ request.reported_date|date:"M d" }}
+            </p>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+          <div
+            class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3"
+          >
+            <i class="fas fa-tools text-gray-400"></i>
+          </div>
+          <p class="text-sm text-gray-600">No maintenance requests</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div
+      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <div
+        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
+      >
+        <h3 class="text-lg font-semibold text-gray-800 font-sans">
+          Quick Actions
+        </h3>
+      </div>
+      <div class="p-4">
+        <div class="grid grid-cols-2 gap-3">
+          <a
+            href="{% url 'property_units' property.id %}"
+            class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+          >
+            <i class="fas fa-door-open text-blue-600 text-xl mb-2"></i>
+            <span class="text-xs font-medium text-gray-900">Manage Units</span>
+          </a>
+          <a
+            href="#"
+            class="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+          >
+            <i
+              class="fas fa-file-invoice-dollar text-green-600 text-xl mb-2"
+            ></i>
+            <span class="text-xs font-medium text-gray-900">Collect Rent</span>
+          </a>
+          <a
+            href="#"
+            class="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors"
+          >
+            <i class="fas fa-tools text-yellow-600 text-xl mb-2"></i>
+            <span class="text-xs font-medium text-gray-900">Report Issue</span>
+          </a>
+          <a
+            href="#"
+            class="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+          >
+            <i class="fas fa-chart-bar text-purple-600 text-xl mb-2"></i>
+            <span class="text-xs font-medium text-gray-900">View Reports</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Section: Property Documents -->
+<div
+  class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+>
+  <div
+    class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
+  >
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-800 font-sans">
+        Property Documents
+      </h3>
+      <button
+        class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors text-sm font-medium"
+      >
+        <i class="fas fa-upload mr-2"></i> Upload Document
+      </button>
+    </div>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <!-- Example Document Card -->
+      <div
+        class="border border-gray-200 rounded-lg p-4 hover:border-brown-300 transition-colors"
+      >
+        <div class="flex items-center justify-between mb-3">
+          <div
+            class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center"
+          >
+            <i class="fas fa-file-pdf text-red-600"></i>
+          </div>
+          <span class="text-xs text-gray-500">1.2 MB</span>
+        </div>
+        <h4 class="text-sm font-medium text-gray-900 mb-1">Lease Agreement</h4>
+        <p class="text-xs text-gray-500 mb-3">Updated: Jan 15, 2024</p>
+        <div class="flex space-x-2">
+          <a href="#" class="text-sm text-brown-600 hover:text-brown-800"
+            >View</a
+          >
+          <a href="#" class="text-sm text-brown-600 hover:text-brown-800"
+            >Download</a
+          >
+        </div>
+      </div>
+      <!-- Add more document cards as needed -->
+    </div>
+  </div>
+</div>
+
+<!-- Danger Zone -->
+<div
+  class="mt-6 bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden"
+>
+  <div class="px-6 py-4 border-b border-red-200 bg-red-50">
+    <h3 class="text-lg font-semibold text-red-800 font-sans">Danger Zone</h3>
+  </div>
+  <div class="p-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h4 class="text-sm font-medium text-gray-900">Delete this property</h4>
+        <p class="text-sm text-gray-600 mt-1">
+          Once you delete a property, there is no going back. Please be certain.
+        </p>
+      </div>
+      <button
+        class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-red-600 text-red-700 bg-white rounded-lg hover:bg-red-50 transition-colors font-medium"
+      >
+        <i class="fas fa-trash-alt mr-2"></i> Delete Property
+      </button>
+    </div>
+  </div>
 </div>
 {% endblock %}
