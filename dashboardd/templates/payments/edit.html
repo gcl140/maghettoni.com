@@ -4,19 +4,21 @@
 {% block title %}{{ title }} - Maghettoni{% endblock %}
 {% block page_title %}{{ title }}{% endblock %}
 
-{% block content %}
-<div class="mb-6">
-    {% if is_edit %}
-    <a href="{% url 'payment_detail' payment.id %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
-        <i class="fas fa-arrow-left mr-2"></i> Rudi kwenye Maelezo ya Malipo
-    </a>
-    {% else %}
-    <a href="{% url 'payments_list' %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
-        <i class="fas fa-arrow-left mr-2"></i> Rudi kwenye Orodha ya Malipo
-    </a>
-    {% endif %}
-</div>
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li><a href="{% url 'payments_list' %}" class="hover:text-brown-600 transition-colors">Payments</a></li>
+<li class="text-gray-400">/</li>
+{% if payment %}
+<li><a href="{% url 'payment_detail' payment.id %}" class="hover:text-brown-600 transition-colors">{{ payment.reference_number }}</a></li>
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">Edit</li>
+{% else %}
+<li class="text-gray-800 font-semibold">Add Payment</li>
+{% endif %}
+{% endblock %}
 
+{% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
 <div class="max-w-4xl mx-auto">
     <!-- Form Card -->
     <div class="bg-white rounded-2xl shadow-xl border border-brown-200 overflow-hidden glass card-shine">
@@ -700,4 +702,5 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     }
 }
 </style>
+</div>
 {% endblock %}

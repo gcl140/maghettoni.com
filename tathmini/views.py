@@ -11,47 +11,51 @@ import logging
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from dashboardd.services import send_otp
 
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
 @require_POST
 def send_verification_code(request):
-    """Send verification code to phone number"""
+    """Send verification code to phone number via Beem Africa SMS"""
     try:
         data = json.loads(request.body)
         phone = data.get('phone', '').strip()
-        
+
         if not phone:
             return JsonResponse({
                 'success': False,
                 'error': 'Tafadhali ingiza nambari ya simu'
             }, status=400)
-        
+
         # Generate verification code
         verification_code = PhoneVerification.generate_code()
-        
+
         # Delete any existing verification for this phone
         PhoneVerification.objects.filter(phone=phone).delete()
-        
+
         # Create new verification
-        verification = PhoneVerification.objects.create(
+        PhoneVerification.objects.create(
             phone=phone,
             verification_code=verification_code,
             expires_at=timezone.now() + timedelta(minutes=10)
         )
-        
-        # In production, you would send this code via SMS
-        # For now, we'll log it and return it (remove this in production)
-        logger.info(f"Verification code for {phone}: {verification_code}")
-        
+
+        # Send OTP via Beem Africa
+        sent = send_otp(phone, verification_code)
+        if not sent:
+            return JsonResponse({
+                'success': False,
+                'error': 'Imeshindwa kutuma ujumbe. Tafadhali jaribu tena.'
+            }, status=500)
+
         return JsonResponse({
             'success': True,
             'message': 'Msimbo umepelekwa kwenye simu yako.',
-            'code': verification_code,  # Remove this in production!
-            'expires_in': 10  # minutes
+            'expires_in': 10
         })
-        
+
     except Exception as e:
         logger.error(f"Error sending verification code: {str(e)}")
         return JsonResponse({

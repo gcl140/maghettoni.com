@@ -3,13 +3,17 @@
 {% block title %}{{ property.name }} - Units - Maghettoni{% endblock %}
 {% block page_title %}{{ property.name }} Units{% endblock %}
 
-{% block content %}
-<div class="mb-6">
-    <a href="{% url 'property_detail' property.id %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Property
-    </a>
-</div>
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li><a href="{% url 'property_list' %}" class="hover:text-brown-600 transition-colors">Properties</a></li>
+<li class="text-gray-400">/</li>
+<li><a href="{% url 'property_detail' property.id %}" class="hover:text-brown-600 transition-colors">{{ property.name }}</a></li>
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">Units</li>
+{% endblock %}
 
+{% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-2xl p-5 border border-brown-200 shadow-lg glass hover-lift">
@@ -365,4 +369,5 @@ function createConfetti() {
     }
 }
 </script>
+</div>
 {% endblock %}

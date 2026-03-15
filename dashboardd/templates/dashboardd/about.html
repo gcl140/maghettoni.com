@@ -1,1 +1,102 @@
-This is maghettoni! A property management dashboard built with Django to help landlords efficiently manage their properties, tenants, and maintenance requests.
+{% extends 'dashboardd/base.html' %}
+
+{% block title %}About - Maghettoni{% endblock %}
+{% block page_title %}About{% endblock %}
+
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">About</li>
+{% endblock %}
+
+{% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
+<div class="max-w-3xl mx-auto space-y-6">
+
+  <!-- Hero -->
+  <div class="bg-gradient-to-br from-brown-700 to-brown-900 rounded-2xl p-8 text-white shadow-lg">
+    <div class="flex items-center gap-4 mb-5">
+      <div class="w-14 h-14 bg-white/15 rounded-2xl flex items-center justify-center shadow-inner flex-shrink-0">
+        <i class="fas fa-building text-white text-2xl"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">Maghettoni</h1>
+        <p class="text-brown-200 text-sm">Property Management Dashboard</p>
+      </div>
+    </div>
+    <p class="text-brown-100 leading-relaxed text-sm">
+      Maghettoni is a modern property management dashboard that helps landlords efficiently manage
+      their properties, tenants, payments, and maintenance requests — all in one place.
+    </p>
+  </div>
+
+  <!-- Features -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-brown-50 to-white">
+      <h2 class="text-base font-semibold text-gray-800">What you can do</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2">
+      <div class="flex items-start gap-4 p-5 border-b sm:border-b sm:border-r border-gray-100">
+        <div class="w-9 h-9 bg-brown-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-home text-brown-600 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-800">Property Management</p>
+          <p class="text-xs text-gray-500 mt-0.5">Add, edit, and track all your properties and units</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 p-5 border-b border-gray-100">
+        <div class="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-users text-blue-600 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-800">Tenant Management</p>
+          <p class="text-xs text-gray-500 mt-0.5">Manage tenant profiles, contracts, and contact details</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 p-5 border-b sm:border-b sm:border-r border-gray-100">
+        <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-money-bill-wave text-green-600 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-800">Payments</p>
+          <p class="text-xs text-gray-500 mt-0.5">Record payments, download PDF receipts, and send reminders</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 p-5 border-b border-gray-100">
+        <div class="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-tools text-amber-600 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-800">Maintenance</p>
+          <p class="text-xs text-gray-500 mt-0.5">Log and track maintenance requests by priority and status</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 p-5 sm:border-r border-gray-100">
+        <div class="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-file-export text-purple-600 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-800">Reports & Exports</p>
+          <p class="text-xs text-gray-500 mt-0.5">Export your data as CSV or PDF with active filters applied</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 p-5">
+        <div class="w-9 h-9 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fas fa-chart-line text-red-600 text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-800">Dashboard Overview</p>
+          <p class="text-xs text-gray-500 mt-0.5">See revenue trends, occupancy rates, and overdue payments at a glance</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer note -->
+  <div class="text-center text-sm text-gray-400 pb-2">
+    &copy; {% now "Y" %} Maghettoni &mdash; Manage your properties with ease
+  </div>
+
+</div>
+</div>
+{% endblock %}

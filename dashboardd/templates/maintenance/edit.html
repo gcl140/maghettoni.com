@@ -4,19 +4,21 @@
 {% block title %}{{ title }} - Maghettoni{% endblock %}
 {% block page_title %}{{ title }}{% endblock %}
 
-{% block content %}
-<div class="mb-6">
-    {% if is_edit %}
-    <a href="{% url 'maintenance_request_detail' maintenance_request.id %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Request
-    </a>
-    {% else %}
-    <a href="{% url 'maintenance_requests' %}" class="inline-flex items-center text-landlord-primary hover:text-brown-800 font-medium transition-colors hover-lift">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Maintenance
-    </a>
-    {% endif %}
-</div>
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li><a href="{% url 'maintenance_requests' %}" class="hover:text-brown-600 transition-colors">Maintenance</a></li>
+<li class="text-gray-400">/</li>
+{% if maintenance_request %}
+<li><a href="{% url 'maintenance_request_detail' maintenance_request.id %}" class="hover:text-brown-600 transition-colors">{{ maintenance_request.title }}</a></li>
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">Edit</li>
+{% else %}
+<li class="text-gray-800 font-semibold">Add Request</li>
+{% endif %}
+{% endblock %}
 
+{% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
 <div class="max-w-4xl mx-auto">
     <!-- Form Card -->
     <div class="bg-white rounded-2xl shadow-xl border border-brown-200 overflow-hidden glass card-shine">
@@ -642,4 +644,5 @@ input[type="number"]::-webkit-outer-spin-button {
     height: 2em;
 }
 </style>
+</div>
 {% endblock %}

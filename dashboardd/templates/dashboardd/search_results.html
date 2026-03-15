@@ -1,0 +1,432 @@
+{% extends 'dashboardd/base.html' %}
+{% load static %}
+{% block title %}Tafuta - {{ query }} | Maghettoni{% endblock %}
+
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">Search Results</li>
+{% endblock %}
+
+{% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
+<div class="w-full min-h-screen">
+    <!-- Search Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+                    Matokeo ya Utafutaji
+                </h1>
+                <p class="text-gray-600">
+                    "{{ query }}" - {{ total_results }} matokeo yamepatikana
+                </p>
+            </div>
+        </div>
+        
+        <!-- Search Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+            <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
+                <div class="text-2xl font-bold text-brown-700 mb-1">{{ special_results.total_properties }}</div>
+                <div class="text-sm text-gray-600">Mali</div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
+                <div class="text-2xl font-bold text-blue-700 mb-1">{{ special_results.total_tenants }}</div>
+                <div class="text-sm text-gray-600">Wakazi</div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
+                <div class="text-2xl font-bold text-green-700 mb-1">{{ special_results.total_payments }}</div>
+                <div class="text-sm text-gray-600">Malipo</div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
+                <div class="text-2xl font-bold text-yellow-700 mb-1">{{ special_results.total_maintenance }}</div>
+                <div class="text-sm text-gray-600">Matengenezo</div>
+            </div>
+            <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
+                <div class="text-2xl font-bold text-purple-700 mb-1">{{ special_results.total_units }}</div>
+                <div class="text-sm text-gray-600">Vyumba</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search Results Grid -->
+    <div class="space-y-8">
+        <!-- Properties Section -->
+        {% if properties %}
+        <section class="bg-white rounded-2xl p-6 border border-brown-200 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-brown-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-home text-brown-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900">Mali</h2>
+                        <p class="text-sm text-gray-600">{{ properties|length }} mali zilizopatikana</p>
+                    </div>
+                </div>
+                <a href="{% url 'property_list' %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">
+                    Angalia Zote <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for property in properties %}
+                <a href="{% url 'property_detail' property.id %}" 
+                   class="group border border-brown-200 rounded-xl p-4 hover:border-brown-300 hover:shadow-md transition-all">
+                    <div class="flex items-start gap-3">
+                        <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                            {% if property.image %}
+                            <img src="{{ property.image.url }}" alt="{{ property.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                            {% else %}
+                            <div class="w-full h-full bg-gradient-to-br from-brown-200 to-brown-300 flex items-center justify-center">
+                                <i class="fas fa-home text-brown-600"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900 group-hover:text-brown-700">{{ property.name }}</h3>
+                            <p class="text-xs text-gray-600 mt-1">{{ property.address|truncatechars:50 }}</p>
+                            <div class="flex items-center mt-2 text-xs">
+                                <span class="px-2 py-1 bg-brown-100 text-brown-800 rounded mr-2">
+                                    {{ property.get_property_type_display }}
+                                </span>
+                                <span class="text-gray-600">
+                                    <i class="fas fa-door-open mr-1"></i>
+                                    {{ property.units }} vyumba
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-brown-100 text-xs text-gray-500">
+                        <span class="inline-flex items-center">
+                            <i class="fas fa-calendar mr-1"></i>
+                            {{ property.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+        
+        <!-- Tenants Section -->
+        {% if tenants %}
+        <section class="bg-white rounded-2xl p-6 border border-brown-200 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900">Wakazi</h2>
+                        <p class="text-sm text-gray-600">{{ tenants|length }} wakazi walipatikana</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-sm text-gray-600 border-b border-gray-200">
+                            <th class="pb-3">Jina</th>
+                            <th class="pb-3">Simu</th>
+                            <th class="pb-3">Mali</th>
+                            <th class="pb-3">Chumba</th>
+                            <th class="pb-3">Hali</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tenant in tenants %}
+                        <tr class="border-b border-gray-100 hover:bg-blue-50 cursor-pointer" onclick="window.location='{% url 'tenant_detail' tenant.id %}'">
+                            <td class="py-3">
+                                <div class="flex items-center">
+                                    {% if tenant.profile_picture %}
+                                    <img src="{{ tenant.profile_picture.url }}"
+                                         class="w-8 h-8 rounded-full mr-3">
+                                    {% else %}
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-user text-blue-600 text-sm"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <p class="font-medium text-gray-900 hover:text-blue-700">{{ tenant.full_name }}</p>
+                                        <p class="text-xs text-gray-500">{{ tenant.email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3 text-sm text-gray-900">{{ tenant.phone }}</td>
+                            <td class="py-3">
+                                <span class="text-sm text-gray-900">{{ tenant.property.name }}</span>
+                            </td>
+                            <td class="py-3">
+                                {% if tenant.unit %}
+                                <span class="text-sm text-gray-900">{{ tenant.unit.unit_number }}</span>
+                                {% else %}
+                                <span class="text-xs text-gray-400">Hakuna</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3">
+                                <span class="px-2 py-1 text-xs rounded-full 
+                                    {% if tenant.status == 'active' %}bg-green-100 text-green-800
+                                    {% elif tenant.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {{ tenant.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endif %}
+        
+        <!-- Payments Section -->
+        {% if payments %}
+        <section class="bg-white rounded-2xl p-6 border border-brown-200 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-money-bill-wave text-green-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900">Malipo</h2>
+                        <p class="text-sm text-gray-600">{{ payments|length }} malipo yalipatikana</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-3">
+                {% for payment in payments %}
+                <a href="{% url 'payment_detail' payment.id %}" class="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-white rounded-lg border border-green-100 hover-lift hover:border-green-300 transition-colors">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg mr-4 flex items-center justify-center
+                            {% if payment.status == 'completed' %}bg-green-100 text-green-600
+                            {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-600
+                            {% else %}bg-gray-100 text-gray-600{% endif %}">
+                            {% if payment.payment_method == 'mobile_money' %}
+                            <i class="fas fa-mobile-alt"></i>
+                            {% elif payment.payment_method == 'cash' %}
+                            <i class="fas fa-money-bill"></i>
+                            {% else %}
+                            <i class="fas fa-university"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">{{ payment.tenant.full_name }}</p>
+                            <div class="flex items-center text-xs text-gray-600 mt-1">
+                                <span class="mr-3">{{ payment.property.name }}</span>
+                                <span>{{ payment.payment_date|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg font-bold 
+                            {% if payment.status == 'completed' %}text-green-600
+                            {% elif payment.status == 'pending' %}text-yellow-600
+                            {% else %}text-gray-600{% endif %}">
+                            TZS {{ payment.amount|floatformat:0 }}
+                        </p>
+                        <span class="text-xs px-2 py-1 mt-1 inline-block rounded-full
+                            {% if payment.status == 'completed' %}bg-green-100 text-green-800
+                            {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ payment.get_status_display }}
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Maintenance Requests Section -->
+        {% if maintenance_requests %}
+        <section class="bg-white rounded-2xl p-6 border border-brown-200 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-tools text-yellow-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900">Matengenezo</h2>
+                        <p class="text-sm text-gray-600">{{ maintenance_requests|length %} maombi ya matengenezo yalipatikana</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for request in maintenance_requests %}
+                <a href="{% url 'maintenance_request_detail' request.id %}" class="block border rounded-xl p-4 hover-lift
+                    {% if request.priority == 'emergency' %}border-red-200 bg-red-50
+                    {% elif request.priority == 'high' %}border-orange-200 bg-orange-50
+                    {% elif request.priority == 'medium' %}border-yellow-200 bg-yellow-50
+                    {% else %}border-green-200 bg-green-50{% endif %}">
+                    <div class="flex items-start justify-between mb-3">
+                        <h3 class="font-semibold text-gray-900 truncate">{{ request.title }}</h3>
+                        <span class="text-xs px-2 py-1 rounded-full 
+                            {% if request.priority == 'emergency' %}bg-red-100 text-red-800
+                            {% elif request.priority == 'high' %}bg-orange-100 text-orange-800
+                            {% elif request.priority == 'medium' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-green-100 text-green-800{% endif %}">
+                            {{ request.get_priority_display }}
+                        </span>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ request.description|truncatechars:120 }}</p>
+                    
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <div>
+                            <span class="inline-flex items-center mr-3">
+                                <i class="fas fa-home mr-1"></i>
+                                {{ request.property.name }}
+                            </span>
+                            <span class="inline-flex items-center">
+                                <i class="fas fa-door-open mr-1"></i>
+                                Unit {{ request.unit.unit_number }}
+                            </span>
+                        </div>
+                        <span>{{ request.reported_date|date:"M d" }}</span>
+                    </div>
+                    
+                    <div class="mt-3 pt-3 border-t 
+                        {% if request.priority == 'emergency' %}border-red-200
+                        {% elif request.priority == 'high' %}border-orange-200
+                        {% elif request.priority == 'medium' %}border-yellow-200
+                        {% else %}border-green-200{% endif %}">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs 
+                                {% if request.status == 'pending' %}text-yellow-600
+                                {% elif request.status == 'in_progress' %}text-blue-600
+                                {% elif request.status == 'completed' %}text-green-600
+                                {% else %}text-gray-600{% endif %}">
+                                <i class="fas fa-circle text-xs mr-1"></i>
+                                {{ request.get_status_display }}
+                            </span>
+                            {% if request.cost %}
+                            <span class="text-xs font-medium">TZS {{ request.cost|floatformat:0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Units Section -->
+        {% if units %}
+        <section class="bg-white rounded-2xl p-6 border border-brown-200 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-door-open text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900">Vyumba</h2>
+                        <p class="text-sm text-gray-600">{{ units|length }} vyumba vilipatikana</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {% for unit in units %}
+                <a href="{% url 'property_units' unit.property.id %}" class="block border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover-lift">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold text-gray-900">Unit {{ unit.unit_number }}</h3>
+                        <span class="text-xs px-2 py-1 rounded-full
+                            {% if unit.is_occupied %}bg-green-100 text-green-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {% if unit.is_occupied %}Imejaza{% else %}Tupu{% endif %}
+                        </span>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600 mb-2">{{ unit.property.name }}</p>
+                    
+                    <div class="flex items-center text-xs text-gray-500 mb-3">
+                        <span class="inline-flex items-center mr-3">
+                            <i class="fas fa-bed mr-1"></i>
+                            {{ unit.bedrooms }}
+                        </span>
+                        <span class="inline-flex items-center">
+                            <i class="fas fa-bath mr-1"></i>
+                            {{ unit.bathrooms }}
+                        </span>
+                    </div>
+                    
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-lg font-bold text-purple-700">TZS {{ unit.monthly_rent|floatformat:0 }}</p>
+                        <p class="text-xs text-gray-500">Kodi ya kila mwezi</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- No Results -->
+        {% if not properties and not tenants and not payments and not maintenance_requests and not units %}
+        <div class="text-center py-16">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-search text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Hakuna matokeo yaliyopatikana</h3>
+            <p class="text-gray-600 mb-8 max-w-md mx-auto">
+                Hakuna chochote kilichopatikana kwa "{{ query }}". Jaribu kwa maneno mengine au angalia kwa aina maalum.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="{% url 'property_list' %}" class="px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700">
+                    <i class="fas fa-home mr-2"></i>
+                    Angalia Mali Zote
+                </a>
+                <a href="{% url 'payments_list' %}" class="px-4 py-2 border border-brown-600 text-brown-600 rounded-lg hover:bg-brown-50">
+                    <i class="fas fa-money-bill-wave mr-2"></i>
+                    Angalia Malipo Yote
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Highlight search terms
+    const query = "{{ query|escapejs }}";
+    const highlightElements = document.querySelectorAll('h3, p, td, span');
+    
+    highlightElements.forEach(element => {
+        const html = element.innerHTML;
+        const regex = new RegExp(`(${query})`, 'gi');
+        const highlighted = html.replace(regex, '<span class="bg-yellow-200 px-1 rounded">$1</span>');
+        element.innerHTML = highlighted;
+    });
+});
+</script>
+
+<style>
+    /* Add to your base.css */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+</style>
+</div>
+{% endblock %}

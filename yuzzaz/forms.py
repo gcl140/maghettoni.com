@@ -44,7 +44,7 @@ class UserRegistrationForm(forms.ModelForm):
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'telephone', 'profile_picture']
+        fields = ['first_name', 'last_name', 'username', 'email', 'telephone', 'about', 'profile_picture']
         widgets = {
             'first_name': forms.TextInput(attrs={
                 'class': 'input-field',
@@ -54,9 +54,22 @@ class CustomUserForm(forms.ModelForm):
                 'class': 'input-field',
                 'placeholder': 'Last Name'
             }),
+            'username': forms.TextInput(attrs={
+                'class': 'input-field',
+                'placeholder': 'Username'
+            }),
             'email': forms.EmailInput(attrs={
                 'class': 'input-field',
                 'placeholder': 'Email'
+            }),
+            'telephone': forms.TextInput(attrs={
+                'class': 'input-field',
+                'placeholder': 'Telephone'
+            }),
+            'about': forms.Textarea(attrs={
+                'class': 'input-field',
+                'placeholder': 'Tell us about yourself...',
+                'rows': 3,
             }),
             'profile_picture': forms.FileInput(attrs={
                 'class': '',

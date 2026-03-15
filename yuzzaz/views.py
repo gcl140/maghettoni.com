@@ -1,3 +1,7 @@
+# views.py
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.contrib.auth import logout as auth_logout
@@ -20,8 +24,7 @@ from yuzzaz.forms import UserRegistrationForm, CustomUserForm
 from django.contrib.auth.decorators import login_required
 from yuzzaz.tokens import account_activation_token
 import random
-# from content.views import general_context
-# from content.models import Joke
+
 User = get_user_model()
 
 def landing(request):
@@ -55,7 +58,6 @@ def register(request):
 
             # Store session for resend logic
             request.session['inactive_user_email'] = user.email
-            # request.session['email_sent_time'] = datetime.now().isoformat()
             request.session['email_sent_time'] = now().isoformat()
 
 
@@ -175,20 +177,17 @@ def profile(request, user_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Wasifu wako umesasishwa!")
-            return redirect('profile', user_id=user.id)  # Redirect to the same page
+            return redirect('profile', user_id=user.id)
         else:
             print(form.errors)
-
     else:
         form = CustomUserForm(instance=user)
-    jokess = Joke.objects.filter(joke_by=user).order_by('-created_at')
+
     context = {
         'logged_in_user': request.user,
         'looking_at': user,
-        'jokess': jokess,
         'form': form,
     }
-    context.update(general_context(request))
     return render(request, 'yuzzaz/profile.html', context)
 
 
@@ -220,3 +219,97 @@ def edit_profile(request):
 
 def custom_404_view(request, exception):
     return render(request, 'partials/404.html', status=404)
+    
+    
+    
+
+@csrf_exempt
+def send_gift_a_text(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            name = data.get('name')
+            phone = data.get('phone')
+            email = data.get('email')
+            message = data.get('message')
+
+            if not all([name, email, message]):
+                return JsonResponse({'status': 'error', 'message': 'Missing required fields'}, status=400)
+
+        else:  # GET request: read query params
+            name = request.GET.get('name', "Test User")
+            phone = request.GET.get('phone', "1234567890")
+            email = request.GET.get('email', "test@example.com")
+            message = request.GET.get('message', "This is a test message.")
+
+            if not all([name, email, message]):
+                return JsonResponse({'status': 'error', 'message': 'Missing required fields'}, status=400)
+
+        # Plain text email
+        subject = f'New Message from {name} for Gift Christian'
+        body = f"""Name: {name}
+Phone: {phone}
+Email: {email}
+
+Message:
+{message}"""
+
+        email_obj = EmailMessage(
+            subject=subject,
+            body=body,
+            to=['christiangift44@gmail.com'],
+        )
+        email_obj.send(fail_silently=False)
+
+        return JsonResponse({'status': 'success', 'message': 'Message sent successfully'})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+def send_lissa_text(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            name = data.get('name')
+            phone = data.get('phone')
+            email = data.get('email')
+            message = data.get('message')
+
+            if not all([name, email, message]):
+                return JsonResponse({'status': 'error', 'message': 'Missing required fields'}, status=400)
+
+        else:  # GET request: read query params
+            name = request.GET.get('name', "Test User")
+            phone = request.GET.get('phone', "1234567890")
+            email = request.GET.get('email', "test@example.com")
+            message = request.GET.get('message', "This is a test message.")
+
+            if not all([name, email, message]):
+                return JsonResponse({'status': 'error', 'message': 'Missing required fields'}, status=400)
+
+        # Plain text email
+        subject = f'New Message from {name} for Gift Christian'
+        body = f"""Name: {name}
+Phone: {phone}
+Email: {email}
+
+Message:
+{message}"""
+
+        email_obj = EmailMessage(
+            subject=subject,
+            body=body,
+            to=['christiangift44@gmail.com'],
+        )
+        email_obj.send(fail_silently=False)
+
+        return JsonResponse({'status': 'success', 'message': 'Message sent successfully'})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

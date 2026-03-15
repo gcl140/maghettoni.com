@@ -308,5 +308,20 @@ class MaintenanceRequestForm(forms.ModelForm):
             raise forms.ValidationError({
                 'tenant': 'Selected tenant is not assigned to the selected unit.'
             })
-        
+
         return cleaned_data
+
+
+class MaintenanceStatusUpdateForm(forms.ModelForm):
+    class Meta:
+        model = MaintenanceRequest
+        fields = ['status', 'priority', 'cost']
+        widgets = {
+            'cost': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '0.00'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-input'

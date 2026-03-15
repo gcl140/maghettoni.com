@@ -3,13 +3,15 @@
 {% block title %}Payment {{ payment.reference_number }} - Landlord Management System{% endblock %}
 {% block page_title %}Payment Details{% endblock %}
 
-{% block content %}
-<div class="mb-6">
-    <a href="{% url 'payments_list' %}" class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Payments
-    </a>
-</div>
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li><a href="{% url 'payments_list' %}" class="hover:text-brown-600 transition-colors">Payments</a></li>
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">{{ payment.reference_number|default:payment.id }}</li>
+{% endblock %}
 
+{% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Main Details -->
     <div class="lg:col-span-2">
@@ -143,15 +145,30 @@
                         </select>
                     </form>
                     
-                    <a href="#" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-print mr-2"></i>
-                        Print Receipt
+                    <a href="{% url 'payment_receipt' payment.id %}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-file-pdf mr-2"></i>
+                        Download Receipt
                     </a>
-                    
-                    <a href="#" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+
+                    <a href="mailto:{{ payment.tenant.email }}?subject=Payment Reminder - {{ payment.property.name }}&body=Dear {{ payment.tenant.first_name }},%0D%0A%0D%0AThis is a reminder that your payment of TZS {{ payment.amount }} for {{ payment.property.name }} is due on {{ payment.due_date|date:'F j, Y' }}.%0D%0A%0D%0AReference: {{ payment.reference_number|default:'N/A' }}%0D%0A%0D%0APlease make your payment as soon as possible. Thank you.%0D%0A%0D%0A----%0D%0A%0D%0AMpendwa {{ payment.tenant.first_name }},%0D%0A%0D%0AHii ni ukumbusho kwamba malipo yako ya TZS {{ payment.amount }} kwa {{ payment.property.name }} yanaisha tarehe {{ payment.due_date|date:'j F Y' }}.%0D%0A%0D%0AKumbukumbu: {{ payment.reference_number|default:'N/A' }}%0D%0A%0D%0ATafadhali lipa haraka iwezekanavyo. Asante."
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                         <i class="fas fa-envelope mr-2"></i>
-                        Send Reminder
+                        Email Reminder
                     </a>
+
+                    <!-- Manual SMS: opens phone/SMS app with pre-filled message -->
+                    <a href="sms:{{ payment.tenant.phone }}?body=Mpendwa {{ payment.tenant.first_name }}, malipo yako ya TZS {{ payment.amount }} kwa {{ payment.property.name }} yanaisha tarehe {{ payment.due_date|date:'j F Y' }}. Kumb: {{ payment.reference_number|default:'N/A' }}. Tafadhali lipa haraka. - Maghettoni"
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-mobile-alt mr-2"></i>
+                        SMS (Manual)
+                    </a>
+
+                    <!-- Direct SMS: sends via Beem API immediately -->
+                    <button id="directSmsBtn" onclick="sendDirectReminder({{ payment.id }}, this)"
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Send SMS Now
+                    </button>
                 </div>
             </div>
         </div>
@@ -178,14 +195,14 @@
                 <div class="space-y-3">
                     <div>
                         <p class="text-xs text-gray-500">Email</p>
-                        <a href="mailto:{{ payment.tenant.user.email }}" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
-                            {{ payment.tenant.user.email }}
+                        <a href="mailto:{{ payment.tenant.email }}" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+                            {{ payment.tenant.email }}
                         </a>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500">Phone</p>
-                        <a href="tel:{{ payment.tenant.user.phone }}" class="text-sm text-gray-900">
-                            {{ payment.tenant.user.phone }}
+                        <a href="tel:{{ payment.tenant.phone }}" class="text-sm text-gray-900">
+                            {{ payment.tenant.phone }}
                         </a>
                     </div>
                     <div>
@@ -282,4 +299,33 @@
         </div>
     </div>
 </div>
+</div>
+
+<script>
+function sendDirectReminder(paymentId, btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+    fetch(`/dashboard/api/v1/payments/${paymentId}/remind/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || ''},
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            btn.innerHTML = '<i class="fas fa-check mr-2"></i>SMS Sent!';
+            btn.classList.replace('bg-blue-600', 'bg-green-600');
+            btn.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+        } else {
+            btn.innerHTML = '<i class="fas fa-times mr-2"></i>Failed — retry';
+            btn.classList.replace('bg-blue-600', 'bg-red-600');
+            btn.classList.replace('hover:bg-blue-700', 'hover:bg-red-700');
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send SMS Now';
+        btn.disabled = false;
+    });
+}
+</script>
 {% endblock %}

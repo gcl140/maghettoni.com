@@ -45,9 +45,11 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'tathmini',
     'dashboardd',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -131,7 +133,12 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Use your Gmail address here
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Use the app password (not your Google account password)
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+# Beem Africa SMS
+BEEM_API_KEY = os.getenv('BEEM_API_KEY')
+BEEM_SECRET_KEY = os.getenv('BEEM_SECRET_KEY')
+BEEM_SENDER_ID = os.getenv('BEEM_SENDER_ID', 'INFO')
 
 
 # Google OAuth2 keys (now from environment)
@@ -180,3 +187,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+
+# CORS_ALLOWED_ORIGINS = [
+#     "https://giftchristian.me",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True  # for testing only; restrict in production

@@ -3,18 +3,31 @@
 {% block title %}Maintenance - Landlord Management System{% endblock %}
 {% block page_title %}Maintenance Requests{% endblock %}
 
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">Maintenance</li>
+{% endblock %}
+
 {% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
-        <a href="{% url 'dashboard' %}" class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors">
-            <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
-        </a>
         <h2 class="text-2xl font-bold text-gray-800 mt-2 font-sans">Maintenance Requests</h2>
         <p class="text-gray-600 mt-1">Manage and track all maintenance issues</p>
     </div>
-    <a href="{% url 'maintenance_request_create' %}" class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors font-medium" style="width: fit-content;">
-        <i class="fas fa-plus mr-2"></i> New Request
-    </a>
+    <div class="flex gap-2 flex-wrap no-print">
+        <a href="{% url 'maintenance_export_csv' %}?{{ request.GET.urlencode }}"
+           class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+            <i class="fas fa-file-csv mr-2 text-green-600"></i> Export CSV
+        </a>
+        <button onclick="window.print()"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+            <i class="fas fa-print mr-2 text-blue-600"></i> Print
+        </button>
+        <a href="{% url 'maintenance_request_create' %}" class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors font-medium">
+            <i class="fas fa-plus mr-2"></i> New Request
+        </a>
+    </div>
 </div>
 
 <!-- Stats Cards -->
@@ -194,12 +207,19 @@
                                 <i class="fas fa-eye mr-2"></i>
                                 View
                             </a>
-                            {% if req.status != 'completed' %}
-                            <a href="{% url 'maintenance_request_detail' req.id %}" 
+                            {% if req.status == 'completed' %}
+                            <a href="{% url 'maintenance_request_edit' req.id %}"
                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-brown-600 hover:bg-brown-700 transition-colors">
                                 <i class="fas fa-edit mr-2"></i>
                                 Update
                             </a>
+                            {% endif %}
+                            {% if req.status != 'cancelled' %}
+                            <button onclick="notifyTenant({{ req.id }}, this)"
+                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-sms mr-2"></i>
+                                Notify
+                            </button>
                             {% endif %}
                         </div>
                     </td>
@@ -285,6 +305,31 @@
 </div>
 
 <script>
+function notifyTenant(requestId, btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+    fetch(`/dashboard/api/v1/maintenance/${requestId}/notify/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || ''},
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            btn.innerHTML = '<i class="fas fa-check mr-2"></i>Sent!';
+            btn.classList.replace('bg-blue-600', 'bg-green-600');
+            btn.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+        } else {
+            btn.innerHTML = '<i class="fas fa-times mr-2"></i>Failed';
+            btn.classList.replace('bg-blue-600', 'bg-red-600');
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        btn.innerHTML = '<i class="fas fa-sms mr-2"></i>Notify';
+        btn.disabled = false;
+    });
+}
+
 // Filter functionality
 document.getElementById('statusFilter').addEventListener('change', function() {
     const url = new URL(window.location.href);
@@ -298,4 +343,5 @@ document.getElementById('priorityFilter').addEventListener('change', function() 
     window.location.href = url.toString();
 });
 </script>
+</div>
 {% endblock %}

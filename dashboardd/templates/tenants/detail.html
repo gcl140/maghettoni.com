@@ -3,13 +3,15 @@
 {% block title %}{{ tenant.full_name }} - Landlord Management System{% endblock %}
 {% block page_title %}{{ tenant.full_name }}{% endblock %}
 
-{% block content %}
-<div class="mb-6">
-    <a href="{% url 'tenant_list' %}" class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Tenants
-    </a>
-</div>
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li><a href="{% url 'tenant_list' %}" class="hover:text-brown-600 transition-colors">Tenants</a></li>
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">{{ tenant.full_name }}</li>
+{% endblock %}
 
+{% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Main Column -->
     <div class="lg:col-span-2 space-y-6">
@@ -173,7 +175,7 @@
             <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-800 font-sans">Recent Payments</h3>
-                    <a href="#" class="text-sm text-brown-600 hover:text-brown-800 font-medium">
+                    <a href="{% url 'payments_list' %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">
                         View All
                     </a>
                 </div>
@@ -217,7 +219,7 @@
             <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-800 font-sans">Maintenance History</h3>
-                    <a href="#" class="text-sm text-brown-600 hover:text-brown-800 font-medium">
+                    <a href="{% url 'maintenance_requests' %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">
                         View All
                     </a>
                 </div>
@@ -311,14 +313,14 @@
             </div>
             <div class="p-6">
                 <div class="space-y-3">
-                    <a href="#" class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <a href="{% url 'payment_create' %}" class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                         <div class="flex-shrink-0 h-8 w-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
                             <i class="fas fa-file-invoice-dollar text-green-600"></i>
                         </div>
                         <span class="text-sm font-medium text-gray-900">Record Payment</span>
                     </a>
-                    
-                    <a href="#" class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+
+                    <a href="{% url 'maintenance_request_create' %}" class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                         <div class="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
                             <i class="fas fa-tools text-blue-600"></i>
                         </div>
@@ -471,4 +473,5 @@ function confirmDelete() {
     }
 }
 </script>
+</div>
 {% endblock %}

@@ -5,19 +5,21 @@
 {% block title %}{{ title }} - Landlord Management System{% endblock %}
 {% block page_title %}{{ title }}{% endblock %}
 
-{% block content %}
-<div class="mb-6">
-    {% if is_edit %}
-    <a href="{% url 'property_detail' property.id %}" class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Property
-    </a>
-    {% else %}
-    <a href="{% url 'property_list' %}" class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Properties
-    </a>
-    {% endif %}
-</div>
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li><a href="{% url 'property_list' %}" class="hover:text-brown-600 transition-colors">Properties</a></li>
+<li class="text-gray-400">/</li>
+{% if is_edit %}
+<li><a href="{% url 'property_detail' property.id %}" class="hover:text-brown-600 transition-colors">{{ property.name }}</a></li>
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">Edit</li>
+{% else %}
+<li class="text-gray-800 font-semibold">Add Property</li>
+{% endif %}
+{% endblock %}
 
+{% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
 <div class="max-w-4xl mx-auto">
     <!-- Form Card -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -374,6 +376,7 @@ label i {
 </style>
 
 
+</div>
 {% endblock %}
 {% block extra_js %}
 <script src="{% static 'js/edit.js' %}"></script>

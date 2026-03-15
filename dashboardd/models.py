@@ -144,3 +144,17 @@ class MaintenanceRequest(models.Model):
     
     def __str__(self):
         return f"{self.title} - {self.property.name}"
+    
+
+class Notification(models.Model):
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications_for_user')
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.title

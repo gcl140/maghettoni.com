@@ -1,17 +1,17 @@
 {% extends 'dashboardd/base.html' %} {% block title %}Properties - Landlord
 Management System{% endblock %} {% block page_title %}Properties{% endblock %}
+{% block breadcrumbs %}
+<li class="text-gray-400">/</li>
+<li class="text-gray-800 font-semibold">Properties</li>
+{% endblock %}
+
 {% block content %}
+<div class="p-4 lg:p-6 pb-20 lg:pb-6">
 <div
   class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
 >
   <div>
-    <a
-      href="{% url 'dashboard' %}"
-      class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors"
-    >
-      <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
-    </a>
-    <h2 class="text-2xl font-bold text-gray-800 mt-2 font-sans">
+    <h2 class="text-2xl font-bold text-gray-800 font-sans">
       Your Properties
     </h2>
     <p class="text-gray-600 mt-1">Manage and view all your rental properties</p>
@@ -109,14 +109,23 @@ Management System{% endblock %} {% block page_title %}Properties{% endblock %}
         </p>
       </div>
       <div class="mt-3 sm:mt-0">
-        <div class="relative">
-          <input
-            type="text"
-            placeholder="Search properties..."
-            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 w-full sm:w-64"
-          />
-          <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-        </div>
+        <form method="GET" action="{% url 'property_list' %}">
+          <div class="relative">
+            <input
+              type="text"
+              name="search"
+              value="{{ search_query }}"
+              placeholder="Search properties..."
+              class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 w-full sm:w-64"
+            />
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            {% if search_query %}
+            <a href="{% url 'property_list' %}" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+              <i class="fas fa-times"></i>
+            </a>
+            {% endif %}
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -332,14 +341,14 @@ Management System{% endblock %} {% block page_title %}Properties{% endblock %}
         <div class="flex space-x-2">
           {% if page_obj.has_previous %}
           <a
-            href="?page=1"
+            href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}"
             class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
           >
             <i class="fas fa-angle-double-left mr-2"></i>
             First
           </a>
           <a
-            href="?page={{ page_obj.previous_page_number }}"
+            href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
             class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
           >
             <i class="fas fa-chevron-left mr-2"></i>
@@ -357,7 +366,7 @@ Management System{% endblock %} {% block page_title %}Properties{% endblock %}
             </span>
             {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
             <a
-              href="?page={{ num }}"
+              href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}"
               class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition-colors"
             >
               {{ num }}
@@ -368,14 +377,14 @@ Management System{% endblock %} {% block page_title %}Properties{% endblock %}
 
           {% if page_obj.has_next %}
           <a
-            href="?page={{ page_obj.next_page_number }}"
+            href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
             class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
           >
             Next
             <i class="fas fa-chevron-right ml-2"></i>
           </a>
           <a
-            href="?page={{ page_obj.paginator.num_pages }}"
+            href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}"
             class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
           >
             Last
@@ -387,6 +396,7 @@ Management System{% endblock %} {% block page_title %}Properties{% endblock %}
     </div>
   </div>
   {% endif %}
+</div>
 </div>
 
 {% endblock %}
