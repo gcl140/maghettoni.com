@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Property, Unit, Tenant, Payment, MaintenanceRequest
+from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Notification
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
@@ -35,3 +35,10 @@ class MaintenanceRequestAdmin(admin.ModelAdmin):
     list_filter = ['priority', 'status', 'reported_date']
     search_fields = ['title', 'description', 'property__name']
     raw_id_fields = ['property', 'unit', 'tenant']
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['title', 'message', 'is_read']
+    list_filter = ['is_read']
+    search_fields = ['message', 'title', 'recipient__first_name', 'recipient__last_name']
+    raw_id_fields = ['recipient']

@@ -263,13 +263,7 @@
     </div>
 </div>
 
-<script>
-function markComplete() {
-    if (confirm('Mark this maintenance request as completed?')) {
-        document.querySelector('select[name="status"]').value = 'completed';
-        document.querySelector('form').submit();
-    }
-}
-</script>
+{% load static %}
+<script src="{% static 'js/maintenance-detail.js' %}" defer></script>
 </div>
 {% endblock %}
