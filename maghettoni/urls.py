@@ -22,6 +22,8 @@ from django.views.generic import RedirectView
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.views.static import serve
+from django.http import HttpResponse
+from django.contrib.staticfiles import finders
 from yuzzaz.views import landing
 
 handler404 = 'yuzzaz.views.custom_404_view'
@@ -30,8 +32,24 @@ def logout_then_google(request):
     logout(request)
     return redirect('/oauth/login/google-oauth2/?next=/profile/')
 
+def service_worker(request):
+    path_ = finders.find('js/sw.js')
+    with open(path_, 'r') as f:
+        content = f.read()
+    resp = HttpResponse(content, content_type='application/javascript')
+    resp['Service-Worker-Allowed'] = '/'
+    return resp
+
+def pwa_manifest(request):
+    path_ = finders.find('manifest.json')
+    with open(path_, 'r') as f:
+        content = f.read()
+    return HttpResponse(content, content_type='application/manifest+json')
+
 
 urlpatterns = [
+    path('sw.js', service_worker, name='service_worker'),
+    path('manifest.json', pwa_manifest, name='pwa_manifest'),
     path('', landing, name='landing'),
     path('admin/', admin.site.urls),
     path('home/', include('yuzzaz.urls')),

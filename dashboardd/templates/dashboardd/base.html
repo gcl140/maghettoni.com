@@ -8,6 +8,12 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#7a4520" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Maghettoni" />
+  <link rel="apple-touch-icon" href="{% static 'images/fav.png' %}" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -379,6 +385,12 @@
 
 {% block extra_js %}{% endblock %}
 <script src="{% static 'js/base.js' %}" defer></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js', { scope: '/dashboard/' })
+      .catch(function(e) { console.warn('SW registration failed:', e); });
+  }
+</script>
 
 </body>
 </html>

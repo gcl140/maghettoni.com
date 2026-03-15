@@ -30,7 +30,6 @@ from .forms import (
     MaintenanceStatusUpdateForm,
 )
 
-from dashboardd.services import send_sms
 
 def _build_pdf(title, headers, rows):
     """Build a landscape A4 PDF table and return a BytesIO buffer."""
@@ -1309,12 +1308,39 @@ def test_sms(request):
             'error': 'phone parameter required'
         }, status=400)
 
-    success = send_sms(phone, message)
-    return JsonResponse({
-        'success': success,
-        'phone': phone,
-        'message': message,
-    })
+    import requests as req_lib
+    from requests.auth import HTTPBasicAuth
+
+    # Normalise phone
+    phone_norm = phone.lstrip('+')
+    if phone_norm.startswith('0'):
+        phone_norm = '255' + phone_norm[1:]
+
+    payload = {
+        "source_addr": settings.BEEM_SENDER_ID,
+        "encoding": 0,
+        "message": message,
+        "recipients": [{"recipient_id": 1, "dest_addr": phone_norm}],
+    }
+
+    try:
+        resp = req_lib.post(
+            "https://apisms.beem.africa/v1/send",
+            json=payload,
+            auth=HTTPBasicAuth(settings.BEEM_API_KEY, settings.BEEM_SECRET_KEY),
+            timeout=10,
+        )
+        return JsonResponse({
+            'success': resp.status_code == 200,
+            'beem_status': resp.status_code,
+            'beem_response': resp.text,
+            'phone_sent_to': phone_norm,
+            'sender_id': settings.BEEM_SENDER_ID,
+            'api_key_set': bool(settings.BEEM_API_KEY),
+            'secret_key_set': bool(settings.BEEM_SECRET_KEY),
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
 
 @login_required
