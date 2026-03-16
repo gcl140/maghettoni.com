@@ -24,7 +24,7 @@
     'January','February','March','April','May','June',
     'July','August','September','October','November','December'
   ];
-  const DAY_NAMES = ['Ju','It','Ta','Ar','Al','Ij','Mo'];
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
   let viewYear  = new Date().getFullYear();
   let viewMonth = new Date().getMonth() + 1; // 1-based
@@ -39,11 +39,12 @@
     const firstDate  = new Date(year, month - 1, 1);
     const startWday  = firstDate.getDay(); // 0=Sun
 
-    let html = '<div class="grid grid-cols-7 gap-px text-center mb-1">';
+    const gridStyle = 'display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;';
+    let html = `<div style="${gridStyle}margin-bottom:4px;">`;
     DAY_NAMES.forEach(d => {
       html += `<div class="text-xs text-gray-400 font-medium py-1">${d}</div>`;
     });
-    html += '</div><div class="grid grid-cols-7 gap-px text-center">';
+    html += `</div><div style="${gridStyle}">`;
 
     // Empty cells before month starts
     for (let i = 0; i < startWday; i++) {

@@ -5,15 +5,15 @@ import random
 import string
 
 class PhoneVerification(models.Model):
-    phone = models.CharField(max_length=20, unique=True, verbose_name="Nambari Ya Simu")
-    verification_code = models.CharField(max_length=6, verbose_name="Msimbo Wa Uthibitisho")
-    is_verified = models.BooleanField(default=False, verbose_name="Imehakikiwa")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Imeundwa")
-    expires_at = models.DateTimeField(verbose_name="Inaisha")
+    phone = models.CharField(max_length=20, unique=True, verbose_name="Phone Number")
+    verification_code = models.CharField(max_length=6, verbose_name="Verification Code")
+    is_verified = models.BooleanField(default=False, verbose_name="Is Verified")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    expires_at = models.DateTimeField(verbose_name="Expires At")
     
     class Meta:
-        verbose_name = "Uthibitisho Wa Simu"
-        verbose_name_plural = "Uthibitisho Wa Simu"
+        verbose_name = "Phone Verification"
+        verbose_name_plural = "Phone Verifications"
     
     def __str__(self):
         return f"{self.phone} - {self.verification_code}"
@@ -30,57 +30,57 @@ class PhoneVerification(models.Model):
 
 class AssessmentSubmission(models.Model):
     CURRENT_SITUATION_CHOICES = [
-        ('madaftari', 'Nasimamia kutumia madaftari'),
-        ('kompyuta', 'Nasimamia kutumia mifumo mbalimbali ya kompyuta'),
-        ('mkabidhi', 'Nimemkabidhi mtu anisaidie kusimamia'),
+        ('notebooks', 'I manage using notebooks'),
+        ('computer_systems', 'I manage using different computer systems'),
+        ('delegated_manager', 'I delegated someone to help me manage'),
     ]
     
     GOALS_CHOICES = [
-        ('kusimamia-mwenyewe', 'Kusimamia nyumba zangu mwenyewe nikiwa na mfumo mzuri'),
-        ('kukabidhi-mtu', 'Kukabidhi mtu asimamie nyumba yangu huku nikiwa na mfumo unaonihusha moja kwa moja'),
+        ('self_manage', 'Manage my properties myself with a good system'),
+        ('delegate_with_visibility', 'Delegate management while staying directly involved through a system'),
     ]
     
     CHALLENGE_CHOICES = [
-        ('ugumu-rekodi', 'Ugumu wa kutunza rekodi zako'),
-        ('wachelewa-kulipa', 'Wapangaji kuchelewa kulipa kodi'),
-        ('kukua-taratibu', 'Biashara yako ya nyumba za kupanga kukua taratibu'),
-        ('gharama-kubwa', 'Gharama kubwa za ukarabati na matengenezo'),
-        ('ukosefu-wakati', 'Ukosefu wa wakati wa kusimamia vyema'),
+        ('record_keeping', 'Difficulty keeping records'),
+        ('late_rent', 'Tenants paying rent late'),
+        ('slow_growth', 'Rental business growing slowly'),
+        ('high_maintenance_costs', 'High maintenance and repair costs'),
+        ('limited_time', 'Lack of time to manage properly'),
     ]
     
-    name = models.CharField(max_length=255, verbose_name="Jina Kamili")
-    email = models.EmailField(validators=[EmailValidator()], verbose_name="Barua Pepe")
-    location = models.CharField(max_length=255, verbose_name="Mahali Unapoishi")
-    phone = models.CharField(max_length=20, unique=True, verbose_name="Nambari Ya Simu")
+    name = models.CharField(max_length=255, verbose_name="Full Name")
+    email = models.EmailField(validators=[EmailValidator()], verbose_name="Email")
+    location = models.CharField(max_length=255, verbose_name="Location")
+    phone = models.CharField(max_length=20, unique=True, verbose_name="Phone Number")
     
     current_situation = models.CharField(
         max_length=20,
         choices=CURRENT_SITUATION_CHOICES,
-        verbose_name="Hali Ya Sasa"
+        verbose_name="Current Situation"
     )
     
     goals = models.CharField(
         max_length=50,
         choices=GOALS_CHOICES,
-        verbose_name="Malengo"
+        verbose_name="Goals"
     )
     
-    challenges = models.TextField(verbose_name="Changamoto")
-    solution = models.TextField(verbose_name="Njia Ya Kusaidia", blank=True)
+    challenges = models.TextField(verbose_name="Challenges")
+    solution = models.TextField(verbose_name="Suggested Solution", blank=True)
     
-    submitted_at = models.DateTimeField(default=timezone.now, verbose_name="Tarehe Ya Kutuma")
-    ip_address = models.GenericIPAddressField(null=True, blank=True, verbose_name="Anwani Ya IP")
+    submitted_at = models.DateTimeField(default=timezone.now, verbose_name="Submitted At")
+    ip_address = models.GenericIPAddressField(null=True, blank=True, verbose_name="IP Address")
     verified_phone = models.ForeignKey(
         PhoneVerification, 
         on_delete=models.SET_NULL, 
         null=True, 
         blank=True,
-        verbose_name="Simu Iliyohakikiwa"
+        verbose_name="Verified Phone"
     )
     
     class Meta:
-        verbose_name = "Tathmini"
-        verbose_name_plural = "Tathmini"
+        verbose_name = "Assessment"
+        verbose_name_plural = "Assessments"
         ordering = ['-submitted_at']
     
     def __str__(self):
@@ -90,23 +90,23 @@ class AssessmentSubmission(models.Model):
         """Return challenges as list"""
         return self.challenges.split(',') if self.challenges else []
     
-    def get_current_situation_display_sw(self):
-        """Get Swahili display for current situation"""
+    def get_current_situation_label(self):
+        """Get display label for current situation."""
         choices_dict = dict(self.CURRENT_SITUATION_CHOICES)
         return choices_dict.get(self.current_situation, '')
     
-    def get_goals_display_sw(self):
-        """Get Swahili display for goals"""
+    def get_goals_label(self):
+        """Get display label for goals."""
         choices_dict = dict(self.GOALS_CHOICES)
         return choices_dict.get(self.goals, '')
     
 class Subscriber(models.Model):
-    email = models.EmailField(unique=True, validators=[EmailValidator()], verbose_name="Barua Pepe")
-    subscribed_at = models.DateTimeField(auto_now_add=True, verbose_name="Imejisajili")
+    email = models.EmailField(unique=True, validators=[EmailValidator()], verbose_name="Email")
+    subscribed_at = models.DateTimeField(auto_now_add=True, verbose_name="Subscribed At")
     
     class Meta:
-        verbose_name = "Mteja Aliyejisajili"
-        verbose_name_plural = "Wateja Waliyojisajili"
+        verbose_name = "Subscriber"
+        verbose_name_plural = "Subscribers"
         ordering = ['-subscribed_at']
     
     def __str__(self):

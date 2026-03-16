@@ -495,23 +495,17 @@
       </button>
     </footer>
     {% if messages %}
-    <div class="fixed bottom-4 right-4 z-50 space-y-2">
+    <div id="yuzzaz-toast-messages" class="hidden" aria-hidden="true">
       {% for message in messages %}
-      <script>
-        Toastify({
-          text: "{{ message }}",
-          duration: 15000,
-          close: true,
-          gravity: "top",
-          position: "right",
-          backgroundColor:
-            "{% if message.tags == 'error' %}#f56565{% elif message.tags == 'success' %}#48bb78{% elif message.tags == 'info' %}#4299e1{% endif %}",
-          stopOnFocus: true,
-        }).showToast();
-      </script>
+      <div
+        data-message="{{ message|escapejs }}"
+        data-tags="{{ message.tags|escapejs }}"
+        data-duration="15000"
+      ></div>
       {% endfor %}
     </div>
     {% endif %}
+    <script src="{% static 'js/yuzzaz/messages.js' %}"></script>
     <script src="{% static 'js/home.js' %}"></script>
   </body>
 </html>

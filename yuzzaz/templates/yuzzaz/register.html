@@ -1,5 +1,5 @@
-{% extends 'yuzzaz/base.html' %} {% load static %} {% load widget_tweaks %} 
-{% block title %}Register{% endblock %} {% block content %}
+{% extends 'yuzzaz/base.html' %} {% load static %} {% load widget_tweaks %} {%
+block title %}Register{% endblock %} {% block content %}
 <!-- Header -->
 <div class="text-center mb-8">
   <div
@@ -16,15 +16,16 @@
   {% csrf_token %}
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
     <!-- First Name -->
     <div class="space-y-2">
       <label for="id_first_name" class="block text-gray-300 font-medium">
         <i class="fas fa-user mr-2 text-gray-400"></i>
         First Name
       </label>
-      {{ form.first_name|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
-      {% if form.first_name.errors %}
+      {{ form.first_name|add_class:"w-full bg-brown-900 border border-gray-600
+      rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2
+      focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {%
+      if form.first_name.errors %}
       <p class="text-red-400 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
       {% endif %}
     </div>
@@ -35,8 +36,10 @@
         <i class="fas fa-user mr-2 text-gray-400"></i>
         Last Name
       </label>
-      {{ form.last_name|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
-      {% if form.last_name.errors %}
+      {{ form.last_name|add_class:"w-full bg-brown-900 border border-gray-600
+      rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2
+      focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {%
+      if form.last_name.errors %}
       <p class="text-red-400 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
       {% endif %}
     </div>
@@ -47,8 +50,10 @@
         <i class="fas fa-phone mr-2 text-gray-400"></i>
         Phone Number
       </label>
-      {{ form.telephone|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
-      {% if form.telephone.errors %}
+      {{ form.telephone|add_class:"w-full bg-brown-900 border border-gray-600
+      rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2
+      focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {%
+      if form.telephone.errors %}
       <p class="text-red-400 text-sm mt-1">{{ form.telephone.errors.0 }}</p>
       {% endif %}
     </div>
@@ -59,8 +64,10 @@
         <i class="fas fa-envelope mr-2 text-gray-400"></i>
         Email (Optional)
       </label>
-      {{ form.email|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
-      {% if form.email.errors %}
+      {{ form.email|add_class:"w-full bg-brown-900 border border-gray-600
+      rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2
+      focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {%
+      if form.email.errors %}
       <p class="text-red-400 text-sm mt-1">{{ form.email.errors.0 }}</p>
       {% endif %}
     </div>
@@ -71,8 +78,10 @@
         <i class="fas fa-key mr-2 text-gray-400"></i>
         Password
       </label>
-      {{ form.password1|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
-      {% if form.password1.errors %}
+      {{ form.password1|add_class:"w-full bg-brown-900 border border-gray-600
+      rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2
+      focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {%
+      if form.password1.errors %}
       <p class="text-red-400 text-sm mt-1">{{ form.password1.errors.0 }}</p>
       {% endif %}
     </div>
@@ -83,12 +92,13 @@
         <i class="fas fa-lock mr-2 text-gray-400"></i>
         Confirm Password
       </label>
-      {{ form.password2|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
-      {% if form.password2.errors %}
+      {{ form.password2|add_class:"w-full bg-brown-900 border border-gray-600
+      rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2
+      focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }} {%
+      if form.password2.errors %}
       <p class="text-red-400 text-sm mt-1">{{ form.password2.errors.0 }}</p>
       {% endif %}
     </div>
-
   </div>
 
   <!-- Submit Button -->
@@ -100,7 +110,6 @@
     <span>Create Account</span>
   </button>
 </form>
-
 
 <!-- Additional Links -->
 <div class="mt-6 text-center">
@@ -114,26 +123,6 @@
     </a>
   </p>
 </div>
- {% block scripts %}
-<script>
-    const tel = document.getElementById("id_telephone");
-
-    tel.addEventListener("input", () => {
-        let v = tel.value.replace(/\s+/g, "");
-
-        // Always enforce prefix
-        if (!v.startsWith("+255")) {
-            v = v.replace(/^\+?0*/, ""); 
-            v = "+255" + v;
-        }
-
-        // If the user types "+2550", remove the zero
-        if (v.startsWith("+2550")) {
-            v = "+255" + v.slice(5);
-        }
-
-        tel.value = v;
-    });
-</script>
-{% endblock %}
-{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/yuzzaz/register.js' %}" defer></script>
+{% endblock %} {% endblock %}

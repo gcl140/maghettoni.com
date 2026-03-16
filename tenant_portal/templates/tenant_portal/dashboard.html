@@ -63,7 +63,7 @@
     <div class="flex items-center gap-2 mb-3">
       <div class="w-8 h-8 rounded-lg flex items-center justify-center
                   {% if days_until_due <= 3 %}bg-red-500/20{% elif days_until_due <= 7 %}bg-amber-500/20{% else %}bg-green-500/20{% endif %}">
-        <i class="fas fa-calendar-clock text-sm
+        <i class="fas fa-calendar text-sm
                   {% if days_until_due <= 3 %}text-red-400{% elif days_until_due <= 7 %}text-amber-400{% else %}text-green-400{% endif %}">
         </i>
       </div>

@@ -12,7 +12,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.utils import timezone
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Count, Q, Min, Max, Avg
 from django.db.models.functions import TruncMonth
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
@@ -1578,13 +1578,19 @@ def test_sms(request):
 def property_units(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
     units = property_obj.units_list.all()
-    
+
     # Calculate statistics
     total_units = units.count()
     occupied_units = units.filter(is_occupied=True).count()
     vacant_units = total_units - occupied_units
-    total_monthly_rent = units.aggregate(Sum('monthly_rent'))['monthly_rent__sum'] or 0
-    
+    agg = units.aggregate(
+        total=Sum('monthly_rent'),
+        min_rent=Min('monthly_rent'),
+        max_rent=Max('monthly_rent'),
+        avg_rent=Avg('monthly_rent'),
+    )
+    total_monthly_rent = agg['total'] or 0
+
     context = {
         'property': property_obj,
         'units': units,
@@ -1592,9 +1598,79 @@ def property_units(request, property_id):
         'occupied_units': occupied_units,
         'vacant_units': vacant_units,
         'total_monthly_rent': total_monthly_rent,
+        'min_rent': agg['min_rent'] or 0,
+        'max_rent': agg['max_rent'] or 0,
+        'avg_rent': round(agg['avg_rent'] or 0, 2),
+        'occupancy_rate': round((occupied_units / total_units * 100), 1) if total_units else 0,
     }
-    
+
     return render(request, 'properties/units.html', context)
+
+
+@landlord_required
+def units_export_csv(request, property_id):
+    property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
+    units = property_obj.units_list.all().order_by('unit_number')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{property_obj.name}-units.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Unit', 'Bedrooms', 'Bathrooms', 'Sq Ft', 'Monthly Rent', 'Status', 'Description'])
+    for u in units:
+        writer.writerow([
+            u.unit_number,
+            u.bedrooms,
+            u.bathrooms,
+            u.square_feet or '',
+            u.monthly_rent,
+            'Occupied' if u.is_occupied else 'Vacant',
+            u.description or '',
+        ])
+    return response
+
+
+@landlord_required
+def units_export_pdf(request, property_id):
+    property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
+    units = property_obj.units_list.all().order_by('unit_number')
+
+    headers = ['Unit', 'Bedrooms', 'Bathrooms', 'Sq Ft', 'Monthly Rent (TZS. )', 'Status']
+    rows = [[
+        u.unit_number,
+        u.bedrooms,
+        u.bathrooms,
+        u.square_feet or '-',
+        u.monthly_rent,
+        'Occupied' if u.is_occupied else 'Vacant',
+    ] for u in units]
+
+    buf = _build_pdf(f'{property_obj.name} — Units', headers, rows)
+    filename = f"{property_obj.name}-units.pdf"
+    return HttpResponse(buf, content_type='application/pdf',
+                        headers={'Content-Disposition': f'attachment; filename="{filename}"'})
+
+
+@landlord_required
+@require_GET
+def units_vacancy_alert(request, property_id):
+    """Create a notification listing the current vacant units for this property."""
+    property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
+    vacant = property_obj.units_list.filter(is_occupied=False).order_by('unit_number')
+
+    if not vacant.exists():
+        return JsonResponse({'status': 'ok', 'message': 'No vacant units right now — all units are occupied!'})
+
+    unit_list = ', '.join(f'Unit {u.unit_number}' for u in vacant)
+    Notification.objects.create(
+        recipient=request.user,
+        title=f'Vacancy Alert — {property_obj.name}',
+        message=f'{vacant.count()} vacant unit(s): {unit_list}',
+    )
+    return JsonResponse({
+        'status': 'ok',
+        'count': vacant.count(),
+        'message': f'Alert created — {vacant.count()} vacant unit(s): {unit_list}',
+    })
 
 @landlord_required
 def unit_edit(request, property_id, unit_id=None):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Notification, PropertyDocument
+from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Notification, PropertyDocument, TenantInvite
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
@@ -50,3 +50,10 @@ class PropertyDocumentAdmin(admin.ModelAdmin):
     list_filter = ['uploaded_at', 'property', 'version']
     search_fields = ['title', 'property__name', 'uploaded_by__username']
     raw_id_fields = ['property', 'uploaded_by', 'previous_version']
+
+@admin.register(TenantInvite)
+class TenantInviteAdmin(admin.ModelAdmin):
+    list_display = ['tenant', 'token', 'is_used', 'created_at']
+    list_filter = ['created_at', 'tenant']
+    search_fields = ['tenant__first_name', 'tenant__last_name', 'property__name', 'unit__unit_number']
+    raw_id_fields = ['tenant']

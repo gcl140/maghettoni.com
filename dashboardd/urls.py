@@ -16,6 +16,9 @@ urlpatterns = [
     path('properties/units/<int:property_id>/', views.property_units, name='property_units'),
 
     path('properties/<int:property_id>/units/', views.property_units, name='property_units'),
+    path('properties/<int:property_id>/units/export/csv/', views.units_export_csv, name='units_export_csv'),
+    path('properties/<int:property_id>/units/export/pdf/', views.units_export_pdf, name='units_export_pdf'),
+    path('properties/<int:property_id>/units/vacancy-alert/', views.units_vacancy_alert, name='units_vacancy_alert'),
     path('properties/<int:property_id>/units/add/', views.unit_edit, name='unit_add'),
     path('properties/<int:property_id>/units/<int:unit_id>/edit/', views.unit_edit, name='unit_edit'),
     path('properties/<int:property_id>/units/<int:unit_id>/delete/', views.unit_delete, name='unit_delete'),
@@ -72,6 +75,7 @@ urlpatterns = [
 
     # Notifications
     path('api/v1/notifications/', api.api_notifications, name='api_notifications'),
+    path('api/v1/calendar/', api.api_landlord_calendar, name='api_landlord_calendar'),
 
     # SMS reminders
     path('api/v1/payments/<int:payment_id>/remind/', api.api_payment_remind, name='api_payment_remind'),

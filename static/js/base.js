@@ -168,19 +168,36 @@ document.addEventListener("DOMContentLoaded", function () {
     const m = document.cookie.match(/(?:^|;)\s*googtrans=([^;]+)/);
     return m ? decodeURIComponent(m[1]) : null;
   }
+
   function setGTCookie(val) {
     document.cookie = "googtrans=" + val + "; path=/";
-    document.cookie =
-      "googtrans=" + val + "; domain=" + location.hostname + "; path=/";
+    if (
+      location.hostname !== "localhost" &&
+      location.hostname !== "127.0.0.1"
+    ) {
+      document.cookie =
+        "googtrans=" + val + "; domain=" + location.hostname + "; path=/";
+      document.cookie =
+        "googtrans=" + val + "; domain=." + location.hostname + "; path=/";
+    }
   }
+
   function clearGTCookie() {
     var exp = "expires=Thu, 01 Jan 1970 00:00:00 UTC";
     document.cookie = "googtrans=; path=/; " + exp;
-    document.cookie =
-      "googtrans=; domain=" + location.hostname + "; path=/; " + exp;
+    if (
+      location.hostname !== "localhost" &&
+      location.hostname !== "127.0.0.1"
+    ) {
+      document.cookie =
+        "googtrans=; domain=" + location.hostname + "; path=/; " + exp;
+      document.cookie =
+        "googtrans=; domain=." + location.hostname + "; path=/; " + exp;
+    }
   }
 
-  var activeLang = getGTCookie() === "/en/sw" ? "sw" : "en";
+  var savedLang = localStorage.getItem("mag-lang");
+  var activeLang = savedLang || (getGTCookie() === "/en/sw" ? "sw" : "en");
   if (langLabel)
     langLabel.textContent = activeLang === "sw" ? "Kiswahili" : "English";
   document.querySelectorAll(".lang-opt").forEach(function (btn) {
@@ -189,15 +206,20 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   window.switchLang = function (lang) {
-    if (lang === activeLang) {
+    if (langMenu) {
       langMenu.classList.add("hidden");
-      return;
     }
+
     localStorage.setItem("mag-lang", lang);
     if (lang === "sw") {
       setGTCookie("/en/sw");
     } else {
       clearGTCookie();
+    }
+
+    document.documentElement.lang = lang === "sw" ? "sw" : "en";
+    if (langLabel) {
+      langLabel.textContent = lang === "sw" ? "Kiswahili" : "English";
     }
     location.reload();
   };

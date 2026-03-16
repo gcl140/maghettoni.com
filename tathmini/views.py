@@ -135,8 +135,13 @@ def submit_assessment(request):
                 'error': 'Tafadhali andika barua pepe sahihi'
             }, status=400)
         
-        # Check if phone is verified
+        # Check if phone is verified.
+        # Supports both legacy tathmini verification records and
+        # newer yuzzaz session-stamped OTP verification.
         phone = data['phone'].strip()
+        session_verified = bool(request.session.get(f'otp_verified_{phone}'))
+        verification = None
+
         try:
             verification = PhoneVerification.objects.get(phone=phone, is_verified=True)
             if verification.is_expired():
@@ -145,10 +150,11 @@ def submit_assessment(request):
                     'error': 'Uthibitisho wa simu umeisha muda wake. Tafadhali hakiki simu yako tena.'
                 }, status=400)
         except PhoneVerification.DoesNotExist:
-            return JsonResponse({
-                'success': False,
-                'error': 'Tafadhali hakiki nambari yako ya simu kabla ya kuendelea.'
-            }, status=400)
+            if not session_verified:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Tafadhali hakiki nambari yako ya simu kabla ya kuendelea.'
+                }, status=400)
         
         # Check if phone already exists (unique constraint)
         if AssessmentSubmission.objects.filter(phone=phone).exists():
@@ -174,6 +180,9 @@ def submit_assessment(request):
         
         # Save to database
         submission.save()
+
+        # Clear session OTP verification after successful submission.
+        request.session.pop(f'otp_verified_{phone}', None)
         
         # Log the submission
         logger.info(f"New assessment submitted by {data['name']} ({data['email']}) - Phone: {phone}")
@@ -263,8 +272,8 @@ def assessment_dashboard(request):
     by_goals = {}
     
     for sub in submissions:
-        by_situation[sub.get_current_situation_display_sw()] = by_situation.get(sub.get_current_situation_display_sw(), 0) + 1
-        by_goals[sub.get_goals_display_sw()] = by_goals.get(sub.get_goals_display_sw(), 0) + 1
+        by_situation[sub.get_current_situation_label()] = by_situation.get(sub.get_current_situation_label(), 0) + 1
+        by_goals[sub.get_goals_label()] = by_goals.get(sub.get_goals_label(), 0) + 1
     
     context = {
         'submissions': submissions,

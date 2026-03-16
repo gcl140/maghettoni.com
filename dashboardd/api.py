@@ -1,3 +1,6 @@
+import calendar as cal
+from datetime import date
+
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
@@ -332,3 +335,84 @@ def _serialize_maintenance(r, full=False):
         data['description'] = r.description
         data['completed_date'] = r.completed_date.isoformat() if r.completed_date else None
     return data
+
+
+
+# ── Landlord Payment Calendar ─────────────────────────────────────────────────
+
+@login_required
+@require_GET
+def api_landlord_calendar(request):
+    """
+    Returns per-day payment summary + item details for all landlord properties.
+    GET /dashboard/api/v1/calendar/?year=2026&month=3
+    days keyed by day number (string): { completed, pending, overdue, upcoming, items[] }
+    """
+    today = date.today()
+    try:
+        year  = int(request.GET.get('year',  today.year))
+        month = int(request.GET.get('month', today.month))
+        if not (1 <= month <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'Invalid year/month'}, status=400)
+
+    last_day = cal.monthrange(year, month)[1]
+
+    days = {}
+
+    def bucket(d):
+        key = str(d)
+        if key not in days:
+            days[key] = {'completed': 0, 'pending': 0, 'overdue': 0, 'upcoming': 0, 'items': []}
+        return days[key]
+
+    # Completed payments — keyed by payment_date
+    for p in Payment.objects.filter(
+        property__owner=request.user,
+        payment_date__year=year,
+        payment_date__month=month,
+        status='completed',
+    ).select_related('tenant', 'property'):
+        b = bucket(p.payment_date.day)
+        b['completed'] += 1
+        b['items'].append({
+            'id': p.id,
+            'tenant': f"{p.tenant.first_name} {p.tenant.last_name}",
+            'property': p.property.name,
+            'amount': float(p.amount),
+            'status': 'completed',
+        })
+
+    # Non-completed payments — keyed by due_date
+    for p in Payment.objects.filter(
+        property__owner=request.user,
+        due_date__year=year,
+        due_date__month=month,
+    ).exclude(status='completed').select_related('tenant', 'property'):
+        due = date(year, month, p.due_date.day)
+        b = bucket(p.due_date.day)
+        if due < today:
+            item_status = 'overdue'
+            b['overdue'] += 1
+        elif due > today:
+            item_status = 'upcoming'
+            b['upcoming'] += 1
+        else:
+            item_status = 'pending'
+            b['pending'] += 1
+        b['items'].append({
+            'id': p.id,
+            'tenant': f"{p.tenant.first_name} {p.tenant.last_name}",
+            'property': p.property.name,
+            'amount': float(p.amount),
+            'status': item_status,
+        })
+
+    return JsonResponse({
+        'year': year,
+        'month': month,
+        'days_in_month': last_day,
+        'today': today.day if (today.year == year and today.month == month) else None,
+        'days': days,
+    })

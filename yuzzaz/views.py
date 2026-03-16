@@ -29,6 +29,144 @@ from dashboardd.services import send_otp as sms_send_otp
 User = get_user_model()
 
 
+MESSAGES = {
+    'invalid_json': {
+        'en': 'Invalid JSON',
+        'sw': 'Data ya JSON si sahihi.',
+    },
+    'phone_required': {
+        'en': 'Phone number is required.',
+        'sw': 'Nambari ya simu inahitajika.',
+    },
+    'otp_rate_limited': {
+        'en': 'Rate limit reached. Please wait one hour and try again.',
+        'sw': 'Umefika kikomo. Tafadhali subiri saa moja na ujaribu tena.',
+    },
+    'otp_send_failed': {
+        'en': 'Failed to send OTP. Check your phone number and try again.',
+        'sw': 'Imeshindwa kutuma OTP. Angalia nambari yako na ujaribu tena.',
+    },
+    'otp_sent_for': {
+        'en': 'OTP sent to {phone}',
+        'sw': 'OTP imetumwa kwa {phone}',
+    },
+    'otp_data_incomplete': {
+        'en': 'Phone and code are required.',
+        'sw': 'Taarifa hazikamiliki.',
+    },
+    'otp_invalid_code': {
+        'en': 'Invalid code.',
+        'sw': 'Msimbo si sahihi.',
+    },
+    'otp_expired': {
+        'en': 'Code has expired. Please request a new one.',
+        'sw': 'Msimbo umekwisha muda. Tuma tena.',
+    },
+    'otp_verified': {
+        'en': 'Phone number verified successfully!',
+        'sw': 'Nambari imethibitishwa!',
+    },
+    'activation_link_invalid': {
+        'en': 'Activation link is invalid.',
+        'sw': 'Kiungo cha uamilishaji si sahihi.',
+    },
+    'account_already_active': {
+        'en': 'Account is already activated. You can log in.',
+        'sw': 'Akaunti tayari imeamilishwa. Unaweza kuingia.',
+    },
+    'activation_link_expired': {
+        'en': 'Activation link is invalid or expired.',
+        'sw': 'Kiungo cha uamilishaji si sahihi au kimeisha muda.',
+    },
+    'account_activated': {
+        'en': 'Your account has been activated. You can log in now.',
+        'sw': 'Akaunti yako imeamilishwa. Unaweza kuingia sasa.',
+    },
+    'no_activation_request': {
+        'en': 'No activation request was found.',
+        'sw': 'Hakuna ombi la uamilishaji lililopatikana.',
+    },
+    'activation_session_expired': {
+        'en': 'Session expired. Please contact administrator.',
+        'sw': 'Kipindi kimeisha. Tafadhali wasiliana na msimamizi.',
+    },
+    'activation_link_resent': {
+        'en': 'A new activation link has been sent.',
+        'sw': 'Kiungo kipya kimetumwa.',
+    },
+    'account_not_found': {
+        'en': 'No account was found.',
+        'sw': 'Hakuna akaunti iliyopatikana.',
+    },
+    'account_not_activated': {
+        'en': 'Your account is not activated yet. Please check your email.',
+        'sw': 'Akaunti yako haijamilishwa. Angalia barua pepe yako.',
+    },
+    'account_not_verified': {
+        'en': 'Your account has not been approved yet. We will contact you soon.',
+        'sw': 'Akaunti yako bado haijakubaliwa na timu yetu. Tutawasiliana nawe hivi karibuni.',
+    },
+    'login_success': {
+        'en': 'Logged in successfully.',
+        'sw': 'Umefanikiwa kuingia.',
+    },
+    'invalid_credentials': {
+        'en': 'Invalid credentials, please try again.',
+        'sw': 'Taarifa zako si sahihi, tafadhali jaribu tena.',
+    },
+    'logged_out': {
+        'en': 'You have been logged out successfully.',
+        'sw': 'Umetoka nje kikamilifu.',
+    },
+    'profile_updated': {
+        'en': 'Your profile has been updated!',
+        'sw': 'Wasifu wako umesasishwa!',
+    },
+    'phone_verify_first': {
+        'en': 'Please verify your phone number first.',
+        'sw': 'Thibiti nambari yako ya simu kwanza.',
+    },
+    'missing_required_fields': {
+        'en': 'Missing required fields',
+        'sw': 'Sehemu muhimu hazijajazwa',
+    },
+    'message_sent_success': {
+        'en': 'Message sent successfully',
+        'sw': 'Ujumbe umetumwa kikamilifu',
+    },
+}
+
+
+def get_language(request, payload=None):
+    """Resolve active language for this request: en or sw."""
+    lang = None
+
+    if isinstance(payload, dict):
+        lang = payload.get('lang')
+
+    if not lang:
+        lang = request.GET.get('lang')
+
+    if not lang and request.method == 'POST':
+        lang = request.POST.get('lang')
+
+    if not lang:
+        lang = request.session.get('lang')
+
+    if lang not in {'en', 'sw'}:
+        accept = (request.headers.get('Accept-Language', '') or '').lower()
+        lang = 'sw' if accept.startswith('sw') else 'en'
+
+    request.session['lang'] = lang
+    return lang
+
+
+def msg(request, key, payload=None, **fmt):
+    lang = get_language(request, payload)
+    template = MESSAGES.get(key, {}).get(lang) or MESSAGES.get(key, {}).get('en') or key
+    return template.format(**fmt) if fmt else template
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Landing
 # ─────────────────────────────────────────────────────────────────────────────
@@ -61,33 +199,35 @@ def otp_send(request):
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        return JsonResponse({'error': msg(request, 'invalid_json')}, status=400)
 
     phone = data.get('phone', '').strip()
     if not phone:
-        return JsonResponse({'error': 'Nambari ya simu inahitajika.'}, status=400)
+        return JsonResponse({'error': msg(request, 'phone_required', data)}, status=400)
 
     # Rate limit: max 3 OTPs per phone per hour
     hour_ago = timezone.now() - timedelta(hours=1)
     recent_count = OTPVerification.objects.filter(
         phone=phone, created_at__gte=hour_ago
     ).count()
-    if recent_count >= 3:
-        return JsonResponse(
-            {'error': 'Umefika kikomo. Tafadhali subiri saa moja na ujaribu tena.'},
-            status=429,
-        )
+    # if recent_count >= 3:
+    #     return JsonResponse(
+    #         {'error': msg(request, 'otp_rate_limited', data)},
+    #         status=429,
+    #     )
 
     otp = OTPVerification.generate(phone)
+    print(f"OTP requested for phone: {phone} is {otp.code}")
+
     sent = sms_send_otp(phone, otp.code)
     if not sent:
         otp.delete()
         return JsonResponse(
-            {'error': 'Imeshindwa kutuma OTP. Angalia nambari yako na ujaribu tena.'},
+            {'error': msg(request, 'otp_send_failed', data)},
             status=500,
         )
 
-    return JsonResponse({'status': 'sent', 'message': f'OTP imetumwa kwa {phone}'})
+    return JsonResponse({'status': 'sent', 'message': msg(request, 'otp_sent_for', data, phone=phone)})
 
 
 @csrf_exempt
@@ -101,13 +241,13 @@ def otp_verify(request):
     try:
         data = json.loads(request.body)
     except (json.JSONDecodeError, ValueError):
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        return JsonResponse({'error': msg(request, 'invalid_json')}, status=400)
 
     phone = data.get('phone', '').strip()
     code = data.get('code', '').strip()
 
     if not phone or not code:
-        return JsonResponse({'error': 'Taarifa hazikamiliki.'}, status=400)
+        return JsonResponse({'error': msg(request, 'otp_data_incomplete', data)}, status=400)
 
     otp = (
         OTPVerification.objects
@@ -117,11 +257,11 @@ def otp_verify(request):
     )
 
     if not otp:
-        return JsonResponse({'verified': False, 'error': 'Msimbo si sahihi.'}, status=400)
+        return JsonResponse({'verified': False, 'error': msg(request, 'otp_invalid_code', data)}, status=400)
 
     if otp.is_expired():
         return JsonResponse(
-            {'verified': False, 'error': 'Msimbo umekwisha muda. Tuma tena.'},
+            {'verified': False, 'error': msg(request, 'otp_expired', data)},
             status=400,
         )
 
@@ -131,7 +271,7 @@ def otp_verify(request):
     # Stamp the session so survey submission can verify
     request.session[f'otp_verified_{phone}'] = True
 
-    return JsonResponse({'verified': True, 'message': 'Nambari imethibitishwa!'})
+    return JsonResponse({'verified': True, 'message': msg(request, 'otp_verified', data)})
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -146,27 +286,27 @@ def activate(request, uidb64, token):
         user = None
 
     if not user:
-        messages.error(request, "Kiungo cha uamilishaji si sahihi.")
+        messages.error(request, msg(request, 'activation_link_invalid'))
         return redirect('home')
 
     if user.is_active:
-        messages.info(request, "Akaunti tayari imeamilishwa. Unaweza kuingia.")
+        messages.info(request, msg(request, 'account_already_active'))
         return redirect('login')
 
     if not account_activation_token.check_token(user, token):
-        messages.error(request, "Kiungo cha uamilishaji si sahihi au kimeisha muda.")
+        messages.error(request, msg(request, 'activation_link_expired'))
         return redirect('home')
 
     user.is_active = True
     user.save()
-    messages.success(request, "Akaunti yako imeamilishwa. Unaweza kuingia sasa.")
+    messages.success(request, msg(request, 'account_activated'))
     return redirect('login')
 
 
 def activation_sent(request):
     email = request.session.get('inactive_user_email')
     if not email:
-        messages.warning(request, "Hakuna ombi la uamilishaji lililopatikana.")
+        messages.warning(request, msg(request, 'no_activation_request'))
         return redirect('login')
 
     if not request.session.get('email_sent_time'):
@@ -183,7 +323,7 @@ def resend_activation_email(request):
     sent_time = request.session.get('email_sent_time')
 
     if not email or not sent_time:
-        messages.error(request, "Kipindi kimeisha. Tafadhali wasiliana na msimamizi.")
+        messages.error(request, msg(request, 'activation_session_expired'))
         return redirect('login')
 
     sent_time = datetime.fromisoformat(sent_time)
@@ -202,9 +342,9 @@ def resend_activation_email(request):
         email_obj.content_subtype = "html"
         email_obj.send()
         request.session['email_sent_time'] = now().isoformat()
-        messages.success(request, "Kiungo kipya kimetumwa.")
+        messages.success(request, msg(request, 'activation_link_resent'))
     else:
-        messages.error(request, "Hakuna akaunti iliyopatikana.")
+        messages.error(request, msg(request, 'account_not_found'))
 
     return redirect('activation_sent')
 
@@ -215,17 +355,20 @@ def resend_activation_email(request):
 
 def login(request):
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
+        identifier = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
 
-        user = User.objects.filter(username=username).first()
+        from django.db.models import Q
+        user = User.objects.filter(
+            Q(username=identifier) | Q(email=identifier) | Q(telephone=identifier)
+        ).first()
         if user and user.check_password(password):
             if not user.is_active:
                 request.session['inactive_user_email'] = user.email
                 request.session['email_sent_time'] = now().isoformat()
                 messages.warning(
                     request,
-                    "Akaunti yako haijamilishwa. Angalia barua pepe yako.",
+                    msg(request, 'account_not_activated'),
                 )
                 return redirect('activation_sent')
 
@@ -233,27 +376,26 @@ def login(request):
             if not user.is_verified:
                 messages.error(
                     request,
-                    "Akaunti yako bado haijakubaliwa na timu yetu. "
-                    "Tutawasiliana nawe hivi karibuni.",
+                    msg(request, 'account_not_verified'),
                 )
                 return render(request, 'yuzzaz/login.html')
 
             auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            messages.success(request, "Umefanikiwa kuingia.")
+            messages.success(request, msg(request, 'login_success'))
 
             # Tenant users go to the tenant portal
             if hasattr(user, 'tenant_profile') and user.tenant_profile is not None:
                 return redirect('tenant_dashboard')
             return redirect('dashboard')
 
-        messages.error(request, "Taarifa zako si sahihi, tafadhali jaribu tena.")
+        messages.error(request, msg(request, 'invalid_credentials'))
 
     return render(request, 'yuzzaz/login.html')
 
 
 def logout(request):
     auth_logout(request)
-    messages.success(request, "Umetoka nje kikamilifu.")
+    messages.success(request, msg(request, 'logged_out'))
     return redirect('login')
 
 
@@ -268,7 +410,7 @@ def profile(request, user_id):
         form = CustomUserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
-            messages.success(request, "Wasifu wako umesasishwa!")
+            messages.success(request, msg(request, 'profile_updated'))
             return redirect('profile', user_id=user.id)
     else:
         form = CustomUserForm(instance=user)
@@ -295,7 +437,7 @@ def edit_profile(request):
         form = CustomUserForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Wasifu umesasishwa!')
+            messages.success(request, msg(request, 'profile_updated'))
             return redirect('profile', user_id=request.user.id)
     else:
         form = CustomUserForm(instance=request.user)
@@ -332,12 +474,12 @@ def send_gift_a_text(request):
         message_text = data.get('message', '').strip()
 
         if not all([name, email, message_text]):
-            return JsonResponse({'status': 'error', 'message': 'Missing required fields'}, status=400)
+            return JsonResponse({'status': 'error', 'message': msg(request, 'missing_required_fields', data)}, status=400)
 
         # ── OTP gate for survey submissions ──────────────────────────────
         if phone and not request.session.get(f'otp_verified_{phone}'):
             return JsonResponse(
-                {'status': 'error', 'message': 'Thibiti nambari yako ya simu kwanza.'},
+                {'status': 'error', 'message': msg(request, 'phone_verify_first', data)},
                 status=403,
             )
 
@@ -353,10 +495,10 @@ def send_gift_a_text(request):
         # Clear OTP verification from session after successful submission
         request.session.pop(f'otp_verified_{phone}', None)
 
-        return JsonResponse({'status': 'success', 'message': 'Message sent successfully'})
+        return JsonResponse({'status': 'success', 'message': msg(request, 'message_sent_success', data)})
 
     except json.JSONDecodeError:
-        return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+        return JsonResponse({'status': 'error', 'message': msg(request, 'invalid_json')}, status=400)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
@@ -375,15 +517,15 @@ def send_lissa_text(request):
         message_text = data.get('message', '')
 
         if not all([name, email, message_text]):
-            return JsonResponse({'status': 'error', 'message': 'Missing required fields'}, status=400)
+            return JsonResponse({'status': 'error', 'message': msg(request, 'missing_required_fields', data)}, status=400)
 
         subject = f'New Message from {name}'
         body = f"Name: {name}\nPhone: {phone}\nEmail: {email}\n\nMessage:\n{message_text}"
         EmailMessage(subject=subject, body=body, to=['christiangift44@gmail.com']).send(fail_silently=False)
 
-        return JsonResponse({'status': 'success', 'message': 'Message sent successfully'})
+        return JsonResponse({'status': 'success', 'message': msg(request, 'message_sent_success', data)})
 
     except json.JSONDecodeError:
-        return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+        return JsonResponse({'status': 'error', 'message': msg(request, 'invalid_json')}, status=400)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

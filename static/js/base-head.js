@@ -2,14 +2,40 @@
 (function () {
   var pref = localStorage.getItem("mag-lang");
   var exp = "expires=Thu, 01 Jan 1970 00:00:00 UTC";
+  var host = location.hostname;
+
+  function setCookie(name, value) {
+    document.cookie = name + "=" + value + "; path=/";
+    if (host && host !== "localhost" && host !== "127.0.0.1") {
+      document.cookie = name + "=" + value + "; domain=" + host + "; path=/";
+      document.cookie = name + "=" + value + "; domain=." + host + "; path=/";
+    }
+  }
+
+  function clearCookie(name) {
+    document.cookie = name + "=; path=/; " + exp;
+    if (host && host !== "localhost" && host !== "127.0.0.1") {
+      document.cookie = name + "=; domain=" + host + "; path=/; " + exp;
+      document.cookie = name + "=; domain=." + host + "; path=/; " + exp;
+    }
+  }
+
+  function readCookie(name) {
+    var m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]+)"));
+    return m ? decodeURIComponent(m[1]) : "";
+  }
+
+  if (!pref) {
+    var gt = readCookie("googtrans");
+    pref = gt === "/en/sw" ? "sw" : "en";
+  }
+
+  document.documentElement.lang = pref === "sw" ? "sw" : "en";
+
   if (pref === "sw") {
-    document.cookie = "googtrans=/en/sw; path=/";
-    document.cookie =
-      "googtrans=/en/sw; domain=." + location.hostname + "; path=/";
+    setCookie("googtrans", "/en/sw");
   } else if (pref === "en") {
-    document.cookie = "googtrans=; path=/; " + exp;
-    document.cookie =
-      "googtrans=; domain=" + location.hostname + "; path=/; " + exp;
+    clearCookie("googtrans");
   }
 })();
 

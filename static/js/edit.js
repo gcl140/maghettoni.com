@@ -1,6 +1,6 @@
 function getLocation() {
   if (!navigator.geolocation) {
-    alert("Geolocation not supported");
+    showAlert("Geolocation not supported", "error");
     return;
   }
 
@@ -9,11 +9,13 @@ function getLocation() {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
-      // Fill the textarea with lat/lng
+      // Fill the address field (renders as name="address" so it submits correctly)
       const addressField = document.getElementById("addressField");
-      addressField.value = `${lat.toFixed(6)},${lng.toFixed(6)}`;
-      addressField.readOnly = true;
-      addressField.classList.add("bg-gray-100", "cursor-not-allowed");
+      if (addressField && !addressField.value.trim()) {
+        addressField.value = `${lat.toFixed(6)},${lng.toFixed(6)}`;
+        addressField.readOnly = true;
+        addressField.classList.add("bg-gray-100", "cursor-not-allowed");
+      }
 
       // Show success message
       Toastify({
@@ -30,16 +32,16 @@ function getLocation() {
     },
     (error) => {
       console.error(error);
-      alert("Location permission denied or unavailable");
+      showAlert("Location permission denied or unavailable", "error");
     },
-    { enableHighAccuracy: true }
+    { enableHighAccuracy: true },
   );
 }
 
 function confirmDelete() {
   if (
     confirm(
-      "Are you sure you want to delete this property? This action cannot be undone."
+      "Are you sure you want to delete this property? This action cannot be undone.",
     )
   ) {
     // Here you would typically make an AJAX request or redirect to delete view

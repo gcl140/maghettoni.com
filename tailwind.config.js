@@ -5,6 +5,7 @@ module.exports = {
     "./tenant_portal/templates/**/*.html",
     "./yuzzaz/templates/**/*.html",
     "./tathmini/templates/**/*.html",
+    "./static/js/**/*.js",
   ],
   theme: {
     extend: {

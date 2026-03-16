@@ -1,5 +1,6 @@
 from django import forms
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, PropertyDocument
 
 
@@ -162,6 +163,21 @@ class TenantForm(forms.ModelForm):
         self.fields['emergency_phone'].help_text = 'Optional - for emergencies only'
         self.fields['move_out_date'].help_text = 'Leave empty for current tenants'
     
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone', '').strip()
+        if phone:
+            User = get_user_model()
+            qs = User.objects.filter(telephone=phone)
+            # If editing an existing tenant who already has a linked user, exclude them
+            if self.instance and self.instance.pk and self.instance.user_id:
+                qs = qs.exclude(pk=self.instance.user_id)
+            if qs.exists():
+                raise forms.ValidationError(
+                    'This phone number is already registered to another account. '
+                    'Please use a different number.'
+                )
+        return phone
+
     def clean(self):
         cleaned_data = super().clean()
         move_in_date = cleaned_data.get('move_in_date')

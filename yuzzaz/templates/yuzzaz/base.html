@@ -46,26 +46,25 @@
     <div class="min-h-screen flex items-center justify-center p-4">
       <!-- Login Container -->
       <div
-        class="w-full max-w-lg bg-brown-800 rounded-2xl border border-gray-700 shadow-2xl p-8"
+      {% if "register" in request.path %}
+      class=""
+      {% else %}
+      class="w-full max-w-lg bg-brown-800 rounded-2xl border border-gray-700 shadow-2xl p-8"
+        {% endif %}
       >
         {% block content %}{% endblock %}
       </div>
     </div>
 
-    {% block scripts %} {% endblock %} {% if messages %} 
-    {% for message in messages %}
-    <script>
-      Toastify({
-        text: "{{ message|escapejs }}",
-        duration: 15000,
-        close: true,
-        gravity: "top",
-        position: "right",
-        backgroundColor:
-          "{% if message.tags == 'error' %}#FF4C4C{% else %}#4BB543{% endif %}",
-        stopOnFocus: true,
-      }).showToast();
-    </script>
-    {% endfor %} {% endif %}
+    {% block scripts %} {% endblock %}
+    {% if messages %}
+    <div id="yuzzaz-toast-messages" class="hidden" aria-hidden="true">
+      {% for message in messages %}
+      <div data-message="{{ message|escapejs }}" data-tags="{{ message.tags|escapejs }}" data-duration="15000"></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  <script src="{% static 'js/yuzzaz/messages.js' %}"></script>
+  <script src="{% static 'js/btn-loading.js' %}"></script>
   </body>
 </html>

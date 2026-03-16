@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, OTPVerification
 
 # Custom admin actions
 @admin.action(description='Activate selected users')
@@ -43,3 +43,10 @@ class CustomUserAdmin(UserAdmin):
 
 # Register CustomUser model
 admin.site.register(CustomUser, CustomUserAdmin)
+
+@admin.register(OTPVerification)
+class OTPVerificationAdmin(admin.ModelAdmin):
+    list_display = ['phone', 'code', 'created_at']
+    search_fields = ['phone', 'code']
+    list_filter = ['created_at']
+    readonly_fields = ['created_at']
