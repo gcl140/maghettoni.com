@@ -123,10 +123,7 @@
                 <i class="fas fa-signature text-brown-600 mr-1"></i>
                 First Name *
               </label>
-              {% render_field form.first_name class="block w-full px-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all
-              placeholder-brown-400" %} {% if form.first_name.errors %}
+              {% render_field form.first_name class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.first_name.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.first_name.errors.0 }}
@@ -143,10 +140,7 @@
                 <i class="fas fa-signature text-brown-600 mr-1"></i>
                 Last Name *
               </label>
-              {% render_field form.last_name class="block w-full px-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all
-              placeholder-brown-400" %} {% if form.last_name.errors %}
+              {% render_field form.last_name class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.last_name.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.last_name.errors.0 }}
@@ -179,9 +173,7 @@
                 <i class="fas fa-envelope text-brown-600 mr-1"></i>
                 Email Address *
               </label>
-              {% render_field form.email class="block w-full px-4 py-3 border
-              border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-              focus:border-brown-500 transition-all placeholder-brown-400" %} 
+              {% render_field form.email class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} 
               {% if form.email.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -199,9 +191,7 @@
                 <i class="fas fa-phone text-brown-600 mr-1"></i>
                 Phone Number *
               </label>
-              {% render_field form.phone class="block w-full px-4 py-3 border
-              border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-              focus:border-brown-500 transition-all placeholder-brown-400" %} 
+              {% render_field form.phone class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} 
               {% if form.phone.help_text %}
               <p class="mt-2 text-xs text-brown-500 flex items-center">
                 <i class="fas fa-info-circle mr-1"></i>
@@ -241,10 +231,7 @@
                 Property *
               </label>
               <div class="relative">
-                {% render_field form.property class="block w-full px-4 py-3
-                border border-brown-300 rounded-xl focus:ring-2
-                focus:ring-brown-500 focus:border-brown-500 transition-all
-                appearance-none bg-white" %}
+                {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -269,10 +256,7 @@
                 Unit (Optional)
               </label>
               <div class="relative">
-                {% render_field form.unit class="block w-full px-4 py-3 border
-                border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-                focus:border-brown-500 transition-all appearance-none bg-white"
-                %}
+                {% render_field form.unit class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -316,9 +300,7 @@
                 <i class="fas fa-sign-in-alt text-brown-600 mr-1"></i>
                 Move-in Date *
               </label>
-              {% render_field form.move_in_date class="block w-full px-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all" %} 
+              {% render_field form.move_in_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %} 
               {% if form.move_in_date.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -336,10 +318,7 @@
                 <i class="fas fa-sign-out-alt text-brown-600 mr-1"></i>
                 Move-out Date
               </label>
-              {% render_field form.move_out_date class="block w-full px-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all
-              optional-date" %} {% if form.move_out_date.help_text %}
+              {% render_field form.move_out_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all optional-date" %} {% if form.move_out_date.help_text %}
               <p class="mt-2 text-xs text-brown-500 flex items-center">
                 <i class="fas fa-info-circle mr-1"></i>
                 {{ form.move_out_date.help_text }}
@@ -377,10 +356,7 @@
                 <i class="fas fa-user-friends text-brown-600 mr-1"></i>
                 Emergency Contact
               </label>
-              {% render_field form.emergency_contact class="block w-full px-4
-              py-3 border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all
-              placeholder-brown-400" %} {% if form.emergency_contact.errors %}
+              {% render_field form.emergency_contact class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.emergency_contact.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.emergency_contact.errors.0 }}
@@ -397,10 +373,7 @@
                 <i class="fas fa-phone-alt text-brown-600 mr-1"></i>
                 Emergency Phone
               </label>
-              {% render_field form.emergency_phone class="block w-full px-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all
-              placeholder-brown-400" %} {% if form.emergency_phone.help_text %}
+              {% render_field form.emergency_phone class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.emergency_phone.help_text %}
               <p class="mt-2 text-xs text-brown-500 flex items-center">
                 <i class="fas fa-info-circle mr-1"></i>
                 {{ form.emergency_phone.help_text }}
@@ -439,10 +412,7 @@
                 Tenant Status *
               </label>
               <div class="relative">
-                {% render_field form.status class="block w-full px-4 py-3 border
-                border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-                focus:border-brown-500 transition-all appearance-none bg-white"
-                %}
+                {% render_field form.status class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -526,10 +496,7 @@
               <i class="fas fa-edit text-brown-600 mr-1"></i>
               Additional Notes
             </label>
-            {% render_field form.notes class="block w-full px-4 py-3 border
-            border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-            focus:border-brown-500 transition-all" placeholder="Any special
-            notes about this tenant..." %} {% if form.notes.errors %}
+            {% render_field form.notes class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" placeholder="Any special notes about this tenant..." %} {% if form.notes.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
               {{ form.notes.errors.0 }}

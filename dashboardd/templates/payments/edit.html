@@ -1,4 +1,4 @@
-{% extends 'dashboardd/base.html' %} {% load static widget_tweaks %} 
+{% extends 'dashboardd/base.html' %} {% load static widget_tweaks %}
 {% block title %}{{ title }} - Maghettoni{% endblock %} {% block page_title %}
 {{ title }}{% endblock %} {% block breadcrumbs %}
 <li class="text-gray-400">/</li>
@@ -46,8 +46,7 @@
               </h3>
               <p class="text-brown-600 mt-1 flex items-center gap-2">
                 <i class="fas fa-info-circle text-landlord-accent"></i>
-                {% if is_edit %} Badilisha maelezo ya malipo hapa chini {% else
-                %} Rekodi malipo mapya ya kodi ya nyumba {% endif %}
+                {% if is_edit %}Update the payment details below{% else %}Record a new rent payment{% endif %}
               </p>
             </div>
           </div>
@@ -88,7 +87,7 @@
               <i class="fas fa-dollar-sign text-white text-sm"></i>
             </div>
             <h4 class="text-xl font-bold text-landlord-dark font-display">
-              Kiasi cha Malipo
+              Payment Amount
             </h4>
           </div>
 
@@ -98,7 +97,7 @@
               class="block text-sm font-medium text-gray-700 mb-2"
             >
               <i class="fas fa-money-bill text-brown-600 mr-1"></i>
-              Kiasi cha Malipo (TZS) *
+              Payment Amount (TZS) *
             </label>
             <div class="relative">
               <div
@@ -106,10 +105,7 @@
               >
                 <span class="text-gray-500">TZS</span>
               </div>
-              {% render_field form.amount class="block w-full pl-12 pr-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all text-lg
-              font-semibold" %}
+              {% render_field form.amount class="block w-full pl-12 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all text-lg font-semibold" %}
             </div>
             {% if form.amount.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
@@ -119,7 +115,7 @@
             {% endif %}
             <p class="mt-2 text-xs text-brown-500 flex items-center">
               <i class="fas fa-lightbulb mr-1"></i>
-              Ingiza kiasi kamili cha malipo yaliyolipwa
+              Enter the full amount that was paid
             </p>
           </div>
         </div>
@@ -133,7 +129,7 @@
               <i class="fas fa-user-tie text-white text-sm"></i>
             </div>
             <h4 class="text-xl font-bold text-landlord-dark font-display">
-              Mpangaji na Mali
+              Tenant & Property
             </h4>
           </div>
 
@@ -145,13 +141,10 @@
                 class="block text-sm font-medium text-gray-700 mb-2"
               >
                 <i class="fas fa-user text-brown-600 mr-1"></i>
-                Mpangaji *
+                Tenant *
               </label>
               <div class="relative">
-                {% render_field form.tenant class="block w-full px-4 py-3 border
-                border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-                focus:border-brown-500 transition-all appearance-none bg-white"
-                %}
+                {% render_field form.tenant class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -173,13 +166,10 @@
                 class="block text-sm font-medium text-gray-700 mb-2"
               >
                 <i class="fas fa-building text-brown-600 mr-1"></i>
-                Mali *
+                Property *
               </label>
               <div class="relative">
-                {% render_field form.property class="block w-full px-4 py-3
-                border border-brown-300 rounded-xl focus:ring-2
-                focus:ring-brown-500 focus:border-brown-500 transition-all
-                appearance-none bg-white" %}
+                {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -205,7 +195,7 @@
               <i class="fas fa-calendar-alt text-white text-sm"></i>
             </div>
             <h4 class="text-xl font-bold text-landlord-dark font-display">
-              Muda wa Malipo
+              Payment Dates
             </h4>
           </div>
 
@@ -217,12 +207,10 @@
                 class="block text-sm font-medium text-gray-700 mb-2"
               >
                 <i class="fas fa-calendar-check text-brown-600 mr-1"></i>
-                Tarehe ya Malipo *
+                Payment Date *
               </label>
-              {% render_field form.payment_date class="block w-full px-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all" %} {%
-              if form.payment_date.errors %}
+              {% render_field form.payment_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+              {% if form.payment_date.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.payment_date.errors.0 }}
@@ -237,12 +225,10 @@
                 class="block text-sm font-medium text-gray-700 mb-2"
               >
                 <i class="fas fa-clock text-brown-600 mr-1"></i>
-                Tarehe ya Malipo Inayotakiwa *
+                Due Date *
               </label>
-              {% render_field form.due_date class="block w-full px-4 py-3 border
-              border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-              focus:border-brown-500 transition-all" %} {% if
-              form.due_date.errors %}
+              {% render_field form.due_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+              {% if form.due_date.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.due_date.errors.0 }}
@@ -250,7 +236,7 @@
               {% endif %}
               <p class="mt-2 text-xs text-brown-500 flex items-center">
                 <i class="fas fa-info-circle mr-1"></i>
-                Tarehe ambayo malipo yanapaswa kulipwa
+                The date by which payment was due
               </p>
             </div>
           </div>
@@ -265,7 +251,7 @@
               <i class="fas fa-credit-card text-white text-sm"></i>
             </div>
             <h4 class="text-xl font-bold text-landlord-dark font-display">
-              Njia ya Malipo na Hali
+              Payment Method & Status
             </h4>
           </div>
 
@@ -277,13 +263,10 @@
                 class="block text-sm font-medium text-gray-700 mb-2"
               >
                 <i class="fas fa-wallet text-brown-600 mr-1"></i>
-                Njia ya Malipo *
+                Payment Method *
               </label>
               <div class="relative">
-                {% render_field form.payment_method class="block w-full px-4
-                py-3 border border-brown-300 rounded-xl focus:ring-2
-                focus:ring-brown-500 focus:border-brown-500 transition-all
-                appearance-none bg-white" %}
+                {% render_field form.payment_method class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -305,13 +288,10 @@
                 class="block text-sm font-medium text-gray-700 mb-2"
               >
                 <i class="fas fa-tasks text-brown-600 mr-1"></i>
-                Hali ya Malipo *
+                Payment Status *
               </label>
               <div class="relative">
-                {% render_field form.status class="block w-full px-4 py-3 border
-                border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-                focus:border-brown-500 transition-all appearance-none bg-white"
-                %}
+                {% render_field form.status class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -337,7 +317,7 @@
               <i class="fas fa-sticky-note text-white text-sm"></i>
             </div>
             <h4 class="text-xl font-bold text-landlord-dark font-display">
-              Maelezo Zaidi
+              Additional Information
             </h4>
           </div>
 
@@ -349,17 +329,16 @@
                 class="block text-sm font-medium text-gray-700 mb-2"
               >
                 <i class="fas fa-hashtag text-brown-600 mr-1"></i>
-                Nambari ya Kumbukumbu
+                Reference Number
               </label>
-              {% render_field form.reference_number class="block w-full px-4
-              py-3 border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all
-              placeholder-brown-400" %} {% if form.reference_number.errors %}
+              {% render_field form.reference_number class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+              {% if form.reference_number.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.reference_number.errors.0 }}
               </p>
-              {% endif %} {% if form.reference_number.help_text %}
+              {% endif %}
+              {% if form.reference_number.help_text %}
               <p class="mt-2 text-xs text-brown-500 flex items-center">
                 <i class="fas fa-info-circle mr-1"></i>
                 {{ form.reference_number.help_text }}
@@ -371,13 +350,13 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="fas fa-door-open text-brown-600 mr-1"></i>
-                Chumba/Kiti
+                Unit / Room
               </label>
               <div
                 id="tenant-unit-info"
                 class="p-4 border border-brown-200 bg-brown-50 rounded-xl"
               >
-                <p class="text-sm text-gray-500">Chagua mpangaji kwanza</p>
+                <p class="text-sm text-gray-500">Select a tenant first</p>
               </div>
             </div>
           </div>
@@ -389,16 +368,16 @@
               class="block text-sm font-medium text-gray-700 mb-2"
             >
               <i class="fas fa-edit text-brown-600 mr-1"></i>
-              Maelezo (Ya Hiari)
+              Notes (Optional)
             </label>
-            {% render_field form.notes class="block w-full px-4 py-3 border
-            border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-            focus:border-brown-500 transition-all" %} {% if form.notes.errors %}
+            {% render_field form.notes class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+            {% if form.notes.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
               {{ form.notes.errors.0 }}
             </p>
-            {% endif %} {% if form.notes.help_text %}
+            {% endif %}
+            {% if form.notes.help_text %}
             <p class="mt-2 text-xs text-brown-500 flex items-center">
               <i class="fas fa-info-circle mr-1"></i>
               {{ form.notes.help_text }}
@@ -418,7 +397,7 @@
               class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift"
             >
               <i class="fas fa-times mr-2"></i>
-              Ghairi
+              Cancel
             </a>
             {% else %}
             <a
@@ -426,7 +405,7 @@
               class="inline-flex items-center text-brown-600 hover:text-brown-800 font-medium transition-colors hover-lift"
             >
               <i class="fas fa-times mr-2"></i>
-              Ghairi
+              Cancel
             </a>
             {% endif %}
           </div>
@@ -437,7 +416,7 @@
               class="inline-flex items-center px-6 py-3 border border-brown-300 text-brown-700 bg-white rounded-xl hover:bg-brown-50 transition-all font-medium hover-lift"
             >
               <i class="fas fa-eye mr-2"></i>
-              Angalia Maelezo
+              View Details
             </a>
             {% endif %}
             <button
@@ -445,8 +424,7 @@
               class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun"
             >
               <i class="fas fa-save mr-2"></i>
-              {% if is_edit %}Hifadhi Mabadiliko 💰{% else %}Hifadhi Malipo 🎉{%
-              endif %}
+              {% if is_edit %}Save Changes 💰{% else %}Save Payment 🎉{% endif %}
             </button>
           </div>
         </div>
@@ -467,7 +445,7 @@
             <i class="fas fa-lightbulb text-white"></i>
           </div>
           <h3 class="text-xl font-bold text-landlord-dark font-display">
-            Msaada wa Kurekodi Malipo
+            Payment Recording Guide
           </h3>
         </div>
       </div>
@@ -475,7 +453,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <h4 class="text-lg font-semibold text-gray-800 mb-4">
-              Ushauri wa Kufuata:
+              Best Practices:
             </h4>
             <ul class="space-y-3">
               <li class="flex items-start">
@@ -483,8 +461,7 @@
                   class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"
                 ></i>
                 <span class="text-sm text-gray-700"
-                  >Hakikisha namba ya kumbukumbu ni ya kipekee kwa kila
-                  malipo</span
+                  >Ensure the reference number is unique for each payment</span
                 >
               </li>
               <li class="flex items-start">
@@ -492,8 +469,7 @@
                   class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"
                 ></i>
                 <span class="text-sm text-gray-700"
-                  >Tumia tarehe sahihi za malipo ili kuepuka
-                  kuchanganyikiwa</span
+                  >Use accurate payment dates to avoid confusion</span
                 >
               </li>
               <li class="flex items-start">
@@ -501,7 +477,7 @@
                   class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"
                 ></i>
                 <span class="text-sm text-gray-700"
-                  >Weka maelezo yoyote muhimu kuhusu malipo hayo</span
+                  >Add any relevant notes about the payment</span
                 >
               </li>
               <li class="flex items-start">
@@ -509,24 +485,21 @@
                   class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"
                 ></i>
                 <span class="text-sm text-gray-700"
-                  >Badilisha hali ya malipo iwe "Imekamilika" pale
-                  inapolipwa</span
+                  >Set the payment status to "Completed" once it has been received</span
                 >
               </li>
             </ul>
           </div>
           <div>
             <h4 class="text-lg font-semibold text-gray-800 mb-4">
-              Mifano ya Namba za Kumbukumbu:
+              Reference Number Examples:
             </h4>
             <div class="space-y-3">
               <div class="p-3 bg-blue-50 rounded-xl">
                 <div class="flex items-center">
                   <i class="fas fa-money-bill-wave text-blue-600 mr-3"></i>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">
-                      Fedha Taslimu
-                    </p>
+                    <p class="text-sm font-medium text-gray-900">Cash</p>
                     <p class="text-xs text-gray-600">
                       CASH-2025-001, CASH-2025-002
                     </p>
@@ -537,9 +510,7 @@
                 <div class="flex items-center">
                   <i class="fas fa-mobile-alt text-green-600 mr-3"></i>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">
-                      Pesa za Simu
-                    </p>
+                    <p class="text-sm font-medium text-gray-900">Mobile Money</p>
                     <p class="text-xs text-gray-600">
                       MPESA-7ABC123, TIGO-8XYZ456
                     </p>
@@ -550,7 +521,7 @@
                 <div class="flex items-center">
                   <i class="fas fa-university text-purple-600 mr-3"></i>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">Benki</p>
+                    <p class="text-sm font-medium text-gray-900">Bank Transfer</p>
                     <p class="text-xs text-gray-600">CRDB-12345, NMB-67890</p>
                   </div>
                 </div>

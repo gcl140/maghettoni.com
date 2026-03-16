@@ -9,7 +9,6 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 from django.views.decorators.cache import never_cache
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.utils import timezone
@@ -31,7 +30,19 @@ from .forms import (
     MaintenanceRequestForm,
     MaintenanceStatusUpdateForm,
 )
+from django.contrib.auth.decorators import login_required
+from functools import wraps
 
+def landlord_required(view_func):
+    """Allow only authenticated users with is_landlord=True."""
+    @wraps(view_func)
+    @login_required
+    def _wrapped(request, *args, **kwargs):
+        if not getattr(request.user, 'is_landlord', False):
+            messages.error(request, "Huna ruhusa ya kufikia ukurasa huu.")
+            return redirect('login')
+        return view_func(request, *args, **kwargs)
+    return _wrapped
 
 def _send_tenant_invite(request, tenant):
     """
@@ -133,7 +144,7 @@ def _build_pdf(title, headers, rows):
     return buf
 
 
-@login_required
+@landlord_required
 def dashboard(request):
     user = request.user
     today = timezone.now().date()
@@ -289,7 +300,7 @@ def dashboard(request):
     return render(request, 'dashboardd/dashboard.html', context)
 
 
-@login_required
+@landlord_required
 def search_results(request):
     query = request.GET.get('q', '').strip()
 
@@ -385,7 +396,7 @@ def search_results(request):
     return render(request, 'dashboardd/search_results.html', context)
 
 
-@login_required
+@landlord_required
 def quick_search(request):
     query = request.GET.get('q', '').strip()
 
@@ -446,7 +457,7 @@ def quick_search(request):
     return JsonResponse({'results': results})
 
 
-@login_required
+@landlord_required
 def property_list(request):
     # Get properties with annotated unit counts (using units_list for Unit objects)
     properties_list = Property.objects.filter(owner=request.user)\
@@ -493,7 +504,7 @@ def property_list(request):
     return render(request, 'properties/list.html', context)
 
 
-@login_required
+@landlord_required
 def property_delete(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
     
@@ -514,7 +525,7 @@ def property_delete(request, property_id):
     })
 
 # views.py
-@login_required
+@landlord_required
 @csrf_exempt
 def location_api(request):
     if request.method != "POST":
@@ -533,7 +544,7 @@ def location_api(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-@login_required
+@landlord_required
 def property_edit(request, property_id=None):
     # If property_id is provided, we're editing; otherwise, we're adding
     if property_id:
@@ -571,7 +582,7 @@ def property_edit(request, property_id=None):
     return render(request, 'properties/edit.html', context)
 
 
-@login_required
+@landlord_required
 def property_units(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
     units = property_obj.units_list.all()
@@ -584,7 +595,7 @@ def property_units(request, property_id):
     return render(request, 'properties/units.html', context)
 
 
-@login_required
+@landlord_required
 def property_detail(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
     doc_search = request.GET.get('doc_q', '').strip()
@@ -697,7 +708,7 @@ def property_detail(request, property_id):
     return render(request, 'properties/detail.html', context)
 
 
-@login_required
+@landlord_required
 def property_document_delete(request, property_id, document_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
     document = get_object_or_404(property_obj.documents, id=document_id)
@@ -716,7 +727,7 @@ def property_document_delete(request, property_id, document_id):
 #     return render(request, 'tenants/list.html', {'tenants': tenants})
 
 
-@login_required
+@landlord_required
 def tenant_list(request):
     # Get tenants belonging to properties owned by the current user
     tenants_list = Tenant.objects.filter(property__owner=request.user)\
@@ -756,7 +767,7 @@ def tenant_list(request):
     }
     return render(request, 'tenants/list.html', context)
 
-@login_required
+@landlord_required
 def tenants_export_csv(request):
     qs = Tenant.objects.filter(property__owner=request.user)\
         .select_related('property', 'unit').order_by('-move_in_date')
@@ -786,7 +797,7 @@ def tenants_export_csv(request):
         ])
     return response
 
-@login_required
+@landlord_required
 def tenants_export_pdf(request):
     qs = Tenant.objects.filter(property__owner=request.user)\
         .select_related('property', 'unit').order_by('-move_in_date')
@@ -838,7 +849,7 @@ def tenants_export_pdf(request):
 #     return render(request, 'tenants/detail.html', context)
 
 
-@login_required
+@landlord_required
 def tenant_activate(request, tenant_id):
     tenant = get_object_or_404(Tenant, id=tenant_id, property__owner=request.user)
     tenant.status = 'active'
@@ -849,7 +860,7 @@ def tenant_activate(request, tenant_id):
     messages.success(request, f'{name} has been activated!')
     return redirect('tenant_detail', tenant_id=tenant.id)
 
-@login_required
+@landlord_required
 def tenant_deactivate(request, tenant_id):
     tenant = get_object_or_404(Tenant, id=tenant_id, property__owner=request.user)
     tenant.status = 'inactive'
@@ -860,7 +871,7 @@ def tenant_deactivate(request, tenant_id):
     messages.success(request, f'{name} has been deactivated!')
     return redirect('tenant_detail', tenant_id=tenant.id)
 
-@login_required
+@landlord_required
 def tenant_delete(request, tenant_id):
     tenant = get_object_or_404(Tenant, id=tenant_id, property__owner=request.user)
     tenant_name = tenant.full_name()
@@ -868,7 +879,7 @@ def tenant_delete(request, tenant_id):
     messages.success(request, f'Tenant {tenant_name} has been removed!')
     return redirect('tenant_list')
 
-@login_required
+@landlord_required
 def tenant_detail(request, tenant_id):
     tenant = get_object_or_404(Tenant, id=tenant_id, property__owner=request.user)
     
@@ -898,7 +909,7 @@ def tenant_detail(request, tenant_id):
     return render(request, 'tenants/detail.html', context)
 
 
-@login_required
+@landlord_required
 def tenant_edit(request, tenant_id=None):
     """
     Combined view for adding and editing tenants
@@ -969,7 +980,7 @@ def tenant_edit(request, tenant_id=None):
     return render(request, 'tenants/edit.html', context)
 
 # Add this to views.py if you want dynamic unit filtering
-@login_required
+@landlord_required
 @require_GET
 def get_available_units(request, property_id):
     """API endpoint to get available units for a property"""
@@ -995,7 +1006,7 @@ def get_available_units(request, property_id):
 # Add to urls.py:
 # path('api/properties/<int:property_id>/units/available/', views.get_available_units, name='available_units'),
 
-@login_required
+@landlord_required
 def payments_list(request):
     # Get payments for properties owned by current user
     payments_list = Payment.objects.filter(property__owner=request.user)\
@@ -1054,7 +1065,7 @@ def payments_list(request):
     }
     return render(request, 'payments/list.html', context)
 
-@login_required
+@landlord_required
 def payments_export_csv(request):
     qs = Payment.objects.filter(property__owner=request.user)\
         .select_related('property', 'tenant').order_by('-payment_date')
@@ -1086,7 +1097,7 @@ def payments_export_csv(request):
         ])
     return response
 
-@login_required
+@landlord_required
 def payments_export_pdf(request):
     qs = Payment.objects.filter(property__owner=request.user)\
         .select_related('property', 'tenant').order_by('-payment_date')
@@ -1119,7 +1130,7 @@ def payments_export_pdf(request):
     return HttpResponse(buf, content_type='application/pdf',
                         headers={'Content-Disposition': 'attachment; filename="malipo.pdf"'})
 
-@login_required
+@landlord_required
 def payment_detail(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id, property__owner=request.user)
 
@@ -1156,7 +1167,7 @@ def payment_detail(request, payment_id):
     }
     return render(request, 'payments/detail.html', context)
 
-@login_required
+@landlord_required
 def payment_receipt_pdf(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id, property__owner=request.user)
     buf = io.BytesIO()
@@ -1235,7 +1246,7 @@ def payment_receipt_pdf(request, payment_id):
 #     context = {'form': form}
 #     return render(request, 'payments/create.html', context)
 
-@login_required
+@landlord_required
 def payment_edit(request, payment_id=None):
     """
     Combined view for adding and editing payments
@@ -1290,7 +1301,7 @@ def payment_edit(request, payment_id=None):
 
 # ========== MAINTENANCE REQUESTS ==========
 
-@login_required
+@landlord_required
 def maintenance_requests_list(request):
     # Get maintenance requests for properties owned by current user
     requests_list = MaintenanceRequest.objects.filter(property__owner=request.user)\
@@ -1342,7 +1353,7 @@ def maintenance_requests_list(request):
     }
     return render(request, 'maintenance/list.html', context)
 
-@login_required
+@landlord_required
 def maintenance_export_csv(request):
     qs = MaintenanceRequest.objects.filter(property__owner=request.user)\
         .select_related('property', 'unit', 'tenant').order_by('-reported_date')
@@ -1376,7 +1387,7 @@ def maintenance_export_csv(request):
         ])
     return response
 
-@login_required
+@landlord_required
 def maintenance_export_pdf(request):
     qs = MaintenanceRequest.objects.filter(property__owner=request.user)\
         .select_related('property', 'unit', 'tenant').order_by('-reported_date')
@@ -1412,7 +1423,7 @@ def maintenance_export_pdf(request):
                         headers={'Content-Disposition': 'attachment; filename="matengenezo.pdf"'})
 
 @never_cache
-@login_required
+@landlord_required
 def maintenance_request_detail(request, request_id):
     maintenance_request = get_object_or_404(
         MaintenanceRequest, id=request_id, property__owner=request.user
@@ -1448,7 +1459,7 @@ def maintenance_request_detail(request, request_id):
     return render(request, 'maintenance/detail.html', context)
 
 
-@login_required
+@landlord_required
 def maintenance_request_edit(request, request_id=None):
     """
     Combined view for adding and editing maintenance requests
@@ -1512,7 +1523,7 @@ def about(request):
     return render(request, 'dashboardd/about.html', context)
 
 
-@login_required
+@landlord_required
 def test_sms(request):
     """Dev-only endpoint to test Beem SMS. Remove or restrict before going live."""
 
@@ -1563,7 +1574,7 @@ def test_sms(request):
         return JsonResponse({'success': False, 'error': str(e)})
 
 
-@login_required
+@landlord_required
 def property_units(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
     units = property_obj.units_list.all()
@@ -1585,7 +1596,7 @@ def property_units(request, property_id):
     
     return render(request, 'properties/units.html', context)
 
-@login_required
+@landlord_required
 def unit_edit(request, property_id, unit_id=None):
     """
     Combined view for adding and editing units
@@ -1636,7 +1647,7 @@ def unit_edit(request, property_id, unit_id=None):
     }
     return render(request, 'properties/unit_edit.html', context)
 
-@login_required
+@landlord_required
 def unit_delete(request, property_id, unit_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
     unit = get_object_or_404(Unit, id=unit_id, property=property_obj)
@@ -1650,7 +1661,7 @@ def unit_delete(request, property_id, unit_id):
     return redirect('property_units', property_id=property_obj.id)
 
 # Add this to views.py if you want dynamic unit/tenant filtering
-@login_required
+@landlord_required
 @require_GET
 def get_property_units_tenants(request, property_id):
     """API endpoint to get units and tenants for a property"""
@@ -1688,7 +1699,7 @@ def get_property_units_tenants(request, property_id):
 # path('api/properties/<int:property_id>/units-tenants/', views.get_property_units_tenants, name='property_units_tenants'),
 
 # Add this to views.py for dynamic tenant info
-@login_required
+@landlord_required
 @require_GET
 def get_tenant_details(request, tenant_id):
     """API endpoint to get tenant details including unit info"""

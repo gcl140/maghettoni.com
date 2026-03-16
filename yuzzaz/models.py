@@ -13,6 +13,12 @@ class CustomUser(AbstractUser):
     telephone = models.CharField(max_length=13, unique=True, verbose_name="Telephone Number", blank=True, null=True)
     about = models.TextField(blank=True, null=True, verbose_name="About")
 
+    is_landlord = models.BooleanField(
+        default=False,
+        verbose_name="Is Landlord",
+        help_text="Grants access to the landlord dashboard. Set by admin.",
+    )
+
     # Verification gate — landlords must be set to True by admin before they can log in.
     # Tenant accounts are created via invite and set to True automatically.
     is_verified = models.BooleanField(

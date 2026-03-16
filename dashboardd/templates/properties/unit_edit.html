@@ -111,10 +111,7 @@
                 <i class="fas fa-hashtag text-brown-600 mr-1"></i>
                 Unit Number *
               </label>
-              {% render_field form.unit_number class="block w-full px-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all
-              placeholder-brown-400" %} {% if form.unit_number.errors %}
+              {% render_field form.unit_number class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.unit_number.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.unit_number.errors.0 }}
@@ -141,9 +138,7 @@
                 >
                   <span class="text-gray-500">$</span>
                 </div>
-                {% render_field form.monthly_rent class="block w-full pl-8 pr-4
-                py-3 border border-brown-300 rounded-xl focus:ring-2
-                focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                {% render_field form.monthly_rent class="block w-full pl-8 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
               </div>
               {% if form.monthly_rent.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
@@ -184,9 +179,7 @@
                 Bedrooms *
               </label>
               <div class="relative">
-                {% render_field form.bedrooms class="block w-full px-4 py-3
-                border border-brown-300 rounded-xl focus:ring-2
-                focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                {% render_field form.bedrooms class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
                 <div
                   class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
                 >
@@ -211,9 +204,7 @@
                 Bathrooms *
               </label>
               <div class="relative">
-                {% render_field form.bathrooms class="block w-full px-4 py-3
-                border border-brown-300 rounded-xl focus:ring-2
-                focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                {% render_field form.bathrooms class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
                 <div
                   class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
                 >
@@ -238,10 +229,7 @@
                 Square Feet
               </label>
               <div class="relative">
-                {% render_field form.square_feet class="block w-full px-4 py-3
-                border border-brown-300 rounded-xl focus:ring-2
-                focus:ring-brown-500 focus:border-brown-500 transition-all
-                placeholder-brown-400" %}
+                {% render_field form.square_feet class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
                 <div
                   class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
                 >
@@ -289,9 +277,7 @@
               <div class="p-4 border border-brown-200 rounded-xl bg-brown-50">
                 <div class="flex items-center">
                   <div class="flex items-center h-5">
-                    {% render_field form.is_occupied class="h-5 w-5
-                    text-brown-600 border-brown-300 rounded
-                    focus:ring-brown-500" %}
+                    {% render_field form.is_occupied class="h-5 w-5 text-brown-600 border-brown-300 rounded focus:ring-brown-500" %}
                   </div>
                   <div class="ml-3">
                     <label
@@ -343,10 +329,7 @@
               <i class="fas fa-sticky-note text-brown-600 mr-1"></i>
               Description (Optional)
             </label>
-            {% render_field form.description class="block w-full px-4 py-3
-            border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-            focus:border-brown-500 transition-all placeholder-brown-400"
-            rows="4" %} {% if form.description.errors %}
+            {% render_field form.description class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" rows="4" %} {% if form.description.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
               {{ form.description.errors.0 }}

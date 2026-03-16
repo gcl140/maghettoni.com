@@ -99,9 +99,7 @@
               <i class="fas fa-heading text-brown-600 mr-1"></i>
               Issue Title *
             </label>
-            {% render_field form.title class="block w-full px-4 py-3 border
-            border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-            focus:border-brown-500 transition-all placeholder-brown-400" %} 
+            {% render_field form.title class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
             {% if form.title.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
@@ -124,10 +122,8 @@
               <i class="fas fa-align-left text-brown-600 mr-1"></i>
               Description *
             </label>
-            {% render_field form.description class="block w-full px-4 py-3
-            border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-            focus:border-brown-500 transition-all" %} {% if
-            form.description.errors %}
+            {% render_field form.description class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+            {% if form.description.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
               {{ form.description.errors.0 }}
@@ -164,10 +160,7 @@
                 Property *
               </label>
               <div class="relative">
-                {% render_field form.property class="block w-full px-4 py-3
-                border border-brown-300 rounded-xl focus:ring-2
-                focus:ring-brown-500 focus:border-brown-500 transition-all
-                appearance-none bg-white" %}
+                {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -192,10 +185,7 @@
                 Unit *
               </label>
               <div class="relative">
-                {% render_field form.unit class="block w-full px-4 py-3 border
-                border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-                focus:border-brown-500 transition-all appearance-none bg-white"
-                %}
+                {% render_field form.unit class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -220,10 +210,7 @@
                 Reported By (Tenant) *
               </label>
               <div class="relative">
-                {% render_field form.tenant class="block w-full px-4 py-3 border
-                border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-                focus:border-brown-500 transition-all appearance-none bg-white"
-                %}
+                {% render_field form.tenant class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -279,13 +266,7 @@
                     id="id_priority_{{ forloop.counter0 }}"
                     value="{{ choice.0 }}"
                     class="hidden"
-                    {%
-                    if
-                    form.priority.value=""
-                    ="choice.0"
-                    %}checked{%
-                    endif
-                    %}
+                    {% if form.priority.value == choice.0 %}checked{% endif %}
                   />
                   <div
                     class="flex items-center justify-center w-6 h-6 rounded-full border mr-3 {% if form.priority.value == choice.0 %}border-brown-500 bg-brown-500 {% else %}border-brown-300{% endif %}"
@@ -366,13 +347,7 @@
                     id="id_status_{{ forloop.counter0 }}"
                     value="{{ choice.0 }}"
                     class="hidden"
-                    {%
-                    if
-                    form.status.value=""
-                    ="choice.0"
-                    %}checked{%
-                    endif
-                    %}
+                    {% if form.status.value == choice.0 %}checked{% endif %}
                   />
                   <div
                     class="flex items-center justify-center w-6 h-6 rounded-full border mr-3 {% if form.status.value == choice.0 %} {% if choice.0 == 'completed' %}border-green-500 bg-green-500 {% elif choice.0 == 'in_progress' %}border-blue-500 bg-blue-500 {% elif choice.0 == 'pending' %}border-yellow-500 bg-yellow-500 {% else %}border-red-500 bg-red-500{% endif %} {% else %}border-brown-300{% endif %}"
@@ -441,9 +416,7 @@
               >
                 <span class="text-gray-500">$</span>
               </div>
-              {% render_field form.cost class="block w-full pl-8 pr-4 py-3
-              border border-brown-300 rounded-xl focus:ring-2
-              focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+              {% render_field form.cost class="block w-full pl-8 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
             </div>
             {% if form.cost.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
