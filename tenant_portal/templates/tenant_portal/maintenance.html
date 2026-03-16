@@ -1,0 +1,73 @@
+{% extends 'tenant_portal/base.html' %}
+{% block title %}Maintenance{% endblock %}
+{% block page_title %}Maintenance{% endblock %}
+{% block breadcrumbs %}
+<li class="text-gray-300">/</li>
+<li class="text-gray-600 font-medium">Maintenance</li>
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <p class="text-sm text-gray-500">Report issues in your unit</p>
+  </div>
+  <a href="{% url 'tenant_maintenance_create' %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-xl transition-colors">
+    <i class="fas fa-plus"></i> Report Issue
+  </a>
+</div>
+
+{% if maintenance_requests %}
+<div class="space-y-3">
+  {% for req in maintenance_requests %}
+  <a href="{% url 'tenant_maintenance_detail' req.id %}"
+     class="block bg-white rounded-2xl shadow-sm p-4 border border-gray-200 hover:border-gray-300 transition-colors">
+    <div class="flex items-start gap-3">
+      <!-- Priority dot -->
+      <div class="mt-1 flex-shrink-0">
+        <span class="w-3 h-3 rounded-full block
+                     {% if req.priority == 'emergency' %}bg-red-500{% elif req.priority == 'high' %}bg-orange-500{% elif req.priority == 'medium' %}bg-amber-500{% else %}bg-green-500{% endif %}">
+        </span>
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-2">
+          <p class="text-sm font-semibold text-gray-900 truncate">{{ req.title }}</p>
+          <span class="flex-shrink-0 text-xs px-2 py-0.5 rounded-full font-medium
+                       {% if req.status == 'completed' %}bg-green-500/20 text-green-400
+                       {% elif req.status == 'in_progress' %}bg-blue-500/20 text-blue-400
+                       {% elif req.status == 'cancelled' %}bg-red-500/20 text-red-400
+                       {% else %}bg-amber-500/20 text-amber-400{% endif %}">
+            {% if req.status == 'completed' %}<i class="fas fa-check mr-1"></i>Completed
+            {% elif req.status == 'in_progress' %}<i class="fas fa-spinner fa-spin mr-1"></i>In Progress
+            {% elif req.status == 'cancelled' %}<i class="fas fa-ban mr-1"></i>Cancelled
+            {% else %}<i class="fas fa-clock mr-1"></i>Pending{% endif %}
+          </span>
+        </div>
+        <p class="text-xs text-gray-400 mt-1 line-clamp-1">{{ req.description }}</p>
+        <div class="flex items-center gap-3 mt-2 text-xs text-gray-400">
+          <span><i class="fas fa-calendar mr-1"></i>{{ req.reported_date|date:"d M Y" }}</span>
+          <span><i class="fas fa-exclamation-circle mr-1"></i>{{ req.get_priority_display }}</span>
+          {% if req.status == 'completed' and req.completed_date %}
+            <span class="text-green-500"><i class="fas fa-check-circle mr-1"></i>{{ req.completed_date|date:"d M Y" }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <i class="fas fa-chevron-right text-gray-300 text-xs mt-1 flex-shrink-0"></i>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center justify-center py-16 text-center px-4">
+  <i class="fas fa-tools text-5xl text-gray-400 mb-4"></i>
+  <p class="text-base font-semibold text-gray-900 mb-1">No Requests Yet</p>
+  <p class="text-sm text-gray-400 mb-5">Have an issue? Report it here and your manager will handle it.</p>
+  <a href="{% url 'tenant_maintenance_create' %}"
+     class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-xl transition-colors">
+    <i class="fas fa-plus"></i> Report First Issue
+  </a>
+</div>
+{% endif %}
+{% endblock %}

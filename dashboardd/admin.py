@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Notification
+from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Notification, PropertyDocument
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
@@ -42,3 +42,11 @@ class NotificationAdmin(admin.ModelAdmin):
     list_filter = ['is_read']
     search_fields = ['message', 'title', 'recipient__first_name', 'recipient__last_name']
     raw_id_fields = ['recipient']
+
+
+@admin.register(PropertyDocument)
+class PropertyDocumentAdmin(admin.ModelAdmin):
+    list_display = ['title', 'property', 'version', 'uploaded_by', 'uploaded_at']
+    list_filter = ['uploaded_at', 'property', 'version']
+    search_fields = ['title', 'property__name', 'uploaded_by__username']
+    raw_id_fields = ['property', 'uploaded_by', 'previous_version']

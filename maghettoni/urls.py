@@ -59,6 +59,7 @@ urlpatterns = [
     path('home/', include('yuzzaz.urls')),
     path('tathmini/', include('tathmini.urls')),
     path('dashboard/', include('dashboardd.urls')),
+    path('tenant/', include('tenant_portal.urls')),
     path('accounts/login/', RedirectView.as_view(url='/login/', permanent=True)),
     path('oauth/login/google/', logout_then_google, name='logout-then-google'),
     path('oauth/', include('social_django.urls', namespace='social')),

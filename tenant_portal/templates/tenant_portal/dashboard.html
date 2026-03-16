@@ -1,0 +1,245 @@
+{% extends 'tenant_portal/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- ===== GREETING + NEXT DUE HERO ===== -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  <!-- Greeting -->
+  <div class="md:col-span-2 bg-gradient-to-br from-brown-800 to-brown-700 rounded-2xl p-5 border border-brown-600/30">
+    <div class="flex items-start justify-between">
+      <div>
+        <p id="tp-greeting" class="text-amber-400 text-sm font-medium mb-1"></p>
+        <h2 class="text-2xl font-bold text-white">{{ tenant.first_name }} {{ tenant.last_name }}</h2>
+        <p class="text-brown-300 text-sm mt-1">
+          <i class="fas fa-map-marker-alt mr-1 text-amber-500"></i>
+          {{ tenant.property.name }}
+          {% if tenant.unit %}— Unit {{ tenant.unit.unit_number }}{% endif %}
+        </p>
+      </div>
+      {% if tenant.profile_picture %}
+        <img src="{{ tenant.profile_picture.url }}" class="w-16 h-16 rounded-2xl object-cover border-2 border-amber-500/40" />
+      {% else %}
+        <div class="w-16 h-16 rounded-2xl bg-amber-500/20 flex items-center justify-center text-2xl font-bold text-amber-300">
+          {{ tenant.first_name|first|upper }}{{ tenant.last_name|first|upper }}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Stay info bar -->
+    <div class="mt-4 grid grid-cols-3 gap-3">
+      <div class="bg-brown-900/40 rounded-xl p-3 text-center">
+        <p class="text-xs text-brown-400 mb-1">Move-in</p>
+        <p class="text-sm font-semibold text-white">{{ stay.start|date:"d M Y" }}</p>
+      </div>
+      <div class="bg-brown-900/40 rounded-xl p-3 text-center">
+        <p class="text-xs text-brown-400 mb-1">Duration (months)</p>
+        <p class="text-xl font-bold text-amber-400">{{ stay.months }}</p>
+      </div>
+      <div class="bg-brown-900/40 rounded-xl p-3 text-center">
+        <p class="text-xs text-brown-400 mb-1">
+          {% if stay.end %}Move-out{% else %}Days So Far{% endif %}
+        </p>
+        {% if stay.end %}
+          <p class="text-sm font-semibold {% if stay.days_remaining < 30 %}text-red-400{% else %}text-white{% endif %}">
+            {{ stay.days_remaining }} days
+          </p>
+        {% else %}
+          <p class="text-sm font-semibold text-green-400">Ongoing</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Payment Due Countdown -->
+  <div class="bg-brown-800 rounded-2xl p-5 border border-brown-600/30 flex flex-col">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center
+                  {% if days_until_due <= 3 %}bg-red-500/20{% elif days_until_due <= 7 %}bg-amber-500/20{% else %}bg-green-500/20{% endif %}">
+        <i class="fas fa-calendar-clock text-sm
+                  {% if days_until_due <= 3 %}text-red-400{% elif days_until_due <= 7 %}text-amber-400{% else %}text-green-400{% endif %}">
+        </i>
+      </div>
+      <p class="text-sm font-medium text-brown-300">Next Rent Due</p>
+    </div>
+
+    <div class="flex-1 flex flex-col items-center justify-center text-center">
+      <p class="text-4xl font-black
+                {% if days_until_due <= 3 %}text-red-400{% elif days_until_due <= 7 %}text-amber-400{% else %}text-green-400{% endif %}">
+        {{ days_until_due }}
+      </p>
+      <p class="text-sm text-brown-300 mt-1">
+        {% if days_until_due == 0 %}Today!{% elif days_until_due == 1 %}Tomorrow!{% else %}days{% endif %}
+      </p>
+      <p class="text-xs text-brown-400 mt-1">{{ next_due|date:"d F Y" }}</p>
+      {% if tenant.unit %}
+        <p class="mt-3 text-lg font-bold text-white">TZS. {{ tenant.unit.monthly_rent|floatformat:0 }}</p>
+      {% endif %}
+    </div>
+
+    <a href="{% url 'tenant_payment_initiate' %}"
+       class="mt-3 w-full text-center py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-xl transition-colors">
+      <i class="fas fa-money-bill-wave mr-1"></i> Pay Now
+    </a>
+  </div>
+</div>
+
+<!-- ===== KPI CARDS ===== -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <!-- Total Paid -->
+  <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
+    <div class="flex items-center gap-2 mb-2">
+      <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+        <i class="fas fa-check-circle text-green-400 text-xs"></i>
+      </div>
+      <p class="text-xs text-gray-500">Total Paid</p>
+    </div>
+    <p class="text-xl font-bold text-gray-900">TZS. {{ total_paid_sum|floatformat:0 }}</p>
+  </div>
+
+  <!-- Overdue -->
+  <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
+    <div class="flex items-center gap-2 mb-2">
+      <div class="w-8 h-8 rounded-lg {% if overdue_payments %}bg-red-500/20{% else %}bg-green-500/20{% endif %} flex items-center justify-center">
+        <i class="fas fa-exclamation-triangle {% if overdue_payments %}text-red-400{% else %}text-green-400{% endif %} text-xs"></i>
+      </div>
+      <p class="text-xs text-gray-500">Overdue Payments</p>
+    </div>
+    <p class="text-xl font-bold {% if overdue_payments %}text-red-400{% else %}text-green-400{% endif %}">{{ overdue_payments }}</p>
+  </div>
+
+  <!-- Maintenance -->
+  <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
+    <div class="flex items-center gap-2 mb-2">
+      <div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
+        <i class="fas fa-tools text-amber-400 text-xs"></i>
+      </div>
+      <p class="text-xs text-gray-500">Active Requests</p>
+    </div>
+    <p class="text-xl font-bold text-gray-900">{{ pending_maintenance.count }}</p>
+  </div>
+
+  <!-- Status -->
+  <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
+    <div class="flex items-center gap-2 mb-2">
+      <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+        <i class="fas fa-user-check text-blue-400 text-xs"></i>
+      </div>
+      <p class="text-xs text-gray-500">Tenancy Status</p>
+    </div>
+    <p class="text-sm font-bold
+              {% if tenant.status == 'active' %}text-green-400{% elif tenant.status == 'pending' %}text-amber-400{% else %}text-red-400{% endif %}">
+      {% if tenant.status == 'active' %}Active{% elif tenant.status == 'pending' %}Pending{% else %}Inactive{% endif %}
+    </p>
+  </div>
+</div>
+
+<!-- ===== CALENDAR + RECENT ACTIVITY ===== -->
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-6">
+
+  <!-- Calendar -->
+  <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-5 border border-gray-200">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-sm font-semibold text-gray-900">Payment Calendar</h3>
+      <div class="flex items-center gap-2">
+        <button id="tp-cal-prev" class="w-7 h-7 flex items-center justify-center rounded-lg bg-brown-700 hover:bg-brown-600 text-brown-300 hover:text-white transition-colors text-xs">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <span id="tp-cal-label" class="text-xs text-brown-300 min-w-20 text-center font-medium"></span>
+        <button id="tp-cal-next" class="w-7 h-7 flex items-center justify-center rounded-lg bg-brown-700 hover:bg-brown-600 text-brown-300 hover:text-white transition-colors text-xs">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Calendar grid -->
+    <div id="tp-calendar" class="text-xs"></div>
+    <!-- Legend -->
+    <div class="mt-3 flex items-center gap-3 text-xs text-gray-500 flex-wrap">
+      <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-100 border border-amber-400 inline-block"></span> Due Date</span>
+      <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-green-100 border border-green-400 inline-block"></span> Paid</span>
+      <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-500 inline-block"></span> Today</span>
+    </div>
+  </div>
+
+  <!-- Recent Payments -->
+  <div class="lg:col-span-3 bg-white rounded-2xl shadow-sm p-5 border border-gray-200">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-sm font-semibold text-gray-900">Recent Payments</h3>
+      <a href="{% url 'tenant_payments' %}" class="text-xs text-amber-400 hover:text-amber-300 transition-colors">View All <i class="fas fa-arrow-right ml-1"></i></a>
+    </div>
+
+    {% if recent_payments %}
+    <div class="space-y-2">
+      {% for payment in recent_payments %}
+      <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0
+                    {% if payment.status == 'completed' %}bg-green-500/20{% elif payment.status == 'pending' %}bg-amber-500/20{% else %}bg-red-500/20{% endif %}">
+          <i class="fas fa-money-bill text-sm
+                    {% if payment.status == 'completed' %}text-green-400{% elif payment.status == 'pending' %}text-amber-400{% else %}text-red-400{% endif %}"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 truncate">TZS. {{ payment.amount|floatformat:0 }}</p>
+          <p class="text-xs text-gray-500">{{ payment.payment_date|date:"d M Y" }} · {{ payment.get_payment_method_display }}</p>
+        </div>
+        <span class="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0
+                     {% if payment.status == 'completed' %}bg-green-500/20 text-green-400{% elif payment.status == 'pending' %}bg-amber-500/20 text-amber-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+          {% if payment.status == 'completed' %}Completed{% elif payment.status == 'pending' %}Pending{% else %}{{ payment.get_status_display }}{% endif %}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="flex flex-col items-center justify-center py-10 text-center">
+      <i class="fas fa-receipt text-3xl text-gray-400 mb-3"></i>
+      <p class="text-sm text-gray-400">No payments recorded yet.</p>
+      <a href="{% url 'tenant_payment_initiate' %}" class="mt-3 text-xs text-amber-400 hover:text-amber-300">Pay First Rent →</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ===== ACTIVE MAINTENANCE ===== -->
+{% if pending_maintenance %}
+<div class="bg-white rounded-2xl shadow-sm p-5 border border-gray-200 mb-4">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+      <i class="fas fa-tools text-amber-400"></i> Active Maintenance Requests
+    </h3>
+    <a href="{% url 'tenant_maintenance' %}" class="text-xs text-amber-400 hover:text-amber-300 transition-colors">View All <i class="fas fa-arrow-right ml-1"></i></a>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    {% for req in pending_maintenance %}
+    <a href="{% url 'tenant_maintenance_detail' req.id %}"
+       class="p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border border-gray-200">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="w-2 h-2 rounded-full flex-shrink-0
+                     {% if req.priority == 'emergency' %}bg-red-500{% elif req.priority == 'high' %}bg-orange-500{% elif req.priority == 'medium' %}bg-amber-500{% else %}bg-green-500{% endif %}">
+        </span>
+        <span class="text-xs text-gray-400 uppercase tracking-wide">{{ req.get_priority_display }}</span>
+      </div>
+      <p class="text-sm font-medium text-gray-900 truncate">{{ req.title }}</p>
+      <p class="text-xs text-gray-400 mt-1">{{ req.reported_date|date:"d M Y" }}</p>
+      <div class="mt-2">
+        <span class="text-xs px-2 py-0.5 rounded-full
+                     {% if req.status == 'in_progress' %}bg-blue-500/20 text-blue-400{% else %}bg-amber-500/20 text-amber-400{% endif %}">
+          {% if req.status == 'in_progress' %}In Progress{% else %}Pending{% endif %}
+        </span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tenant.js' %}"></script>
+{% endblock %}

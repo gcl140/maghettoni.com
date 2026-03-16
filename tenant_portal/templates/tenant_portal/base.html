@@ -1,0 +1,413 @@
+{% load static %}
+<!doctype html>
+<html lang="en" class="h-full" id="htmlRoot">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Tenant Portal{% endblock %} — Maghettoni</title>
+    <link rel="icon" href="{% static 'images/fav.png' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/tenant_portal/base.css' %}" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script src="{% static 'js/tenant_portal/base-head.js' %}"></script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body class="h-full bg-gray-100 text-gray-800" id="appBody">
+    <div id="google_translate_element" class="tp-translate-hidden"></div>
+
+    <div class="flex h-screen overflow-hidden">
+      <!-- Sidebar Backdrop (mobile) -->
+      <div
+        id="tp-sidebar-backdrop"
+        class="fixed inset-0 bg-black/60 z-20 hidden lg:hidden"
+        onclick="tpCloseSidebar()"
+      ></div>
+
+      <!-- ===================== SIDEBAR ===================== -->
+      <aside
+        id="tp-sidebar"
+        class="fixed inset-y-0 left-0 z-30 bg-brown-800 border-r border-brown-700/50 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+      >
+        <!-- Brand -->
+        <div
+          class="flex items-center gap-3 px-4 py-4 border-b border-brown-700/50 relative overflow-hidden"
+        >
+          <div
+            class="w-9 h-9 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0"
+          >
+            <img
+              src="{% static 'images/fav.png' %}"
+              class="w-6 h-6 object-contain"
+              alt="Maghettoni"
+            />
+          </div>
+          <div
+            class="sidebar-label overflow-hidden transition-all duration-300"
+          >
+            <p
+              class="text-sm font-bold text-white leading-tight whitespace-nowrap"
+            >
+              Maghettoni
+            </p>
+            <p class="text-xs text-amber-400 leading-tight whitespace-nowrap">
+              Tenant Portal
+            </p>
+          </div>
+          <!-- Desktop collapse toggle -->
+          <button
+            id="tp-collapse-btn"
+            class="hidden lg:flex absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 items-center justify-center rounded-full bg-brown-700/60 hover:bg-brown-600/60 transition-colors text-brown-300 hover:text-white"
+            title="Toggle sidebar"
+          >
+            <i
+              id="tp-collapse-icon"
+              class="fas fa-chevron-left text-xs transition-transform duration-300"
+            ></i>
+          </button>
+        </div>
+
+        <!-- Nav -->
+        <nav class="flex-1 overflow-y-auto px-3 py-3 space-y-1">
+          <a
+            href="{% url 'tenant_dashboard' %}"
+            class="tp-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'tenant_dashboard' %}bg-amber-500/20 text-amber-300{% else %}text-brown-300 hover:bg-brown-700/50 hover:text-white{% endif %}"
+            title="Dashboard"
+          >
+            <i class="fas fa-th-large w-5 text-center flex-shrink-0"></i>
+            <span
+              class="sidebar-label whitespace-nowrap overflow-hidden transition-all duration-300"
+              >Dashboard</span
+            >
+          </a>
+
+          <a
+            href="{% url 'tenant_payments' %}"
+            class="tp-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if 'payment' in request.resolver_match.url_name %}bg-amber-500/20 text-amber-300{% else %}text-brown-300 hover:bg-brown-700/50 hover:text-white{% endif %}"
+            title="Payments"
+          >
+            <i class="fas fa-money-bill-wave w-5 text-center flex-shrink-0"></i>
+            <span
+              class="sidebar-label whitespace-nowrap overflow-hidden transition-all duration-300"
+              >Payments</span
+            >
+          </a>
+
+          <a
+            href="{% url 'tenant_maintenance' %}"
+            class="tp-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if 'maintenance' in request.resolver_match.url_name %}bg-amber-500/20 text-amber-300{% else %}text-brown-300 hover:bg-brown-700/50 hover:text-white{% endif %}"
+            title="Maintenance"
+          >
+            <i class="fas fa-tools w-5 text-center flex-shrink-0"></i>
+            <span
+              class="sidebar-label whitespace-nowrap overflow-hidden transition-all duration-300"
+              >Maintenance</span
+            >
+          </a>
+
+          <a
+            href="{% url 'tenant_profile' %}"
+            class="tp-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'tenant_profile' %}bg-amber-500/20 text-amber-300{% else %}text-brown-300 hover:bg-brown-700/50 hover:text-white{% endif %}"
+            title="Profile"
+          >
+            <i class="fas fa-user w-5 text-center flex-shrink-0"></i>
+            <span
+              class="sidebar-label whitespace-nowrap overflow-hidden transition-all duration-300"
+              >Profile</span
+            >
+          </a>
+        </nav>
+
+        <!-- Tenant card (bottom) -->
+        {% if tenant %}
+        <div
+          class="mx-3 mb-2 px-3 py-3 bg-brown-700/40 rounded-xl border border-brown-600/30 sidebar-tenant-card overflow-hidden transition-all duration-300"
+        >
+          <div class="flex items-center gap-3">
+            {% if tenant.profile_picture %}
+            <img
+              src="{{ tenant.profile_picture.url }}"
+              class="w-9 h-9 rounded-full object-cover flex-shrink-0"
+              alt="Avatar"
+            />
+            {% else %}
+            <div
+              class="w-9 h-9 rounded-full bg-amber-500/30 flex items-center justify-center text-amber-300 font-bold text-sm flex-shrink-0"
+            >
+              {{ tenant.first_name|first|upper }}{{ tenant.last_name|first|upper
+              }}
+            </div>
+            {% endif %}
+            <div
+              class="min-w-0 sidebar-label overflow-hidden transition-all duration-300"
+            >
+              <p class="text-sm font-semibold text-white truncate">
+                {{ tenant.first_name }} {{ tenant.last_name }}
+              </p>
+              <p class="text-xs text-brown-300 truncate">
+                {{ tenant.property.name }}
+              </p>
+            </div>
+          </div>
+          {% if tenant.unit %}
+          <div
+            class="mt-2 flex items-center gap-1 text-xs text-brown-300 sidebar-label overflow-hidden transition-all duration-300"
+          >
+            <i class="fas fa-door-open text-amber-400 w-4 flex-shrink-0"></i>
+            <span class="whitespace-nowrap"
+              >Unit {{ tenant.unit.unit_number }}</span
+            >
+            <span class="mx-1 text-brown-600">•</span>
+            <span class="text-amber-400 font-medium whitespace-nowrap"
+              >TZS. {{ tenant.unit.monthly_rent|floatformat:0 }}/mo</span
+            >
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Footer: logout -->
+        <div class="px-3 py-3 border-t border-brown-700/50">
+          <a
+            href="/home/logout/"
+            class="tp-nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-red-400 hover:text-red-300 hover:bg-red-900/20 transition-colors"
+            title="Logout"
+          >
+            <i class="fas fa-sign-out-alt w-5 text-center flex-shrink-0"></i>
+            <span
+              class="sidebar-label whitespace-nowrap overflow-hidden transition-all duration-300"
+              >Logout</span
+            >
+          </a>
+        </div>
+      </aside>
+
+      <!-- ===================== MAIN CONTENT ===================== -->
+      <div id="tp-main" class="flex-1 flex flex-col min-w-0 lg:ml-64">
+        <!-- Top bar -->
+        <header
+          class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm"
+        >
+          <div class="flex items-center gap-2 px-4 h-14">
+            <!-- Mobile menu toggle -->
+            <button
+              class="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+              onclick="tpToggleSidebar()"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Logo (mobile only — desktop has sidebar) -->
+            <div class="lg:hidden flex items-center gap-2 mr-2">
+              <div
+                class="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center"
+              >
+                <img
+                  src="{% static 'images/fav.png' %}"
+                  class="w-5 h-5 object-contain"
+                  alt="Maghettoni"
+                />
+              </div>
+              <span class="text-sm font-bold text-gray-900">Maghettoni</span>
+            </div>
+
+            <!-- Page title -->
+            <h2
+              class="font-semibold text-gray-900 text-sm truncate flex-1 ml-1"
+            >
+              {% block page_title %}Dashboard{% endblock %}
+            </h2>
+
+            <!-- Right actions -->
+            <div class="flex items-center gap-2">
+              <!-- Language dropdown -->
+              <div class="relative" id="langWrap">
+                <button
+                  id="langBtn"
+                  class="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition text-gray-600 text-xs font-bold notranslate"
+                  title="Switch language"
+                >
+                  <i class="fas fa-globe text-sm"></i>
+                  <span id="langLabel">English</span>
+                  <i class="fas fa-chevron-down text-xs opacity-60"></i>
+                </button>
+                <div
+                  id="langMenu"
+                  class="hidden absolute right-0 mt-1.5 w-44 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-1.5 overflow-hidden notranslate"
+                >
+                  <button
+                    onclick="switchLang('en')"
+                    class="lang-opt w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition text-left"
+                    data-lang="en"
+                  >
+                    <span class="text-base">🇬🇧</span>
+                    <span>English</span>
+                  </button>
+                  <button
+                    onclick="switchLang('sw')"
+                    class="lang-opt w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition text-left"
+                    data-lang="sw"
+                  >
+                    <span class="text-base">🇹🇿</span>
+                    <span>Kiswahili</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Pay Rent button -->
+              <a
+                href="{% url 'tenant_payment_initiate' %}"
+                class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition-colors"
+              >
+                <i class="fas fa-plus"></i> Pay Rent
+              </a>
+
+              <!-- Bell (notification modal trigger) -->
+              <button
+                id="tp-bell-btn"
+                class="relative w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-lg transition"
+                title="Notifications"
+              >
+                <i class="fas fa-bell text-base"></i>
+                {% if tenant_unread_count %}
+                <span
+                  id="tp-bell-dot"
+                  class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"
+                ></span>
+                {% endif %}
+              </button>
+            </div>
+          </div>
+          <!-- /header inner flex -->
+        </header>
+        <!-- Breadcrumbs -->
+        <nav
+          class="px-4 md:mt-8 mt-4 lg:px-6 py-2.5 border-b border-gray-100 text-xs"
+        >
+          <ol class="flex items-center gap-1.5 text-gray-500 flex-wrap">
+            <li>
+              <a
+                href="{% url 'tenant_dashboard' %}"
+                class="hover:text-brown-600 transition-colors font-medium"
+                >Home</a
+              >
+            </li>
+            {% block breadcrumbs %}{% endblock %}
+          </ol>
+        </nav>
+
+        <!-- Django messages (toast) -->
+        {% if messages %}
+        <div id="tp-toast-messages" class="hidden" aria-hidden="true">
+          {% for msg in messages %}
+          <div
+            class="tp-toast-item"
+            data-text="{{ msg|escape }}"
+            data-level="{{ msg.tags|default:'info'|escape }}"
+          ></div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Page content -->
+        <main class="flex-1 overflow-y-auto p-4 lg:p-6">
+          {% block content %}{% endblock %}
+        </main>
+
+        <!-- Mobile bottom nav -->
+        <nav
+          class="lg:hidden flex items-center bg-white border-t border-gray-200 shadow-lg"
+        >
+          <a
+            href="{% url 'tenant_dashboard' %}"
+            class="flex-1 flex flex-col items-center py-2 text-xs {% if request.resolver_match.url_name == 'tenant_dashboard' %}text-amber-600{% else %}text-gray-400{% endif %}"
+          >
+            <i class="fas fa-th-large text-base mb-1"></i> Home
+          </a>
+          <a
+            href="{% url 'tenant_payments' %}"
+            class="flex-1 flex flex-col items-center py-2 text-xs {% if 'payment' in request.resolver_match.url_name %}text-amber-600{% else %}text-gray-400{% endif %}"
+          >
+            <i class="fas fa-money-bill-wave text-base mb-1"></i> Payments
+          </a>
+          <a
+            href="{% url 'tenant_payment_initiate' %}"
+            class="flex-1 flex flex-col items-center py-2 text-xs"
+          >
+            <div
+              class="w-10 h-10 -mt-5 rounded-full bg-amber-500 flex items-center justify-center shadow-lg"
+            >
+              <i class="fas fa-plus text-white"></i>
+            </div>
+            <span class="mt-1 text-amber-600">Pay</span>
+          </a>
+          <a
+            href="{% url 'tenant_maintenance' %}"
+            class="flex-1 flex flex-col items-center py-2 text-xs {% if 'maintenance' in request.resolver_match.url_name %}text-amber-600{% else %}text-gray-400{% endif %}"
+          >
+            <i class="fas fa-tools text-base mb-1"></i> Repairs
+          </a>
+          <a
+            href="{% url 'tenant_profile' %}"
+            class="flex-1 flex flex-col items-center py-2 text-xs {% if request.resolver_match.url_name == 'tenant_profile' %}text-amber-600{% else %}text-gray-400{% endif %}"
+          >
+            <i class="fas fa-user text-base mb-1"></i> Profile
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ===================== NOTIFICATION MODAL ===================== -->
+    <dialog
+      id="tp-notif-dialog"
+      class="rounded-xl shadow-2xl p-0 w-full md:max-w-md backdrop:bg-gray-900/50"
+    >
+      <div class="bg-brown-800 px-5 pt-5 pb-4">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-white flex items-center">
+            <i class="fas fa-bell mr-2 text-brown-300"></i> Notifications
+          </h3>
+          <button
+            onclick="document.getElementById('tp-notif-dialog').close()"
+            class="text-brown-300 hover:text-white transition-colors p-1"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="tp-notif-list" class="space-y-3 max-h-80 overflow-y-auto">
+          <p class="text-sm text-brown-300 text-center py-6">
+            <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
+          </p>
+        </div>
+      </div>
+      <div class="bg-brown-700 px-5 py-3 flex justify-end">
+        <button
+          onclick="document.getElementById('tp-notif-dialog').close()"
+          class="inline-flex items-center px-4 py-2 bg-red-700 hover:bg-red-800 text-white text-sm font-medium rounded-lg transition-colors"
+        >
+          Close
+        </button>
+      </div>
+    </dialog>
+
+    {% block extra_js %}{% endblock %}
+
+    <script src="{% static 'js/tenant_portal/base.js' %}"></script>
+  </body>
+</html>

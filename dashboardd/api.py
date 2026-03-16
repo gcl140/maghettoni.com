@@ -4,7 +4,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from .models import Property, Unit, Tenant, Payment, MaintenanceRequest
+from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Notification
 from .services import send_payment_reminder, send_maintenance_update
 
 
@@ -223,44 +223,76 @@ def api_maintenance_detail(request, request_id):
 
 # ── Notifications ─────────────────────────────────────────────────────────────
 
+PER_PAGE = 10
+
 @login_required
 @require_GET
 def api_notifications(request):
     today = timezone.now().date()
+    page = max(1, int(request.GET.get('page', 1)))
+    offset = (page - 1) * PER_PAGE
 
-    overdue = Payment.objects.filter(
-        tenant__property__owner=request.user,
-        due_date__lt=today,
-        status__in=['failed', 'pending']
-    ).select_related('tenant', 'tenant__property').order_by('due_date')
+    # On page 1 only: include live alerts (overdue payments + pending maintenance)
+    alerts = []
+    if page == 1:
+        for p in Payment.objects.filter(
+            tenant__property__owner=request.user,
+            due_date__lt=today,
+            status__in=['failed', 'pending']
+        ).select_related('tenant').order_by('due_date')[:5]:
+            days = (today - p.due_date).days
+            alerts.append({
+                'type': 'payment',
+                'icon': 'fa-money-bill-wave',
+                'color': 'red',
+                'title': f'Malipo Overdue: {p.tenant.first_name} {p.tenant.last_name}',
+                'message': f'TZS. {p.amount:,.0f} — siku {days} zimepita',
+                'url': f'/dashboard/payments/{p.id}/',
+                'unread': True,
+                'created_at': timezone.localtime(p.created_at).strftime('%d %b %Y, %H:%M'),
+            })
 
-    pending_maint = MaintenanceRequest.objects.filter(
-        property__owner=request.user, status='pending'
-    ).select_related('property', 'tenant').order_by('reported_date')
+        for r in MaintenanceRequest.objects.filter(
+            property__owner=request.user, status='pending'
+        ).select_related('property', 'tenant').order_by('reported_date')[:5]:
+            alerts.append({
+                'type': 'maintenance',
+                'icon': 'fa-tools',
+                'color': 'amber',
+                'title': f'Matengenezo Inasubiri: {r.property.name}',
+                'message': r.title,
+                'url': f'/dashboard/maintenance/{r.id}/',
+                'unread': True,
+                'created_at': timezone.localtime(r.reported_date).strftime('%d %b %Y, %H:%M'),
+            })
 
-    items = []
-    for p in overdue:
-        days = (today - p.due_date).days
-        items.append({
-            'type': 'payment',
-            'icon': 'fa-money-bill-wave',
-            'color': 'red',
-            'title': f'Malipo: {p.tenant.first_name} {p.tenant.last_name}',
-            'message': f'Ksh {p.amount:,.0f} — siku {days} zimepita',
-            'url': f'/dashboard/payments/{p.id}/',
+    # Paginated DB notifications
+    db_qs = Notification.objects.filter(recipient=request.user).order_by('-created_at')
+    total_db = db_qs.count()
+    db_slice = db_qs[offset: offset + PER_PAGE]
+    db_notif_ids = [n.id for n in db_slice]
+
+    db_items = []
+    for n in db_slice:
+        db_items.append({
+            'type': 'notification',
+            'icon': 'fa-bell',
+            'color': 'blue',
+            'title': n.title,
+            'message': n.message,
+            'url': None,
+            'unread': not n.is_read,
+            'created_at': timezone.localtime(n.created_at).strftime('%d %b %Y, %H:%M'),
         })
 
-    for r in pending_maint:
-        items.append({
-            'type': 'maintenance',
-            'icon': 'fa-tools',
-            'color': 'amber',
-            'title': f'Matengenezo: {r.property.name}',
-            'message': r.description[:80] if r.description else 'Hakuna maelezo',
-            'url': f'/dashboard/maintenance/{r.id}/',
-        })
+    # Mark this page's notifications as read
+    if db_notif_ids:
+        Notification.objects.filter(id__in=db_notif_ids).update(is_read=True)
 
-    return JsonResponse({'items': items, 'count': len(items)})
+    items = alerts + db_items
+    has_more = (offset + PER_PAGE) < total_db
+
+    return JsonResponse({'items': items, 'count': len(items), 'has_more': has_more, 'page': page})
 
 
 @login_required

@@ -1,0 +1,51 @@
+/* Custom radio button styling */
+input[type="radio"]:checked+div {
+    background-color: #603b2b;
+    border-color: #603b2b;
+}
+
+/* Priority-specific border colors */
+.border-red-500 {
+    border-color: #ef4444 !important;
+}
+
+.border-orange-500 {
+    border-color: #f97316 !important;
+}
+
+.border-yellow-500 {
+    border-color: #eab308 !important;
+}
+
+.border-green-500 {
+    border-color: #22c55e !important;
+}
+
+/* Hover effects for select options */
+.form-input option:hover {
+    background-color: #f2e8e5;
+}
+
+/* Focus styles */
+.form-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
+    border-color: #a18072;
+}
+
+/* Transition for radio button groups */
+.radio-group {
+    transition: all 0.3s ease;
+}
+
+.radio-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Cost input styling */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 2em;
+}

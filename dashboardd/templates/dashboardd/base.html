@@ -1,396 +1,543 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sw" id="htmlRoot">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Maghettoni{% endblock %}</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Maghettoni{% endblock %}</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}" />
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#7a4520" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Maghettoni" />
-  <link rel="apple-touch-icon" href="{% static 'images/fav.png' %}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  {% block extra_head %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
+    <link rel="icon" type="image/x-icon" href="{% static 'images/fav.png' %}" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#7a4520" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Maghettoni" />
+    <link rel="apple-touch-icon" href="{% static 'images/fav.png' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    {% block extra_head %}{% endblock %}
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brown: {
-              50:'#fdf8f3', 100:'#f5e8d8', 200:'#e8cba8', 300:'#d9a87a',
-              400:'#c67c3b', 500:'#a0602e', 600:'#7a4520', 700:'#5c3317',
-              800:'#3e2210', 900:'#2c1a0e',
-            }
-          }
-        }
-      }
-    }
-  </script>
+    <link rel="stylesheet" href="{% static 'css/dashboardd-base.css' %}" />
 
-  <link rel="stylesheet" href="{% static 'css/dashboardd-base.css' %}">
+    <script src="{% static 'js/base-head.js' %}"></script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <!-- Google Translate: widget must exist in DOM (off-screen) for cookie-based auto-translate to work -->
-  <div id="google_translate_element" style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;"></div>
-  <script>
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'sw',
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
-  </script>
-  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-</head>
+    <!-- Google Translate: widget div (off-screen) — must be in <head> section but placed in body correctly below -->
+  </head>
 
-<body class="bg-gray-100 text-gray-800" id="appBody">
-<script>
-  /* Apply collapsed state before first paint so there's no flash */
-  if (localStorage.getItem('sb_collapsed') === '1') {
-    document.getElementById('appBody').classList.add('sb-collapsed', 'no-sb-transition');
-  }
-</script>
+  <body class="bg-gray-100 text-gray-800" id="appBody">
+    <!-- Google Translate widget target (off-screen) -->
+    <div
+      id="google_translate_element"
+      style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;"
+      aria-hidden="true"
+    ></div>
 
-<div id="app-shell">
-
-  <!-- ═══════════════════════════════ SIDEBAR ═══════════════════════════════ -->
-  <aside id="sidebar">
-
-    <!-- Brand -->
-    <div class="flex items-center gap-3 px-4 py-5 border-b border-white/10 flex-shrink-0">
-      <div class="w-9 h-9 bg-gradient-to-br from-brown-400 to-brown-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-        <img src="{% static 'images/fav.png' %}" class="w-5 h-5 object-contain" alt="logo" />
-      </div>
-      <div class="sb-brand-text overflow-hidden notranslate">
-        <p class="text-base font-bold leading-tight whitespace-nowrap tracking-tight">Maghettoni</p>
-        <p class="text-xs text-brown-300 whitespace-nowrap mt-0.5">Simamia Mali Zako</p>
-      </div>
-    </div>
-
-    <!-- Nav -->
-    <nav class="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto overflow-x-hidden">
-
-      <p class="sb-section px-3 mb-2 text-xs font-semibold uppercase tracking-widest text-brown-400">Jumla</p>
-
-      <a href="{% url 'dashboard' %}"
-         class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white
-                {% if request.path == '/home/' or '/home/' == request.path %}nav-active{% endif %}">
-        <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 mr-0">
-          <i class="nav-icon fas fa-home text-brown-300 text-sm"></i>
-        </span>
-        <span class="sb-label text-sm font-medium flex-1">Dashibodi</span>
-        <span class="sb-tip">Dashibodi</span>
-      </a>
-
-      <p class="sb-section px-3 mt-5 mb-2 text-xs font-semibold uppercase tracking-widest text-brown-400">Usimamizi</p>
-
-      <a href="{% url 'property_list' %}"
-         class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white
-                {% if 'propert' in request.path %}nav-active{% endif %}">
-        <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
-          <i class="nav-icon fas fa-building text-brown-300 text-sm"></i>
-        </span>
-        <span class="sb-label text-sm font-medium flex-1">Mali</span>
-        <span class="sb-tip">Mali</span>
-      </a>
-
-      <a href="{% url 'tenant_list' %}"
-         class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white
-                {% if 'tenant' in request.path %}nav-active{% endif %}">
-        <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
-          <i class="nav-icon fas fa-users text-brown-300 text-sm"></i>
-        </span>
-        <span class="sb-label text-sm font-medium flex-1">Wapangaji</span>
-        <span class="sb-tip">Wapangaji</span>
-      </a>
-
-      <a href="{% url 'payments_list' %}"
-         class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white
-                {% if 'payment' in request.path %}nav-active{% endif %}">
-        <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
-          <i class="nav-icon fas fa-money-bill-wave text-brown-300 text-sm"></i>
-        </span>
-        <span class="sb-label text-sm font-medium flex-1">Malipo</span>
-        {% if due_payments_count > 0 %}
-        <span class="sb-badge text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full leading-none">{{ due_payments_count }}</span>
-        {% endif %}
-        <span class="sb-tip">Malipo{% if due_payments_count > 0 %} · {{ due_payments_count }}{% endif %}</span>
-      </a>
-
-      <a href="{% url 'maintenance_requests' %}"
-         class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white
-                {% if 'maintenance' in request.path %}nav-active{% endif %}">
-        <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
-          <i class="nav-icon fas fa-tools text-brown-300 text-sm"></i>
-        </span>
-        <span class="sb-label text-sm font-medium flex-1">Matengenezo</span>
-        {% if pending_maintenance_count > 0 %}
-        <span class="sb-badge text-xs bg-amber-500 text-white px-1.5 py-0.5 rounded-full leading-none">{{ pending_maintenance_count }}</span>
-        {% endif %}
-        <span class="sb-tip">Matengenezo{% if pending_maintenance_count > 0 %} · {{ pending_maintenance_count }}{% endif %}</span>
-      </a>
-
-    </nav>
-
-    <!-- User + Logout -->
-    <div class="flex-shrink-0 px-2 pb-4 pt-2 border-t border-white/10 space-y-0.5">
-
-      {% if request.user.is_authenticated %}
-      <a href="{% url 'profile' request.user.id %}"
-         class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white">
-        <span class="nav-icon-wrap w-8 h-8 rounded-full overflow-hidden bg-brown-700 flex items-center justify-center flex-shrink-0">
-          {% if request.user.profile_picture %}
-          <img src="{{ request.user.profile_picture.url }}" class="w-full h-full object-cover" alt="avatar" />
-          {% else %}
-          <i class="fas fa-user text-white text-xs"></i>
-          {% endif %}
-        </span>
-        <div class="sb-sublabel flex-1 overflow-hidden">
-          <p class="text-sm font-semibold truncate leading-tight text-white">{{ request.user.get_full_name|default:request.user.username }}</p>
-          <p class="text-xs text-brown-400 truncate">Mwenye Mali</p>
-        </div>
-        <span class="sb-tip">Wasifu</span>
-      </a>
-      {% endif %}
-
-      <a href="{% url 'logout' %}"
-         class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-500/15 transition-colors text-red-300 hover:text-red-200">
-        <span class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
-          <i class="nav-icon fas fa-sign-out-alt text-sm"></i>
-        </span>
-        <span class="sb-label text-sm font-medium">Toka</span>
-        <span class="sb-tip">Toka</span>
-      </a>
-
-    </div>
-  </aside>
-
-  <!-- Mobile overlay -->
-  <div id="sb-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
-
-  <!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
-  <div id="main-wrap">
-
-    <!-- ── Top Header ── -->
-    <header class="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm flex-shrink-0">
-      <div class="flex items-center gap-2 px-4 h-14">
-
-        <!-- Desktop: collapse/expand toggle (always in header, never inside sidebar) -->
-        <button id="desktopToggle"
-                class="hidden lg:flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition text-gray-500 hover:text-gray-800 flex-shrink-0"
-                title="Bana/Piga upana">
-          <i id="dtIcon" class="fas fa-bars text-base"></i>
-        </button>
-
-        <!-- Mobile: open sidebar -->
-        <button id="mobileToggle"
-                class="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition text-gray-500 flex-shrink-0">
-          <i class="fas fa-bars text-base"></i>
-        </button>
-
-        <!-- Page title -->
-        <h2 class="font-semibold text-gray-900 text-sm truncate flex-1 ml-1">
-          {% block page_title %}Maghettoni{% endblock %}
-        </h2>
-
-        <!-- ── Right actions ── -->
-        <div class="flex items-center gap-1.5">
-
-          <!-- Search toggle (mobile) -->
-          <button id="mobileSearchToggle"
-                  class="lg:hidden w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-lg transition flex-shrink-0">
-            <i class="fas fa-search text-sm"></i>
-          </button>
-
-          <!-- Language dropdown -->
-          <div class="relative" id="langWrap">
-            <button id="langBtn"
-                    class="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition text-gray-600 text-xs font-bold notranslate"
-                    title="Switch language">
-              <i class="fas fa-globe text-sm"></i>
-              <span id="langLabel">English</span>
-              <i class="fas fa-chevron-down text-xs opacity-60"></i>
-            </button>
-            <div id="langMenu"
-                 class="hidden absolute right-0 mt-1.5 w-44 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-1.5 overflow-hidden notranslate">
-              <button onclick="switchLang('en')"
-                      class="lang-opt w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition text-left"
-                      data-lang="en">
-                <span class="text-base">🇬🇧</span>
-                <span>English</span>
-              </button>
-              <button onclick="switchLang('sw')"
-                      class="lang-opt w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition text-left"
-                      data-lang="sw">
-                <span class="text-base">🇹🇿</span>
-                <span>Kiswahili</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Add dropdown -->
-          <div class="relative" id="addWrap">
-            <button id="addBtn"
-                    class="flex items-center gap-1.5 h-9 px-3 bg-brown-700 hover:bg-brown-800 text-white rounded-lg transition text-sm font-medium">
-              <i class="fas fa-plus text-xs"></i>
-              <span class="hidden sm:inline">Ongeza</span>
-            </button>
-            <div id="addMenu"
-                 class="hidden absolute right-0 mt-2 w-52 bg-white border border-gray-100 rounded-xl shadow-2xl z-50 py-1.5 overflow-hidden">
-              <a href="{% url 'add_property' %}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition">
-                <i class="fas fa-home text-brown-600 w-4 text-center"></i> Mali Mpya
-              </a>
-              <a href="{% url 'add_tenant' %}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition">
-                <i class="fas fa-user-plus text-green-600 w-4 text-center"></i> Mpangaji Mpya
-              </a>
-              <a href="{% url 'payment_create' %}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition">
-                <i class="fas fa-money-bill-wave text-blue-600 w-4 text-center"></i> Rekodi Malipo
-              </a>
-              <div class="border-t border-gray-100 mt-1 pt-1">
-                <a href="{% url 'maintenance_request_create' %}" class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition">
-                  <i class="fas fa-tools text-red-600 w-4 text-center"></i> Hitilafu Mpya
-                </a>
-              </div>
-            </div>
-          </div>
-
-
-          <!-- Notification bell -->
-          {% include "partials/not.html" %}
-          <button class="relative w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-lg transition"
-                  title="Taarifa">
-            <i class="fas fa-bell text-base"></i>
-            {% with total=due_payments_count|add:pending_maintenance_count %}
-            {% if total > 0 %}
-            <span class="notif-badge">{{ total }}</span>
-            {% endif %}
-            {% endwith %}
-          </button>
-
-        </div>
-      </div>
-    </header>
-
-    <!-- Mobile search bar (hidden until toggled) -->
-    <div id="mobileSearchBar" class="hidden lg:hidden bg-white border-b border-gray-200 px-3 py-2">
-      <form method="GET" action="{% url 'search_results' %}" class="flex items-center gap-2">
-        <input id="mobileSearchInput" type="text" name="q"
-               placeholder="Tafuta mali, wakazi, malipo…"
-               value="{{ request.GET.q|default:'' }}"
-               autocomplete="off"
-               class="flex-1 bg-gray-50 rounded-xl py-2.5 pl-4 pr-3 text-sm border border-gray-200 focus:border-brown-400 focus:ring-2 focus:ring-brown-100 outline-none transition">
-        <button type="submit"
-                class="w-9 h-9 flex items-center justify-center bg-brown-700 text-white rounded-xl hover:bg-brown-800 transition flex-shrink-0">
-          <i class="fas fa-search text-sm"></i>
-        </button>
-        <button type="button" id="mobileSearchClose"
-                class="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition flex-shrink-0">
-          <i class="fas fa-times text-sm"></i>
-        </button>
-      </form>
-    </div>
-
-    <!-- Breadcrumbs -->
-    <nav class="px-4 lg:px-6 py-2.5 border-b border-gray-100 bg-white text-xs">
-      <ol class="flex items-center gap-1.5 text-gray-500 flex-wrap">
-        <li><a href="{% url 'dashboard' %}" class="hover:text-brown-600 transition-colors font-medium">Home</a></li>
-        {% block breadcrumbs %}{% endblock %}
-      </ol>
-    </nav>
-
-    <!-- Django messages via Toastify -->
-    {% if messages %}
-    {% for message in messages %}
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        Toastify({
-          text: "{{ message|escapejs }}",
-          duration: 5000,
-          close: true,
-          gravity: "top",
-          position: "right",
-          backgroundColor: "{% if message.tags == 'success' %}#16a34a{% elif message.tags == 'error' %}#dc2626{% elif message.tags == 'warning' %}#d97706{% else %}#2563eb{% endif %}",
-          style: { borderRadius: '10px', fontSize: '14px' }
-        }).showToast();
-      });
+      /* Apply collapsed state before first paint so there's no flash */
+      if (localStorage.getItem("sb_collapsed") === "1") {
+        document
+          .getElementById("appBody")
+          .classList.add("sb-collapsed", "no-sb-transition");
+      }
     </script>
-    {% endfor %}
-    {% endif %}
 
-    <!-- Page content -->
-    <div class="flex-1 page-enter">
-      {% block content %}{% endblock %}
-    </div>
+    <div id="app-shell">
+      <!-- ═══════════════════════════════ SIDEBAR ═══════════════════════════════ -->
+      <aside id="sidebar">
+        <!-- Brand -->
+        <div
+          class="relative flex items-center gap-3 px-4 py-5 border-b border-white/10 flex-shrink-0 overflow-hidden"
+        >
+          <div
+            class="w-9 h-9 bg-gradient-to-br from-brown-400 to-brown-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md"
+          >
+            <img
+              src="{% static 'images/fav.png' %}"
+              class="w-5 h-5 object-contain"
+              alt="logo"
+            />
+          </div>
+          <div class="sb-brand-text overflow-hidden notranslate">
+            <p
+              class="text-base font-bold leading-tight whitespace-nowrap tracking-tight"
+            >
+              Maghettoni
+            </p>
+            <p class="text-xs text-brown-300 whitespace-nowrap mt-0.5">
+              Simamia Mali Zako
+            </p>
+          </div>
 
-    <!-- Footer -->
-    <footer class="px-6 py-3 border-t border-gray-200 bg-white text-center text-xs text-gray-400">
-      © {{ year }} Maghettoni ·
-      <a href="{% url 'about' %}" class="hover:text-brown-600 transition">Kuhusu</a>
-    </footer>
+          <button
+            id="desktopToggle"
+            class="hidden lg:flex absolute right-2 top-1/2 -translate-y-1/2 items-center justify-center w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-brown-200 hover:text-white transition-colors"
+            title="Collapse/Expand"
+          >
+            <i id="dtIcon" class="fas fa-chevron-left text-xs"></i>
+          </button>
+        </div>
 
-    <!-- Mobile bottom nav -->
-    <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg">
-      <div class="flex justify-around py-1.5">
-        <a href="{% url 'dashboard' %}"
-           class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if '/home/' == request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition">
-          <i class="fas fa-home text-lg"></i>
-          <span class="text-xs font-medium">Nyumbani</span>
-        </a>
-        <a href="{% url 'property_list' %}"
-           class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if 'propert' in request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition">
-          <i class="fas fa-building text-lg"></i>
-          <span class="text-xs font-medium">Mali</span>
-        </a>
-        <a href="{% url 'tenant_list' %}"
-           class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if 'tenant' in request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition">
-          <i class="fas fa-users text-lg"></i>
-          <span class="text-xs font-medium">Wakazi</span>
-        </a>
-        <a href="{% url 'payments_list' %}"
-           class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if 'payment' in request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition">
-          <div class="relative">
-            <i class="fas fa-wallet text-lg"></i>
+        <!-- Nav -->
+        <nav
+          class="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto overflow-x-hidden"
+        >
+          <p
+            class="sb-section px-3 mb-2 text-xs font-semibold uppercase tracking-widest text-brown-400"
+          >
+            Overview
+          </p>
+
+          <a
+            href="{% url 'dashboard' %}"
+            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white {% if request.path == '/home/' or '/home/' == request.path %}nav-active{% endif %}"
+          >
+            <span
+              class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0 mr-0"
+            >
+              <i class="nav-icon fas fa-home text-brown-300 text-sm"></i>
+            </span>
+            <span class="sb-label text-sm font-medium flex-1">Dashboard</span>
+            <span class="sb-tip">Dashboard</span>
+          </a>
+
+          <p
+            class="sb-section px-3 mt-5 mb-2 text-xs font-semibold uppercase tracking-widest text-brown-400"
+          >
+            Management
+          </p>
+
+          <a
+            href="{% url 'property_list' %}"
+            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white {% if 'propert' in request.path %}nav-active{% endif %}"
+          >
+            <span
+              class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0"
+            >
+              <i class="nav-icon fas fa-building text-brown-300 text-sm"></i>
+            </span>
+            <span class="sb-label text-sm font-medium flex-1">Properties</span>
+            <span class="sb-tip">Properties</span>
+          </a>
+
+          <a
+            href="{% url 'tenant_list' %}"
+            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white {% if 'tenant' in request.path %}nav-active{% endif %}"
+          >
+            <span
+              class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0"
+            >
+              <i class="nav-icon fas fa-users text-brown-300 text-sm"></i>
+            </span>
+            <span class="sb-label text-sm font-medium flex-1">Tenants</span>
+            <span class="sb-tip">Tenants</span>
+          </a>
+
+          <a
+            href="{% url 'payments_list' %}"
+            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white {% if 'payment' in request.path %}nav-active{% endif %}"
+          >
+            <span
+              class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0"
+            >
+              <i
+                class="nav-icon fas fa-money-bill-wave text-brown-300 text-sm"
+              ></i>
+            </span>
+            <span class="sb-label text-sm font-medium flex-1">Payments</span>
             {% if due_payments_count > 0 %}
-            <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            <span
+              class="sb-badge text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full leading-none"
+              >{{ due_payments_count }}</span
+            >
             {% endif %}
-          </div>
-          <span class="text-xs font-medium">Malipo</span>
-        </a>
-        <a href="{% url 'maintenance_requests' %}"
-           class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if 'maintenance' in request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition">
-          <div class="relative">
-            <i class="fas fa-tools text-lg"></i>
+            <span class="sb-tip"
+              >Payments{% if due_payments_count > 0 %} · {{ due_payments_count
+              }}{% endif %}</span
+            >
+          </a>
+
+          <a
+            href="{% url 'maintenance_requests' %}"
+            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white {% if 'maintenance' in request.path %}nav-active{% endif %}"
+          >
+            <span
+              class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0"
+            >
+              <i class="nav-icon fas fa-tools text-brown-300 text-sm"></i>
+            </span>
+            <span class="sb-label text-sm font-medium flex-1">Maintenance</span>
             {% if pending_maintenance_count > 0 %}
-            <span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full"></span>
+            <span
+              class="sb-badge text-xs bg-amber-500 text-white px-1.5 py-0.5 rounded-full leading-none"
+              >{{ pending_maintenance_count }}</span
+            >
             {% endif %}
+            <span class="sb-tip"
+              >Maintenance{% if pending_maintenance_count > 0 %} · {{
+              pending_maintenance_count }}{% endif %}</span
+            >
+          </a>
+        </nav>
+
+        <!-- User + Logout -->
+        <div
+          class="flex-shrink-0 px-2 pb-4 pt-2 border-t border-white/10 space-y-0.5"
+        >
+          {% if request.user.is_authenticated %}
+          <a
+            href="{% url 'profile' request.user.id %}"
+            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/8 transition-colors text-brown-100 hover:text-white"
+          >
+            <span
+              class="nav-icon-wrap w-8 h-8 rounded-full overflow-hidden bg-brown-700 flex items-center justify-center flex-shrink-0"
+            >
+              {% if request.user.profile_picture %}
+              <img
+                src="{{ request.user.profile_picture.url }}"
+                class="w-full h-full object-cover"
+                alt="avatar"
+              />
+              {% else %}
+              <i class="fas fa-user text-white text-xs"></i>
+              {% endif %}
+            </span>
+            <div class="sb-sublabel flex-1 overflow-hidden">
+              <p
+                class="text-sm font-semibold truncate leading-tight text-white"
+              >
+                {{ request.user.get_full_name|default:request.user.username }}
+              </p>
+              <p class="text-xs text-brown-400 truncate">Property Owner</p>
+            </div>
+            <span class="sb-tip">Profile</span>
+          </a>
+          {% endif %}
+
+          <a
+            href="{% url 'logout' %}"
+            class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-500/15 transition-colors text-red-300 hover:text-red-200"
+          >
+            <span
+              class="nav-icon-wrap w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0"
+            >
+              <i class="nav-icon fas fa-sign-out-alt text-sm"></i>
+            </span>
+            <span class="sb-label text-sm font-medium">Logout</span>
+            <span class="sb-tip">Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Mobile overlay -->
+      <div
+        id="sb-overlay"
+        class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"
+      ></div>
+
+      <!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
+      <div id="main-wrap">
+        <!-- ── Top Header ── -->
+        <header
+          class="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm flex-shrink-0"
+        >
+          <div class="flex items-center gap-2 px-4 h-14">
+            <!-- Mobile: open sidebar -->
+            <button
+              id="mobileToggle"
+              class="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition text-gray-500 flex-shrink-0"
+            >
+              <i class="fas fa-bars text-base"></i>
+            </button>
+
+            <!-- Page title -->
+            <h2
+              class="font-semibold text-gray-900 text-sm truncate flex-1 ml-1"
+            >
+              {% block page_title %}Maghettoni{% endblock %}
+            </h2>
+
+            <!-- ── Right actions ── -->
+            <div class="flex items-center gap-1.5">
+              <!-- Search toggle (mobile) -->
+              <button
+                id="mobileSearchToggle"
+                class="lg:hidden w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-lg transition flex-shrink-0"
+              >
+                <i class="fas fa-search text-sm"></i>
+              </button>
+
+              <!-- Language dropdown -->
+              <div class="relative" id="langWrap">
+                <button
+                  id="langBtn"
+                  class="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition text-gray-600 text-xs font-bold notranslate"
+                  title="Switch language"
+                >
+                  <i class="fas fa-globe text-sm"></i>
+                  <span id="langLabel">English</span>
+                  <i class="fas fa-chevron-down text-xs opacity-60"></i>
+                </button>
+                <div
+                  id="langMenu"
+                  class="hidden absolute right-0 mt-1.5 w-44 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-1.5 overflow-hidden notranslate"
+                >
+                  <button
+                    onclick="switchLang('en')"
+                    class="lang-opt w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition text-left"
+                    data-lang="en"
+                  >
+                    <span class="text-base">🇬🇧</span>
+                    <span>English</span>
+                  </button>
+                  <button
+                    onclick="switchLang('sw')"
+                    class="lang-opt w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition text-left"
+                    data-lang="sw"
+                  >
+                    <span class="text-base">🇹🇿</span>
+                    <span>Kiswahili</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Add dropdown -->
+              <div class="relative" id="addWrap">
+                <button
+                  id="addBtn"
+                  class="flex items-center gap-1.5 h-9 px-3 bg-brown-700 hover:bg-brown-800 text-white rounded-lg transition text-sm font-medium"
+                >
+                  <i class="fas fa-plus text-xs"></i>
+                  <span class="hidden sm:inline">Add</span>
+                </button>
+                <div
+                  id="addMenu"
+                  class="hidden absolute right-0 mt-2 w-52 bg-white border border-gray-100 rounded-xl shadow-2xl z-50 py-1.5 overflow-hidden"
+                >
+                  <a
+                    href="{% url 'add_property' %}"
+                    class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition"
+                  >
+                    <i class="fas fa-home text-brown-600 w-4 text-center"></i>
+                    New Property
+                  </a>
+                  <a
+                    href="{% url 'add_tenant' %}"
+                    class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition"
+                  >
+                    <i
+                      class="fas fa-user-plus text-green-600 w-4 text-center"
+                    ></i>
+                    New Tenant
+                  </a>
+                  <a
+                    href="{% url 'payment_create' %}"
+                    class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition"
+                  >
+                    <i
+                      class="fas fa-money-bill-wave text-blue-600 w-4 text-center"
+                    ></i>
+                    Record Payment
+                  </a>
+                  <div class="border-t border-gray-100 mt-1 pt-1">
+                    <a
+                      href="{% url 'maintenance_request_create' %}"
+                      class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition"
+                    >
+                      <i class="fas fa-tools text-red-600 w-4 text-center"></i>
+                      New Issue
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notification bell -->
+              {% include "partials/not.html" %}
+              <button
+                id="dashboardNotifBell"
+                class="relative w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-lg transition"
+                title="Notifications"
+              >
+                <i class="fas fa-bell text-base"></i>
+                {% if due_payments_count|add:pending_maintenance_count > 0 %}
+                <span class="notif-badge"
+                  >{{ due_payments_count|add:pending_maintenance_count }}</span
+                >
+                {% endif %}
+              </button>
+            </div>
           </div>
-          <span class="text-xs font-medium">Hali</span>
-        </a>
+        </header>
+
+        <!-- Mobile search bar (hidden until toggled) -->
+        <div
+          id="mobileSearchBar"
+          class="hidden lg:hidden bg-white border-b border-gray-200 px-3 py-2"
+        >
+          <form
+            method="GET"
+            action="{% url 'search_results' %}"
+            class="flex items-center gap-2"
+          >
+            <input
+              id="mobileSearchInput"
+              type="text"
+              name="q"
+              placeholder="Search properties, tenants, payments…"
+              value="{{ request.GET.q|default:'' }}"
+              autocomplete="off"
+              class="flex-1 bg-gray-50 rounded-xl py-2.5 pl-4 pr-3 text-sm border border-gray-200 focus:border-brown-400 focus:ring-2 focus:ring-brown-100 outline-none transition"
+            />
+            <button
+              type="submit"
+              class="w-9 h-9 flex items-center justify-center bg-brown-700 text-white rounded-xl hover:bg-brown-800 transition flex-shrink-0"
+            >
+              <i class="fas fa-search text-sm"></i>
+            </button>
+            <button
+              type="button"
+              id="mobileSearchClose"
+              class="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition flex-shrink-0"
+            >
+              <i class="fas fa-times text-sm"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Breadcrumbs -->
+        <nav
+          class="px-4 md:mt-8 mt-4 lg:px-6 py-2.5 border-b border-gray-100 text-xs"
+        >
+          <ol class="flex items-center gap-1.5 text-gray-500 flex-wrap">
+            <li>
+              <a
+                href="{% url 'dashboard' %}"
+                class="hover:text-brown-600 transition-colors font-medium"
+                >Home</a
+              >
+            </li>
+            {% block breadcrumbs %}{% endblock %}
+          </ol>
+        </nav>
+
+        <!-- Django messages via Toastify -->
+        {% if messages %} {% for message in messages %}
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            Toastify({
+              text: "{{ message|escapejs }}",
+              duration: 5000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              backgroundColor:
+                "{% if message.tags == 'success' %}#16a34a{% elif message.tags == 'error' %}#dc2626{% elif message.tags == 'warning' %}#d97706{% else %}#2563eb{% endif %}",
+              style: { borderRadius: "10px", fontSize: "14px" },
+            }).showToast();
+          });
+        </script>
+        {% endfor %} {% endif %}
+
+        <!-- Page content -->
+        <div class="flex-1 page-enter">{% block content %}{% endblock %}</div>
+
+        <!-- Footer -->
+        <footer
+          class="px-6 py-3 border-t border-gray-200 bg-white text-center text-xs text-gray-400"
+        >
+          © {{ year }} Maghettoni ·
+          <a href="{% url 'about' %}" class="hover:text-brown-600 transition"
+            >About</a
+          >
+        </footer>
+
+        <!-- Mobile bottom nav -->
+        <nav
+          class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg"
+        >
+          <div class="flex justify-around py-1.5">
+            <a
+              href="{% url 'dashboard' %}"
+              class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if '/home/' == request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition"
+            >
+              <i class="fas fa-home text-lg"></i>
+              <span class="text-xs font-medium">Home</span>
+            </a>
+            <a
+              href="{% url 'property_list' %}"
+              class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if 'propert' in request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition"
+            >
+              <i class="fas fa-building text-lg"></i>
+              <span class="text-xs font-medium">Properties</span>
+            </a>
+            <a
+              href="{% url 'tenant_list' %}"
+              class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if 'tenant' in request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition"
+            >
+              <i class="fas fa-users text-lg"></i>
+              <span class="text-xs font-medium">Tenants</span>
+            </a>
+            <a
+              href="{% url 'payments_list' %}"
+              class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if 'payment' in request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition"
+            >
+              <div class="relative">
+                <i class="fas fa-wallet text-lg"></i>
+                {% if due_payments_count > 0 %}
+                <span
+                  class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"
+                ></span>
+                {% endif %}
+              </div>
+              <span class="text-xs font-medium">Payments</span>
+            </a>
+            <a
+              href="{% url 'maintenance_requests' %}"
+              class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg {% if 'maintenance' in request.path %}text-brown-700{% else %}text-gray-400{% endif %} hover:text-brown-700 transition"
+            >
+              <div class="relative">
+                <i class="fas fa-tools text-lg"></i>
+                {% if pending_maintenance_count > 0 %}
+                <span
+                  class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full"
+                ></span>
+                {% endif %}
+              </div>
+              <span class="text-xs font-medium">Maintenance</span>
+            </a>
+          </div>
+        </nav>
       </div>
-    </nav>
+      <!-- /main-wrap -->
+    </div>
+    <!-- /app-shell -->
 
-  </div><!-- /main-wrap -->
-
-</div><!-- /app-shell -->
-
-{% block extra_js %}{% endblock %}
-<script src="{% static 'js/base.js' %}" defer></script>
-<script src="{% static 'js/notifications.js' %}" defer></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', { scope: '/dashboard/' })
-      .catch(function(e) { console.warn('SW registration failed:', e); });
-  }
-</script>
-
-</body>
+    {% block extra_js %}{% endblock %}
+    <script src="{% static 'js/base.js' %}" defer></script>
+    <script src="{% static 'js/notifications.js' %}" defer></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/sw.js", { scope: "/dashboard/" })
+          .catch(function (e) {
+            console.warn("SW registration failed:", e);
+          });
+      }
+    </script>
+  </body>
 </html>

@@ -91,3 +91,4 @@ venv/
 junk/
 maghettoni-docs/
 hide/
+node_modules/

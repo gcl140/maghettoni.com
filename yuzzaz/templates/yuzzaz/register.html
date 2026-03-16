@@ -7,8 +7,8 @@
   >
     <i class="fas fa-user-plus text-white text-2xl"></i>
   </div>
-  <h1 class="text-3xl font-black text-white tracking-tight">Jiunge Nasi!</h1>
-  <p class="text-gray-300 mt-2 text-lg">Tengeneza akaunti yako</p>
+  <h1 class="text-3xl font-black text-white tracking-tight">Create Account</h1>
+  <p class="text-gray-300 mt-2 text-lg">Join Maghettoni</p>
 </div>
 
 <!-- Register Form -->
@@ -21,7 +21,7 @@
     <div class="space-y-2">
       <label for="id_first_name" class="block text-gray-300 font-medium">
         <i class="fas fa-user mr-2 text-gray-400"></i>
-        Jina la kwanza la mtumiaji
+        First Name
       </label>
       {{ form.first_name|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
       {% if form.first_name.errors %}
@@ -33,7 +33,7 @@
     <div class="space-y-2">
       <label for="id_last_name" class="block text-gray-300 font-medium">
         <i class="fas fa-user mr-2 text-gray-400"></i>
-        Jina la mwisho la mtumiaji
+        Last Name
       </label>
       {{ form.last_name|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
       {% if form.last_name.errors %}
@@ -45,7 +45,7 @@
     <div class="space-y-2">
       <label for="id_telephone" class="block text-gray-300 font-medium">
         <i class="fas fa-phone mr-2 text-gray-400"></i>
-        Nambari ya simu
+        Phone Number
       </label>
       {{ form.telephone|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
       {% if form.telephone.errors %}
@@ -57,7 +57,7 @@
     <div class="space-y-2">
       <label for="id_email" class="block text-gray-300 font-medium">
         <i class="fas fa-envelope mr-2 text-gray-400"></i>
-        Barua pepe (Si lazima)
+        Email (Optional)
       </label>
       {{ form.email|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
       {% if form.email.errors %}
@@ -69,7 +69,7 @@
     <div class="space-y-2">
       <label for="id_password1" class="block text-gray-300 font-medium">
         <i class="fas fa-key mr-2 text-gray-400"></i>
-        Nywila
+        Password
       </label>
       {{ form.password1|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
       {% if form.password1.errors %}
@@ -81,7 +81,7 @@
     <div class="space-y-2">
       <label for="id_password2" class="block text-gray-300 font-medium">
         <i class="fas fa-lock mr-2 text-gray-400"></i>
-        Thibitisha nywila
+        Confirm Password
       </label>
       {{ form.password2|add_class:"w-full bg-brown-900 border border-gray-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent placeholder-gray-400" }}
       {% if form.password2.errors %}
@@ -97,7 +97,7 @@
     class="w-full bg-white text-brown-900 hover:bg-gray-200 py-3 rounded-lg font-bold transition-colors flex items-center justify-center space-x-2"
   >
     <i class="fas fa-user-plus"></i>
-    <span>Tengeneza Akaunti</span>
+    <span>Create Account</span>
   </button>
 </form>
 
@@ -105,12 +105,12 @@
 <!-- Additional Links -->
 <div class="mt-6 text-center">
   <p class="text-gray-300 text-sm">
-    Tayari una akaunti?
+    Already have an account?
     <a
       href="{% url 'login' %}"
       class="text-white hover:text-gray-300 font-medium underline"
     >
-      Ingia hapa
+      Log in here
     </a>
   </p>
 </div>

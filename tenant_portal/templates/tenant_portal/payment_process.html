@@ -1,0 +1,119 @@
+{% extends 'tenant_portal/base.html' %}
+{% load static %}
+{% block title %}Processing Payment{% endblock %}
+{% block page_title %}Processing Payment{% endblock %}
+{% block breadcrumbs %}
+<li class="text-gray-300">/</li>
+<li>
+  <a
+    href="{% url 'tenant_payments' %}"
+    class="hover:text-amber-600 transition-colors"
+    >Payments</a
+  >
+</li>
+<li class="text-gray-300">/</li>
+<li class="text-gray-600 font-medium">Processing</li>
+{% endblock %} {% block content %}
+<div class="max-w-md mx-auto py-8">
+  <div
+    class="bg-white rounded-2xl shadow-sm p-8 border border-gray-200 text-center"
+    id="payment-processor"
+  >
+    <!-- Provider logo area -->
+    <div
+      class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br {% if submission.payment_method == 'mobile_money' %}from-green-600 to-green-800 {% elif submission.payment_method == 'bank_transfer' %}from-blue-600 to-blue-800 {% else %}from-amber-600 to-amber-800{% endif %} flex items-center justify-center mb-5 shadow-lg"
+    >
+      {% if submission.payment_method == 'mobile_money' %}
+      <i class="fas fa-mobile-alt text-3xl text-white"></i>
+      {% elif submission.payment_method == 'bank_transfer' %}
+      <i class="fas fa-university text-3xl text-white"></i>
+      {% else %}
+      <i class="fas fa-hand-holding-usd text-3xl text-white"></i>
+      {% endif %}
+    </div>
+
+    <h2 class="text-xl font-bold text-gray-900 mb-1" id="proc-title">
+      Processing...
+    </h2>
+    <p class="text-sm text-gray-500 mb-6" id="proc-subtitle">
+      {% if submission.payment_method == 'mobile_money' %}Connecting to mobile
+      payment server... {% elif submission.payment_method == 'bank_transfer'
+      %}Verifying bank details... {% else %}Saving your record...{% endif %}
+    </p>
+
+    <!-- Amount display -->
+    <div class="bg-gray-100 rounded-xl px-6 py-4 mb-6 inline-block">
+      <p class="text-xs text-gray-400 mb-1">Amount</p>
+      <p class="text-3xl font-black text-amber-400">
+        TZS. {{ submission.amount|floatformat:0 }}
+      </p>
+      <p class="text-xs text-gray-400 mt-1">
+        {{ submission.get_payment_method_display }}
+      </p>
+    </div>
+
+    <!-- Progress steps -->
+    <div class="space-y-3 mb-8 text-left" id="proc-steps">
+      <div class="step flex items-center gap-3" data-step="0">
+        <div
+          class="step-icon w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-amber-500/20"
+        >
+          <i class="fas fa-spinner fa-spin text-amber-400 text-xs"></i>
+        </div>
+        <span class="text-sm text-gray-500">
+          {% if submission.payment_method == 'mobile_money' %}Connecting to
+          M-Pesa server{% else %}Verifying amount{% endif %}
+        </span>
+      </div>
+      <div class="step flex items-center gap-3 opacity-40" data-step="1">
+        <div
+          class="step-icon w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-200"
+        >
+          <i class="fas fa-shield-alt text-gray-400 text-xs"></i>
+        </div>
+        <span class="text-sm text-gray-400"
+          >Verifying transaction security</span
+        >
+      </div>
+      <div class="step flex items-center gap-3 opacity-40" data-step="2">
+        <div
+          class="step-icon w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-200"
+        >
+          <i class="fas fa-database text-gray-400 text-xs"></i>
+        </div>
+        <span class="text-sm text-gray-400">Saving payment record</span>
+      </div>
+      <div class="step flex items-center gap-3 opacity-40" data-step="3">
+        <div
+          class="step-icon w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-200"
+        >
+          <i class="fas fa-bell text-gray-400 text-xs"></i>
+        </div>
+        <span class="text-sm text-gray-400">Notifying your manager</span>
+      </div>
+    </div>
+
+    <!-- Confirm form (shown after animation) -->
+    <form method="post" id="confirm-form" class="hidden">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="confirm" />
+      <button
+        type="submit"
+        class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
+      >
+        <i class="fas fa-check"></i> Confirm Payment
+      </button>
+    </form>
+
+    <p class="text-xs text-gray-400 mt-4 hidden" id="cancel-link">
+      <a
+        href="{% url 'tenant_payments' %}"
+        class="hover:text-gray-500 transition-colors"
+        >Cancel</a
+      >
+    </p>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'js/tenant_portal/payment-process.js' %}"></script>
+{% endblock %}

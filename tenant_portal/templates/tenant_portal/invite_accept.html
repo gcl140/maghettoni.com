@@ -1,0 +1,181 @@
+{% load static %}
+<!doctype html>
+<html lang="sw" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kubali Mwaliko — Maghettoni</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-full bg-brown-900 flex items-center justify-center p-4">
+    <div class="max-w-md w-full">
+      <!-- Brand -->
+      <div class="text-center mb-8">
+        <div
+          class="w-14 h-14 mx-auto rounded-2xl bg-amber-500/20 flex items-center justify-center mb-3"
+        >
+          <img
+            src="{% static 'images/fav.png' %}"
+            class="w-8 h-8 object-contain"
+            alt="Maghettoni"
+          />
+        </div>
+        <h1 class="text-2xl font-bold text-white">Maghettoni</h1>
+        <p class="text-amber-400 text-sm">Tenant Portal</p>
+      </div>
+
+      <div class="bg-brown-800 rounded-2xl p-8 border border-brown-600/30">
+        <!-- Welcome header -->
+        <div class="text-center mb-6">
+          <div
+            class="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center mb-4"
+          >
+            <i class="fas fa-envelope-open-text text-3xl text-green-400"></i>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-1">
+            Karibu, {{ tenant.first_name }}!
+          </h2>
+          <p class="text-brown-300 text-sm">
+            Umealikwa kwenye portal ya wapangaji wa
+            <span class="text-amber-400 font-medium"
+              >{{ tenant.property.name }}</span
+            >.
+          </p>
+        </div>
+
+        <!-- Info pills -->
+        <div class="grid grid-cols-2 gap-3 mb-6">
+          <div class="bg-brown-700/40 rounded-xl p-3 text-center">
+            <p class="text-xs text-brown-400 mb-1">Nambari ya Kuingia</p>
+            <p class="text-sm font-mono text-white truncate">
+              {{ tenant.phone }}
+            </p>
+          </div>
+          {% if tenant.unit %}
+          <div class="bg-brown-700/40 rounded-xl p-3 text-center">
+            <p class="text-xs text-brown-400 mb-1">Chumba Chako</p>
+            <p class="text-sm font-semibold text-amber-400">
+              Unit {{ tenant.unit.unit_number }}
+            </p>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Security notice -->
+        <div
+          class="mb-5 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-start gap-2 text-xs text-amber-300"
+        >
+          <i class="fas fa-shield-alt mt-0.5 flex-shrink-0"></i>
+          <span
+            >Weka nenosiri salama. Usishirikishe mtu yeyote. Kiungo hiki ni
+            chako peke yako na kitaisha baada ya masaa 72.</span
+          >
+        </div>
+
+        <!-- Error -->
+        {% if error %}
+        <div
+          class="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-xl flex items-start gap-2 text-sm text-red-300"
+        >
+          <i class="fas fa-exclamation-circle mt-0.5 flex-shrink-0"></i>
+          {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Set password form -->
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-brown-300 mb-2">
+              Nenosiri Jipya <span class="text-red-400">*</span>
+            </label>
+            <div class="relative">
+              <input
+                type="password"
+                name="password1"
+                id="pw1"
+                required
+                minlength="8"
+                class="w-full bg-brown-700 border border-brown-600 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder-brown-400"
+                placeholder="Herufi 8 au zaidi"
+              />
+              <button
+                type="button"
+                onclick="togglePw('pw1', this)"
+                class="absolute right-3 top-3.5 text-brown-400 hover:text-white transition-colors"
+              >
+                <i class="fas fa-eye text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-brown-300 mb-2">
+              Thibitisha Nenosiri <span class="text-red-400">*</span>
+            </label>
+            <div class="relative">
+              <input
+                type="password"
+                name="password2"
+                id="pw2"
+                required
+                minlength="8"
+                class="w-full bg-brown-700 border border-brown-600 text-white rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder-brown-400"
+                placeholder="Rudia nenosiri"
+              />
+              <button
+                type="button"
+                onclick="togglePw('pw2', this)"
+                class="absolute right-3 top-3.5 text-brown-400 hover:text-white transition-colors"
+              >
+                <i class="fas fa-eye text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Strength indicator -->
+          <div class="mb-5" id="strength-bar-wrap">
+            <div class="flex gap-1 mb-1">
+              <div
+                class="strength-seg h-1.5 flex-1 rounded bg-brown-600"
+                id="s1"
+              ></div>
+              <div
+                class="strength-seg h-1.5 flex-1 rounded bg-brown-600"
+                id="s2"
+              ></div>
+              <div
+                class="strength-seg h-1.5 flex-1 rounded bg-brown-600"
+                id="s3"
+              ></div>
+              <div
+                class="strength-seg h-1.5 flex-1 rounded bg-brown-600"
+                id="s4"
+              ></div>
+            </div>
+            <p class="text-xs text-brown-400" id="strength-label"></p>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full py-3 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-check-circle"></i> Kubali Mwaliko na Ingia
+          </button>
+        </form>
+
+        <!-- Expiry notice -->
+        <p class="text-center text-xs text-brown-500 mt-4">
+          Kiungo kitaisha: {{ invite.expires_at|date:"d M Y, H:i" }}
+        </p>
+      </div>
+    </div>
+
+    <script src="{% static 'js/tenant_portal/invite-accept.js' %}"></script>
+  </body>
+</html>

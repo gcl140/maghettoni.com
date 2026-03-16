@@ -1,0 +1,30 @@
+/* Custom styles for better UX */
+.optional-date:not(:valid) {
+    color: #a18072;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
+}
+
+/* Animation for new tenant creation */
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.success-animation {
+    animation: successPulse 0.5s ease;
+}

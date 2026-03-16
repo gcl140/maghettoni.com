@@ -1,6 +1,8 @@
-{% extends 'dashboardd/base.html' %} {% block title %}{{ property.name }} -
-Landlord Management System{% endblock %} {% block page_title %}{{ property.name
-}}{% endblock %} {% block breadcrumbs %}
+{% extends 'dashboardd/base.html' %}
+{% block title %}{{ property.name }} - Landlord Management System{% endblock %}
+{% block page_title %}{{ property.name }}{% endblock %}
+
+{% block breadcrumbs %}
 <li class="text-gray-400">/</li>
 <li><a href="{% url 'property_list' %}" class="hover:text-brown-600 transition-colors">Properties</a></li>
 <li class="text-gray-400">/</li>
@@ -9,616 +11,644 @@ Landlord Management System{% endblock %} {% block page_title %}{{ property.name
 
 {% block content %}
 <div class="p-4 lg:p-6 pb-20 lg:pb-6">
-<div
-  class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
->
-  <div>
-    <div class="flex items-center mt-2">
-      <h2 class="text-2xl font-bold text-gray-800 font-sans">
-        {{ property.name }}
-      </h2>
-      <span
-        class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if property.property_type == 'house' %}bg-blue-100 text-blue-800{% elif property.property_type == 'apartment' %}bg-purple-100 text-purple-800{% elif property.property_type == 'condo' %}bg-green-100 text-green-800{% elif property.property_type == 'townhouse' %}bg-yellow-100 text-yellow-800{% elif property.property_type == 'commercial' %}bg-red-100 text-red-800{% else %}bg-gray-100 text-gray-800{% endif %}"
-      >
-        <i class="fas fa-tag mr-1"></i>
-        {{ property.get_property_type_display }}
-      </span>
-    </div>
-    <p class="text-gray-600 mt-1 flex items-center">
-      <i class="fas fa-map-marker-alt text-brown-500 mr-2"></i>
-      {{ property.address }}
-    </p>
-  </div>
-  <div class="flex space-x-3">
-    <a
-      href="{% url 'property_edit' property.id %}"
-      class="inline-flex items-center px-4 py-2 border border-brown-600 text-brown-700 bg-white rounded-lg hover:bg-brown-50 transition-colors font-medium"
-    >
-      <i class="fas fa-edit mr-2"></i> Edit Property
-    </a>
-    <a
-      href="{% url 'unit_add' property.id %}"
-      class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors font-medium"
-      style="width: fit-content"
-    >
-      <i class="fas fa-plus mr-2"></i> Add Unit
-    </a>
-  </div>
-</div>
 
-<!-- Property Overview Cards -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-  <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-    <div class="flex items-center">
-      <div
-        class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center"
-      >
-        <i class="fas fa-door-open text-blue-600 text-xl"></i>
+  <!-- Page Header -->
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+    <div>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+          {% if property.property_type == 'nyumba' %}bg-blue-100 text-blue-800
+          {% elif property.property_type == 'ghorofa' %}bg-purple-100 text-purple-800
+          {% elif property.property_type == 'kondo' %}bg-green-100 text-green-800
+          {% elif property.property_type == 'nyumba_mjini' %}bg-yellow-100 text-yellow-800
+          {% elif property.property_type == 'biashara' %}bg-red-100 text-red-800
+          {% else %}bg-gray-100 text-gray-800{% endif %}">
+          <i class="fas fa-tag mr-1"></i>{{ property.get_property_type_display }}
+        </span>
       </div>
-      <div class="ml-4">
-        <h4 class="text-sm font-medium text-gray-600">Total Units</h4>
-        <p class="text-2xl font-bold text-gray-900">{{ total_units }}</p>
-      </div>
+      <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
+        <i class="fas fa-map-marker-alt text-brown-500"></i>{{ property.address }}
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2 flex-shrink-0">
+      <a href="{% url 'property_edit' property.id %}"
+         class="inline-flex items-center px-4 py-2 border border-brown-600 text-brown-700 bg-white rounded-lg hover:bg-brown-50 transition-colors text-sm font-medium">
+        <i class="fas fa-edit mr-2"></i>Edit Property
+      </a>
+      <a href="{% url 'unit_add' property.id %}"
+         class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors text-sm font-medium">
+        <i class="fas fa-plus mr-2"></i>Add Unit
+      </a>
     </div>
   </div>
-  <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-    <div class="flex items-center">
-      <div
-        class="flex-shrink-0 h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center"
-      >
-        <i class="fas fa-users text-green-600 text-xl"></i>
-      </div>
-      <div class="ml-4">
-        <h4 class="text-sm font-medium text-gray-600">Occupied Units</h4>
-        <p class="text-2xl font-bold text-gray-900">{{ occupied_units }}</p>
-      </div>
-    </div>
-  </div>
-  <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-    <div class="flex items-center">
-      <div
-        class="flex-shrink-0 h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center"
-      >
-        <i class="fas fa-bed text-yellow-600 text-xl"></i>
-      </div>
-      <div class="ml-4">
-        <h4 class="text-sm font-medium text-gray-600">Vacancy Rate</h4>
-        <p class="text-2xl font-bold text-gray-900">{{ vacancy_rate }}%</p>
-      </div>
-    </div>
-  </div>
-  <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-    <div class="flex items-center">
-      <div
-        class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-lg flex items-center justify-center"
-      >
-        <i class="fas fa-calendar-alt text-brown-600 text-xl"></i>
-      </div>
-      <div class="ml-4">
-        <h4 class="text-sm font-medium text-gray-600">Since</h4>
-        <p class="text-lg font-bold text-gray-900">
-          {{ property.created_at|date:"M d, Y" }}
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-  <!-- Left Column: Property Details & Units -->
-  <div class="lg:col-span-2 space-y-6">
-    <!-- Property Information Card -->
-    <div
-      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-    >
-      <div
-        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
-      >
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-800 font-sans">
-            Property Information
-          </h3>
-          <a
-            href="{% url 'property_edit' property.id %}"
-            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
-          >
-            <i class="fas fa-edit mr-1"></i> Edit
+  <!-- Stats Row -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-door-open text-blue-600"></i>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">Total Units</p>
+          <p class="text-xl font-bold text-gray-900">{{ total_units }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0 h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-users text-green-600"></i>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">Occupied</p>
+          <p class="text-xl font-bold text-gray-900">{{ occupied_units }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0 h-10 w-10 bg-amber-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-bed text-amber-600"></i>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">Vacancy Rate</p>
+          <p class="text-xl font-bold text-gray-900">{{ vacancy_rate }}%</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0 h-10 w-10 bg-brown-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-calendar-alt text-brown-600"></i>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500">Since</p>
+          <p class="text-sm font-bold text-gray-900">{{ property.created_at|date:"M d, Y" }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main 2-column grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left: Info + Units -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- Property Info -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white flex items-center justify-between">
+          <h3 class="text-base font-semibold text-gray-800">Property Information</h3>
+          <a href="{% url 'property_edit' property.id %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">
+            <i class="fas fa-edit mr-1"></i>Edit
           </a>
         </div>
-      </div>
-      <div class="p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 class="text-sm font-medium text-gray-700 mb-4">
-              Basic Details
-            </h4>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-4">
+              <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Basic Details</h4>
               <div>
-                <p class="text-xs text-gray-500">Property Name</p>
-                <p class="text-sm font-medium text-gray-900">
-                  {{ property.name }}
-                </p>
+                <p class="text-xs text-gray-400">Property Name</p>
+                <p class="text-sm font-medium text-gray-900 mt-0.5">{{ property.name }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500">Property Type</p>
-                <p class="text-sm font-medium text-gray-900">
-                  {{ property.get_property_type_display }}
-                </p>
+                <p class="text-xs text-gray-400">Property Type</p>
+                <p class="text-sm font-medium text-gray-900 mt-0.5">{{ property.get_property_type_display }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500">Total Capacity</p>
-                <p class="text-sm font-medium text-gray-900">
-                  {{ property.units }} units
-                </p>
+                <p class="text-xs text-gray-400">Total Capacity</p>
+                <p class="text-sm font-medium text-gray-900 mt-0.5">{{ property.units }} units</p>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Address</h4>
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-sm text-gray-800 whitespace-pre-line">{{ property.address }}</p>
               </div>
             </div>
           </div>
-          <div>
-            <h4 class="text-sm font-medium text-gray-700 mb-4">Address</h4>
-            <div class="p-4 bg-gray-50 rounded-lg">
-              <p class="text-sm text-gray-900 whitespace-pre-line">
-                {{ property.address }}
-              </p>
-            </div>
-            <div class="mt-4">
-              <button
-                class="inline-flex items-center text-sm text-brown-600 hover:text-brown-800"
-              >
-                <i class="fas fa-map-marked-alt mr-2"></i>
-                View on Map
-              </button>
+          {% if property.image %}
+          <div class="mt-6">
+            <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Property Image</h4>
+            <div class="relative h-56 rounded-lg overflow-hidden">
+              <img src="{{ property.image.url }}" alt="{{ property.name }}" class="w-full h-full object-cover" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
           </div>
+          {% endif %}
         </div>
+      </div>
 
-        {% if property.image %}
-        <div class="mt-6">
-          <h4 class="text-sm font-medium text-gray-700 mb-3">Property Image</h4>
-          <div class="relative h-64 rounded-lg overflow-hidden">
-            <img
-              src="{{ property.image.url }}"
-              alt="{{ property.name }}"
-              class="w-full h-full object-cover"
-            />
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"
-            ></div>
+      <!-- Units -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white flex items-center justify-between">
+          <h3 class="text-base font-semibold text-gray-800">Units ({{ units.count }})</h3>
+          <a href="{% url 'property_units' property.id %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">
+            <i class="fas fa-plus mr-1"></i>Add Unit
+          </a>
+        </div>
+        {% if units %}
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rent</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% for unit in units %}
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-5 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0 h-9 w-9 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-door-closed text-gray-500 text-sm"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">Unit {{ unit.unit_number }}</p>
+                      <p class="text-xs text-gray-400">{{ unit.square_feet|default:"N/A" }} sqft</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-4">
+                  <p class="text-sm text-gray-900">{{ unit.bedrooms }} bed, {{ unit.bathrooms }} bath</p>
+                  <p class="text-xs text-gray-400">{{ unit.description|truncatechars:30|default:"No description" }}</p>
+                </td>
+                <td class="px-5 py-4">
+                  <p class="text-sm font-semibold text-gray-900">TZS {{ unit.monthly_rent|floatformat:0 }}/mo</p>
+                </td>
+                <td class="px-5 py-4">
+                  {% if unit.is_occupied %}
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                    <i class="fas fa-user mr-1 text-[10px]"></i>Occupied
+                  </span>
+                  {% else %}
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                    <i class="fas fa-bed mr-1 text-[10px]"></i>Vacant
+                  </span>
+                  {% endif %}
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex items-center gap-3">
+                    <a href="{% url 'unit_edit' property.id unit.id %}" class="text-gray-400 hover:text-brown-600 transition-colors" title="Edit unit">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    {% if not unit.is_occupied %}
+                    <a href="{% url 'add_tenant' %}?property={{ property.id }}&unit={{ unit.id }}" class="text-gray-400 hover:text-green-600 transition-colors" title="Add tenant">
+                      <i class="fas fa-user-plus"></i>
+                    </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-10">
+          <div class="mx-auto w-14 h-14 bg-brown-100 rounded-full flex items-center justify-center mb-3">
+            <i class="fas fa-door-closed text-brown-600 text-lg"></i>
           </div>
+          <p class="text-sm font-medium text-gray-700 mb-1">No units added yet</p>
+          <p class="text-xs text-gray-500 mb-4">Add units to start renting out this property</p>
+          <a href="{% url 'property_units' property.id %}" class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors text-sm font-medium">
+            <i class="fas fa-plus mr-2"></i>Add First Unit
+          </a>
         </div>
         {% endif %}
       </div>
+
     </div>
 
-    <!-- Units Section -->
-    <div
-      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-    >
-      <div
-        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
-      >
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-800 font-sans">
-            Units ({{ units.count }})
-          </h3>
-          <a
-            href="{% url 'property_units' property.id %}"
-            class="inline-flex items-center text-sm text-brown-600 hover:text-brown-800 font-medium"
-          >
-            <i class="fas fa-plus mr-1"></i> Add Unit
+    <!-- Right: Sidebar Cards -->
+    <div class="space-y-6">
+
+      <!-- Tenants -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white flex items-center justify-between">
+          <h3 class="text-base font-semibold text-gray-800">Tenants ({{ tenants.count }})</h3>
+          <a href="{% url 'tenant_list' %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">View All</a>
+        </div>
+        <div class="p-4">
+          {% if tenants %}
+          <div class="space-y-3">
+            {% for tenant in tenants|slice:":3" %}
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-brown-50 transition-colors">
+              <div class="flex-shrink-0 h-9 w-9 bg-green-100 rounded-full flex items-center justify-center">
+                {% if tenant.user.profile_picture %}
+                <img src="{{ tenant.user.profile_picture.url }}" alt="{{ tenant.full_name }}" class="h-9 w-9 rounded-full object-cover" />
+                {% else %}
+                <i class="fas fa-user text-green-600 text-sm"></i>
+                {% endif %}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate">{{ tenant.full_name }}</p>
+                <p class="text-xs text-gray-400">Unit {{ tenant.unit.unit_number }}</p>
+              </div>
+              <a href="{% url 'tenant_detail' tenant.id %}" class="text-gray-300 hover:text-brown-600 transition-colors flex-shrink-0">
+                <i class="fas fa-chevron-right text-xs"></i>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-6">
+            <div class="mx-auto w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-2">
+              <i class="fas fa-users text-gray-400 text-sm"></i>
+            </div>
+            <p class="text-sm text-gray-500">No tenants yet</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Recent Payments -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white flex items-center justify-between">
+          <h3 class="text-base font-semibold text-gray-800">Recent Payments</h3>
+          <a href="{% url 'payments_list' %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">View All</a>
+        </div>
+        <div class="p-4">
+          {% if recent_payments %}
+          <div class="space-y-3">
+            {% for payment in recent_payments %}
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <p class="text-sm font-semibold text-gray-900">TZS {{ payment.amount|floatformat:0 }}</p>
+                <p class="text-xs text-gray-400">{{ payment.tenant.full_name }}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-gray-400 mb-1">{{ payment.payment_date|date:"M d" }}</p>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                  {% if payment.status == 'completed' or payment.status == 'imekamilika' %}bg-green-100 text-green-700
+                  {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-700
+                  {% else %}bg-red-100 text-red-700{% endif %}">
+                  {{ payment.get_status_display }}
+                </span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-6">
+            <div class="mx-auto w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-2">
+              <i class="fas fa-money-bill-wave text-gray-400 text-sm"></i>
+            </div>
+            <p class="text-sm text-gray-500">No recent payments</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Maintenance -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white flex items-center justify-between">
+          <h3 class="text-base font-semibold text-gray-800">Maintenance</h3>
+          <a href="{% url 'maintenance_requests' %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">View All</a>
+        </div>
+        <div class="p-4">
+          {% if maintenance_requests %}
+          <div class="space-y-3">
+            {% for req in maintenance_requests %}
+            <div class="p-3 bg-gray-50 rounded-lg">
+              <div class="flex items-start justify-between gap-2 mb-1">
+                <p class="text-sm font-medium text-gray-900 truncate">{{ req.title }}</p>
+                <span class="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                  {% if req.status == 'pending' %}bg-yellow-100 text-yellow-700
+                  {% elif req.status == 'in_progress' %}bg-blue-100 text-blue-700
+                  {% elif req.status == 'completed' %}bg-green-100 text-green-700
+                  {% else %}bg-gray-100 text-gray-700{% endif %}">
+                  {{ req.get_status_display }}
+                </span>
+              </div>
+              <p class="text-xs text-gray-400">Unit {{ req.unit.unit_number }} &bull; {{ req.reported_date|date:"M d" }}</p>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-6">
+            <div class="mx-auto w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-2">
+              <i class="fas fa-tools text-gray-400 text-sm"></i>
+            </div>
+            <p class="text-sm text-gray-500">No maintenance requests</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
+          <h3 class="text-base font-semibold text-gray-800">Quick Actions</h3>
+        </div>
+        <div class="p-4 grid grid-cols-2 gap-3">
+          <a href="{% url 'property_units' property.id %}" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+            <i class="fas fa-door-open text-blue-600 text-lg mb-1.5"></i>
+            <span class="text-xs font-medium text-gray-800 text-center">Manage Units</span>
+          </a>
+          <a href="{% url 'payment_create' %}" class="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+            <i class="fas fa-file-invoice-dollar text-green-600 text-lg mb-1.5"></i>
+            <span class="text-xs font-medium text-gray-800 text-center">Collect Rent</span>
+          </a>
+          <a href="{% url 'maintenance_request_create' %}" class="flex flex-col items-center justify-center p-4 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors">
+            <i class="fas fa-tools text-amber-600 text-lg mb-1.5"></i>
+            <span class="text-xs font-medium text-gray-800 text-center">Report Issue</span>
+          </a>
+          <a href="{% url 'payments_list' %}" class="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+            <i class="fas fa-chart-bar text-purple-600 text-lg mb-1.5"></i>
+            <span class="text-xs font-medium text-gray-800 text-center">View Reports</span>
           </a>
         </div>
       </div>
-      <div class="overflow-x-auto">
-        {% if units %}
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-              >
-                Unit Number
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-              >
-                Details
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-              >
-                Rent
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-              >
-                Status
-              </th>
-              <th
-                scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for unit in units %}
-            <tr class="hover:bg-brown-50 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center">
-                  <div
-                    class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center"
-                  >
-                    <i class="fas fa-door-closed text-gray-600"></i>
-                  </div>
-                  <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-900">
-                      Unit {{ unit.unit_number }}
-                    </p>
-                    <p class="text-xs text-gray-500">
-                      {{ unit.square_feet|default:"N/A" }} sqft
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                <div class="text-sm">
-                  <p class="text-gray-900">
-                    {{ unit.bedrooms }} bed, {{ unit.bathrooms }} bath
-                  </p>
-                  <p class="text-xs text-gray-500">
-                    {{ unit.description|truncatechars:30|default:"No description" }}
-                  </p>
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                <p class="text-sm font-semibold text-gray-900">
-                  ${{ unit.monthly_rent }}/month
-                </p>
-              </td>
-              <td class="px-6 py-4">
-                {% if unit.is_occupied %}
-                <span
-                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
-                >
-                  <i class="fas fa-user mr-1"></i>
-                  Occupied
-                </span>
+
+    </div>
+  </div>
+
+  <!-- Documents -->
+  <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white flex items-center justify-between">
+      <h3 class="text-base font-semibold text-gray-800">Property Documents</h3>
+      <span class="text-sm text-gray-500">{{ documents|length }} file{{ documents|length|pluralize }}</span>
+    </div>
+    <div class="p-6 space-y-4">
+
+      <!-- Search/Filter -->
+      <form method="GET" class="flex flex-col sm:flex-row gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+        <div class="flex-1">
+          <input id="doc_q" name="doc_q" type="text" value="{{ doc_search }}"
+                 placeholder="Search by title, notes, or filename..."
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500" />
+        </div>
+        <div class="sm:w-40">
+          <select id="doc_type" name="doc_type"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500">
+            <option value="all" {% if doc_type == 'all' %}selected{% endif %}>All types</option>
+            <option value="image" {% if doc_type == 'image' %}selected{% endif %}>Images</option>
+            <option value="pdf" {% if doc_type == 'pdf' %}selected{% endif %}>PDF</option>
+            <option value="doc" {% if doc_type == 'doc' %}selected{% endif %}>Documents</option>
+            <option value="other" {% if doc_type == 'other' %}selected{% endif %}>Other</option>
+          </select>
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 text-sm font-medium">Filter</button>
+          <a href="{% url 'property_detail' property.id %}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-white">Reset</a>
+        </div>
+      </form>
+
+      <!-- Upload Form -->
+      <form method="POST" enctype="multipart/form-data" class="p-4 bg-white border border-brown-100 rounded-lg">
+        {% csrf_token %}
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Upload New Document</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+          <div>
+            <label for="{{ upload_form.title.id_for_label }}" class="block text-xs font-medium text-gray-600 mb-1">Document title</label>
+            {{ upload_form.title }}
+            {% if upload_form.title.errors %}<p class="text-xs text-red-600 mt-1">{{ upload_form.title.errors|join:', ' }}</p>{% endif %}
+          </div>
+          <div>
+            <label for="{{ upload_form.notes.id_for_label }}" class="block text-xs font-medium text-gray-600 mb-1">Notes (optional)</label>
+            {{ upload_form.notes }}
+            {% if upload_form.notes.errors %}<p class="text-xs text-red-600 mt-1">{{ upload_form.notes.errors|join:', ' }}</p>{% endif %}
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 items-end">
+          <div class="flex-1">
+            <label for="{{ upload_form.file.id_for_label }}" class="block text-xs font-medium text-gray-600 mb-1">File</label>
+            {{ upload_form.file }}
+            {% if upload_form.file.errors %}<p class="text-xs text-red-600 mt-1">{{ upload_form.file.errors|join:', ' }}</p>{% endif %}
+          </div>
+          <button type="submit" class="inline-flex items-center justify-center px-5 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors text-sm font-medium whitespace-nowrap">
+            <i class="fas fa-upload mr-2"></i>Upload
+          </button>
+        </div>
+      </form>
+
+      <!-- Documents List -->
+      {% if documents %}
+      <div class="space-y-2">
+        {% for document in documents %}
+        <div class="p-4 border border-gray-200 rounded-lg hover:border-brown-200 transition-colors">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="h-14 w-14 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center flex-shrink-0">
+                {% if document.is_image %}
+                <img src="{{ document.file.url }}" alt="{{ document.title }}" class="h-full w-full object-cover" />
+                {% elif document.is_pdf %}
+                <i class="fas fa-file-pdf text-red-400 text-xl"></i>
                 {% else %}
-                <span
-                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
-                >
-                  <i class="fas fa-bed mr-1"></i>
-                  Vacant
-                </span>
+                <i class="fas fa-file-alt text-gray-400 text-xl"></i>
                 {% endif %}
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex space-x-2">
-                  <a href="{% url 'unit_edit' property.id unit.id %}" class="text-gray-400 hover:text-brown-600" title="Edit unit">
-                    <i class="fas fa-edit"></i>
-                  </a>
-                  {% if not unit.is_occupied %}
-                  <a href="{% url 'add_tenant' %}?property={{ property.id }}&unit={{ unit.id }}" class="text-gray-400 hover:text-green-600" title="Add tenant">
-                    <i class="fas fa-user-plus"></i>
-                  </a>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center flex-wrap gap-2 mb-0.5">
+                  <p class="text-sm font-semibold text-gray-900 truncate">{{ document.title }}</p>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-brown-100 text-brown-700">v{{ document.version }}</span>
+                  {% if document.document_type == 'image' %}
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-green-100 text-green-700">Image</span>
+                  {% elif document.document_type == 'pdf' %}
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-red-100 text-red-700">PDF</span>
+                  {% elif document.document_type == 'doc' %}
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-100 text-blue-700">Document</span>
+                  {% else %}
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-600">Other</span>
                   {% endif %}
                 </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-        <div class="text-center py-8">
-          <div
-            class="mx-auto w-16 h-16 bg-brown-100 rounded-full flex items-center justify-center mb-4"
-          >
-            <i class="fas fa-door-closed text-brown-600 text-xl"></i>
-          </div>
-          <h4 class="text-sm font-medium text-gray-900 mb-2">
-            No units added yet
-          </h4>
-          <p class="text-sm text-gray-600 mb-4">
-            Add units to start renting out this property
-          </p>
-          <a
-            href="{% url 'property_units' property.id %}"
-            class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors text-sm font-medium"
-          >
-            <i class="fas fa-plus mr-2"></i> Add First Unit
-          </a>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-  <!-- Right Column: Activity & Quick Actions -->
-  <div class="space-y-6">
-    <!-- Tenants Card -->
-    <div
-      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-    >
-      <div
-        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
-      >
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-800 font-sans">
-            Tenants ({{ tenants.count }})
-          </h3>
-          <a
-            href="{% url 'tenant_list' %}"
-            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
-          >
-            View All
-          </a>
-        </div>
-      </div>
-      <div class="p-4">
-        {% if tenants %}
-        <div class="space-y-4">
-          {% for tenant in tenants|slice:":3" %}
-          <div
-            class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-brown-50 transition-colors"
-          >
-            <div
-              class="flex-shrink-0 h-10 w-10 bg-green-100 rounded-full flex items-center justify-center"
-            >
-              {% if tenant.user.profile_picture %}
-              <img
-                src="{{ tenant.user.profile_picture.url }}"
-                alt="{{ tenant.full_name }}"
-                class="h-8 w-8 rounded-full"
-              />
-              {% else %}
-              <i class="fas fa-user text-green-600"></i>
-              {% endif %}
+                <p class="text-xs text-gray-400">
+                  {{ document.file.name|cut:'property_documents/' }} &bull;
+                  {{ document.file.size|filesizeformat }} &bull;
+                  {{ document.uploaded_at|date:'M d, Y H:i' }}
+                  {% if document.uploaded_by %}&bull; {{ document.uploaded_by.get_full_name|default:document.uploaded_by.username }}{% endif %}
+                </p>
+                {% if document.notes %}
+                <p class="text-xs text-gray-600 mt-1 bg-amber-50 border border-amber-100 rounded px-2 py-1 inline-block max-w-full truncate">{{ document.notes }}</p>
+                {% endif %}
+              </div>
             </div>
-            <div class="ml-3 flex-1">
-              <p class="text-sm font-medium text-gray-900">
-                {{ tenant.full_name }}
-              </p>
-              <p class="text-xs text-gray-500">
-                Unit {{ tenant.unit.unit_number }}
-              </p>
-            </div>
-            <a href="{% url 'tenant_detail' tenant.id %}" class="text-gray-400 hover:text-brown-600">
-              <i class="fas fa-chevron-right"></i>
-            </a>
-          </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <div class="text-center py-4">
-          <div
-            class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3"
-          >
-            <i class="fas fa-users text-gray-400"></i>
-          </div>
-          <p class="text-sm text-gray-600">No tenants yet</p>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Recent Payments -->
-    <div
-      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-    >
-      <div
-        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
-      >
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-800 font-sans">
-            Recent Payments
-          </h3>
-          <a
-            href="{% url 'payments_list' %}"
-            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
-          >
-            View All
-          </a>
-        </div>
-      </div>
-      <div class="p-4">
-        {% if recent_payments %}
-        <div class="space-y-3">
-          {% for payment in recent_payments %}
-          <div
-            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-          >
-            <div>
-              <p class="text-sm font-medium text-gray-900">
-                ${{ payment.amount }}
-              </p>
-              <p class="text-xs text-gray-500">
-                {{ payment.tenant.full_name }}
-              </p>
-            </div>
-            <div class="text-right">
-              <p class="text-xs text-gray-500">
-                {{ payment.payment_date|date:"M d" }}
-              </p>
-              <span
-                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {% if payment.status == 'imekamilika' %}bg-green-100 text-green-800{% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}"
-              >
-                {{ payment.get_status_display }}
-              </span>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <button type="button"
+                      onclick="openDocPreview('{{ document.file.url }}', '{{ document.title|escapejs }}', '{{ document.document_type }}')"
+                      class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-xs font-medium">
+                <i class="fas fa-eye mr-1.5"></i>Preview
+              </button>
+              <a href="{{ document.file.url }}" download
+                 class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-xs font-medium">
+                <i class="fas fa-download mr-1.5"></i>Download
+              </a>
+              <form method="POST" action="{% url 'property_document_delete' property.id document.id %}" onsubmit="return confirm('Delete this document?');">
+                {% csrf_token %}
+                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 text-xs font-medium">
+                  <i class="fas fa-trash-alt mr-1.5"></i>Delete
+                </button>
+              </form>
             </div>
           </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <div class="text-center py-4">
-          <div
-            class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3"
-          >
-            <i class="fas fa-money-bill-wave text-gray-400"></i>
-          </div>
-          <p class="text-sm text-gray-600">No recent payments</p>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Maintenance Requests -->
-    <div
-      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-    >
-      <div
-        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
-      >
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-800 font-sans">
-            Maintenance
-          </h3>
-          <a
-            href="{% url 'maintenance_requests' %}"
-            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
-          >
-            View All
-          </a>
-        </div>
-      </div>
-      <div class="p-4">
-        {% if maintenance_requests %}
-        <div class="space-y-3">
-          {% for request in maintenance_requests %}
-          <div class="p-3 bg-gray-50 rounded-lg">
-            <div class="flex items-start justify-between mb-2">
-              <p class="text-sm font-medium text-gray-900 truncate">
-                {{ request.title }}
-              </p>
-              <span
-                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {% if request.status == 'open' %}bg-red-100 text-red-800{% elif request.status == 'in_progress' %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}"
-              >
-                {{ request.get_status_display }}
-              </span>
+          {% if document.history_versions %}
+          <details class="mt-3 border-t border-gray-100 pt-3">
+            <summary class="cursor-pointer text-xs font-medium text-brown-700 hover:text-brown-900">
+              Version history ({{ document.history_versions|length }} older)
+            </summary>
+            <div class="mt-2 space-y-2">
+              {% for old_doc in document.history_versions %}
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 rounded bg-gray-50 border border-gray-100">
+                <div>
+                  <p class="text-xs font-medium text-gray-700">v{{ old_doc.version }} &bull; {{ old_doc.uploaded_at|date:'M d, Y H:i' }}</p>
+                  {% if old_doc.notes %}<p class="text-xs text-gray-500 mt-0.5">{{ old_doc.notes }}</p>{% endif %}
+                </div>
+                <a href="{{ old_doc.file.url }}" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center px-2 py-1 bg-white border border-gray-200 rounded text-xs text-gray-700 hover:bg-gray-100">
+                  Open
+                </a>
+              </div>
+              {% endfor %}
             </div>
-            <p class="text-xs text-gray-500">
-              {{ request.unit.unit_number }} • {{ request.reported_date|date:"M d" }}
-            </p>
-          </div>
-          {% endfor %}
+          </details>
+          {% endif %}
         </div>
-        {% else %}
-        <div class="text-center py-4">
-          <div
-            class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3"
-          >
-            <i class="fas fa-tools text-gray-400"></i>
-          </div>
-          <p class="text-sm text-gray-600">No maintenance requests</p>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-8 border border-dashed border-gray-300 rounded-lg bg-gray-50">
+        <i class="fas fa-folder-open text-gray-300 text-3xl mb-3 block"></i>
+        <p class="text-sm text-gray-500">No documents yet. Upload your first property document above.</p>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- Danger Zone -->
+  <div class="mt-6 bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-red-200 bg-red-50">
+      <h3 class="text-base font-semibold text-red-800">Danger Zone</h3>
+    </div>
+    <div class="p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h4 class="text-sm font-medium text-gray-900">Delete this property</h4>
+          <p class="text-sm text-gray-500 mt-1">Once deleted, this cannot be undone.</p>
         </div>
-        {% endif %}
+        <form method="POST" action="{% url 'property_delete' property.id %}"
+              onsubmit="return confirm('Are you sure you want to permanently delete this property? This cannot be undone.');">
+          {% csrf_token %}
+          <button type="submit" class="inline-flex items-center px-4 py-2 border border-red-600 text-red-700 bg-white rounded-lg hover:bg-red-50 transition-colors text-sm font-medium">
+            <i class="fas fa-trash-alt mr-2"></i>Delete Property
+          </button>
+        </form>
       </div>
     </div>
+  </div>
 
-    <!-- Quick Actions -->
-    <div
-      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
-    >
-      <div
-        class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
-      >
-        <h3 class="text-lg font-semibold text-gray-800 font-sans">
-          Quick Actions
-        </h3>
-      </div>
-      <div class="p-4">
-        <div class="grid grid-cols-2 gap-3">
-          <a
-            href="{% url 'property_units' property.id %}"
-            class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-          >
-            <i class="fas fa-door-open text-blue-600 text-xl mb-2"></i>
-            <span class="text-xs font-medium text-gray-900">Manage Units</span>
-          </a>
-          <a
-            href="{% url 'payment_create' %}"
-            class="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
-          >
-            <i
-              class="fas fa-file-invoice-dollar text-green-600 text-xl mb-2"
-            ></i>
-            <span class="text-xs font-medium text-gray-900">Collect Rent</span>
-          </a>
-          <a
-            href="{% url 'maintenance_request_create' %}"
-            class="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors"
-          >
-            <i class="fas fa-tools text-yellow-600 text-xl mb-2"></i>
-            <span class="text-xs font-medium text-gray-900">Report Issue</span>
-          </a>
-          <a
-            href="{% url 'payments_list' %}"
-            class="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
-          >
-            <i class="fas fa-chart-bar text-purple-600 text-xl mb-2"></i>
-            <span class="text-xs font-medium text-gray-900">View Reports</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Bottom Section: Property Documents -->
-<div
-  class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
->
-  <div
-    class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
-  >
-    <div class="flex items-center justify-between">
-      <h3 class="text-lg font-semibold text-gray-800 font-sans">
-        Property Documents
-      </h3>
-      <button
-        class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors text-sm font-medium"
-      >
-        <i class="fas fa-upload mr-2"></i> Upload Document
-      </button>
-    </div>
-  </div>
-  <div class="p-6">
-    <div class="text-center py-6 text-gray-500 text-sm">
-      <i class="fas fa-folder-open text-gray-300 text-3xl mb-3 block"></i>
-      Document uploads coming soon.
-    </div>
-  </div>
-</div>
-
-<!-- Danger Zone -->
-<div
-  class="mt-6 bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden"
->
-  <div class="px-6 py-4 border-b border-red-200 bg-red-50">
-    <h3 class="text-lg font-semibold text-red-800 font-sans">Danger Zone</h3>
-  </div>
-  <div class="p-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h4 class="text-sm font-medium text-gray-900">Delete this property</h4>
-        <p class="text-sm text-gray-600 mt-1">
-          Once you delete a property, there is no going back. Please be certain.
-        </p>
-      </div>
-      <form method="POST" action="{% url 'property_delete' property.id %}"
-            onsubmit="return confirm('Are you sure you want to permanently delete this property? This cannot be undone.')">
-        {% csrf_token %}
-        <button type="submit"
-                class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-red-600 text-red-700 bg-white rounded-lg hover:bg-red-50 transition-colors font-medium">
-          <i class="fas fa-trash-alt mr-2"></i> Delete Property
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<!-- Document Preview Modal -->
+<div id="doc-preview-modal"
+     class="fixed inset-0 z-50 items-center justify-center p-4"
+     style="display:none;"
+     aria-modal="true" role="dialog">
+  <!-- Backdrop -->
+  <div id="doc-preview-backdrop"
+       class="absolute inset-0 bg-black/70 backdrop-blur-sm"
+       onclick="closeDocPreview()"></div>
+
+  <!-- Panel -->
+  <div class="relative z-10 w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 flex-shrink-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+          <i id="doc-preview-icon" class="fas fa-file text-blue-600 text-sm"></i>
+        </div>
+        <p id="doc-preview-title" class="text-sm font-semibold text-gray-900 truncate"></p>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0 ml-4">
+        <a id="doc-preview-open"
+           href="#" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-xs font-medium">
+          <i class="fas fa-external-link-alt mr-1.5"></i>Open
+        </a>
+        <button onclick="closeDocPreview()"
+                class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div id="doc-preview-body" class="flex-1 overflow-auto min-h-0 bg-gray-100">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  function openDocPreview(url, title, type) {
+    var modal = document.getElementById('doc-preview-modal');
+    var body  = document.getElementById('doc-preview-body');
+    var titleEl = document.getElementById('doc-preview-title');
+    var icon    = document.getElementById('doc-preview-icon');
+    var openBtn = document.getElementById('doc-preview-open');
+
+    titleEl.textContent = title;
+    openBtn.href = url;
+
+    // Reset content
+    body.innerHTML = '';
+
+    if (type === 'image') {
+      icon.className = 'fas fa-image text-green-600 text-sm';
+      var img = document.createElement('img');
+      img.src = url;
+      img.alt = title;
+      img.className = 'max-w-full max-h-full mx-auto block object-contain p-4';
+      img.style.maxHeight = '75vh';
+      body.appendChild(img);
+    } else if (type === 'pdf') {
+      icon.className = 'fas fa-file-pdf text-red-600 text-sm';
+      var iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.className = 'w-full border-0';
+      iframe.style.height = '75vh';
+      iframe.title = title;
+      body.appendChild(iframe);
+    } else {
+      icon.className = 'fas fa-file-alt text-blue-600 text-sm';
+      body.innerHTML =
+        '<div class="flex flex-col items-center justify-center h-64 gap-4 text-gray-500">' +
+        '<i class="fas fa-file-alt text-5xl text-gray-300"></i>' +
+        '<p class="text-sm">Preview not available for this file type.</p>' +
+        '<a href="' + url + '" target="_blank" rel="noopener noreferrer" ' +
+        'class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">' +
+        '<i class="fas fa-external-link-alt mr-2"></i>Open File</a>' +
+        '</div>';
+    }
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDocPreview() {
+    var modal = document.getElementById('doc-preview-modal');
+    var body  = document.getElementById('doc-preview-body');
+    modal.style.display = 'none';
+    body.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeDocPreview();
+  });
+
+  window.openDocPreview  = openDocPreview;
+  window.closeDocPreview = closeDocPreview;
+})();
+</script>
+{% endblock %}
+

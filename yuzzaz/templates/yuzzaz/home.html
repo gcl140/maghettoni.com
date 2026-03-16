@@ -1,18 +1,27 @@
 {% load static %}
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Maghettoni | Simplify Your Rental Property Management</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
+    <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       type="text/css"
@@ -22,368 +31,487 @@
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/toastify-js"
     ></script>
-    <script>
-        tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        brown: {
-          50: "#fdf8f6",
-          100: "#f2e8e5",
-          200: "#eaddd7",
-          300: "#e0cec7",
-          400: "#d2bab0",
-          500: "#bfa094",
-          600: "#a18072",
-          700: "#8b6e5e",
-          800: "#7d5d4f",
-          900: "#603b2b",
-        },
-      },
-      fontFamily: {
-        serif: ["Playfair Display", "serif"],
-        sans: ["DM Sans", "sans-serif"],
-      },
-    },
-  },
-};
-    </script>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
-</head>
-<body class="bg-white text-gray-800">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/styles.css' %}"
+    />
+  </head>
+  <body class="bg-white text-gray-800">
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 bg-white shadow-md transition-all duration-300">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center">
-                <a href="{% url 'home' %}">
-                    <img src="{% static 'images/fav.png' %}" alt="Maghettoni Logo" class="h-10 w-10 mr-3"/>
-                </a>
-                <a href="{% url 'home' %}">
-
-                    <span class="text-2xl font-serif font-bold text-brown-900">MAGHETTONI</span>
-                </a>    
-            </div>
-            <div class="hidden md:flex space-x-8">
-                <a href="#home" class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"><i class="fas fa-home mr-2"></i> Nyumbani</a>
-                <a href="#about" class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"><i class="fas fa-info-circle mr-2"></i> Kuhusu</a>
-                <a href="#assessment" class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"><i class="fas fa-clipboard-list mr-2"></i> Tathmini</a>
-            </div>
-            <div class="md:hidden">
-                <button id="menu-toggle" class="text-brown-900 focus:outline-none">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-            </div>
+    <nav
+      class="fixed w-full z-50 bg-white shadow-md transition-all duration-300"
+    >
+      <div
+        class="container mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <div class="flex items-center">
+          <a href="{% url 'home' %}">
+            <img
+              src="{% static 'images/fav.png' %}"
+              alt="Maghettoni Logo"
+              class="h-10 w-10 mr-3"
+            />
+          </a>
+          <a href="{% url 'home' %}">
+            <span class="text-2xl font-serif font-bold text-brown-900"
+              >MAGHETTONI</span
+            >
+          </a>
         </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white px-6 py-4 shadow-lg">
-            <a href="#home" class="block py-2 text-brown-900 hover:text-brown-700"><i class="fas fa-home mr-2"></i> Nyumbani</a>
-            <a href="#about" class="block py-2 text-brown-900 hover:text-brown-700"><i class="fas fa-info-circle mr-2"></i> Kuhusu</a>
-            <a href="#assessment" class="block py-2 text-brown-900 hover:text-brown-700"><i class="fas fa-clipboard-list mr-2"></i> Tathmini</a>
+        <div class="hidden md:flex space-x-8">
+          <a
+            href="#home"
+            class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"
+            ><i class="fas fa-home mr-2"></i> Nyumbani</a
+          >
+          <a
+            href="#about"
+            class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"
+            ><i class="fas fa-info-circle mr-2"></i> Kuhusu</a
+          >
+          <a
+            href="#assessment"
+            class="text-brown-900 hover:text-brown-700 font-medium transition-colors hover:underline"
+            ><i class="fas fa-clipboard-list mr-2"></i> Tathmini</a
+          >
         </div>
+        <div class="md:hidden">
+          <button id="menu-toggle" class="text-brown-900 focus:outline-none">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-white px-6 py-4 shadow-lg"
+      >
+        <a href="#home" class="block py-2 text-brown-900 hover:text-brown-700"
+          ><i class="fas fa-home mr-2"></i> Nyumbani</a
+        >
+        <a href="#about" class="block py-2 text-brown-900 hover:text-brown-700"
+          ><i class="fas fa-info-circle mr-2"></i> Kuhusu</a
+        >
+        <a
+          href="#assessment"
+          class="block py-2 text-brown-900 hover:text-brown-700"
+          ><i class="fas fa-clipboard-list mr-2"></i> Tathmini</a
+        >
+      </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero-bg min-h-screen flex items-center justify-center text-white pt-20">
-
-    <div class="relative container mx-auto px-6 py-16">
+    <section
+      id="home"
+      class="hero-bg min-h-screen flex items-center justify-center text-white pt-20"
+    >
+      <div class="relative container mx-auto px-6 py-16">
         <div class="max-w-3xl mx-auto text-center fade-in">
+          <h1
+            class="text-3xl md:text-6xl font-serif font-bold mb-6 leading-tight drop-shadow-lg"
+          >
+            Je, Upo Tayari Kuendesha Uwekezaji Wako wa Nyumba Bila Stress?
+          </h1>
 
-            <h1 class="text-3xl md:text-6xl font-serif font-bold mb-6 leading-tight drop-shadow-lg">
-                Je, Upo Tayari Kuendesha Uwekezaji Wako wa Nyumba Bila Stress?
-            </h1>
+          <p class="text-xl md:text-2xl mb-6 opacity-95 font-light">
+            Na Kutengeneza *Generational Wealth* Bila Pressure.
+          </p>
 
-            <p class="text-xl md:text-2xl mb-6 opacity-95 font-light">
-                Na Kutengeneza *Generational Wealth* Bila Pressure.
-            </p>
+          <p class="text-base md:text-lg mb-12 opacity-90 animate-pulse">
+            Jibu Maswali 10 Chini Hapo 👇 – Upate Mwanga Kabisa
+          </p>
 
-            <p class="text-base md:text-lg mb-12 opacity-90 animate-pulse">
-                Jibu Maswali 10 Chini Hapo 👇 – Upate Mwanga Kabisa
-            </p>
+          <!-- FUN BUTTONS -->
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <!-- Button 1 -->
+            <span
+              class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-xl shadow-xl hover:bg-brown-100 transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 md:flex md:items-center text-center gap-2"
+            >
+              Bila Stress ❤️
+            </span>
 
-            <!-- FUN BUTTONS -->
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <!-- Button 2 -->
+            <span
+              class="border-2 border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-white hover:text-brown-900 transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 md:flex md:items-center text-center gap-2"
+            >
+              More Cashflow 📈
+            </span>
 
-                <!-- Button 1 -->
-                <span
-                   class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-xl shadow-xl
-                          hover:bg-brown-100 transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 md:flex md:items-center text-center gap-2">
-                    Bila Stress ❤️
-                </span>
-
-                <!-- Button 2 -->
-                <span
-                   class="border-2 border-white text-white font-semibold py-3 px-8 rounded-xl hover:bg-white hover:text-brown-900 
-                          transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105  md:flex md:items-center text-center gap-2">
-                    More Cashflow 📈
-                </span>
-
-                <!-- Button 3 -->
-                <span
-                   class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-xl shadow-xl
-                          hover:bg-brown-50 transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 md:flex md:items-center text-center  gap-2">
-                    Generational Wealth 💸
-                </span>
-            </div>
+            <!-- Button 3 -->
+            <span
+              class="bg-white text-brown-900 font-semibold py-3 px-8 rounded-xl shadow-xl hover:bg-brown-50 transition-transform duration-300 transform hover:-translate-y-1 hover:scale-105 md:flex md:items-center text-center gap-2"
+            >
+              Generational Wealth 💸
+            </span>
+          </div>
         </div>
-    </div>
+      </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="section-bg py-20">
-        <div class="container mx-auto px-6">
-            <div class="max-w-4xl mx-auto">
-                <div class="text-center mb-16 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-brown-900 mb-4">Kuhusu Sisi</h2>
-                    <div class="w-24 h-1 bg-brown-900 mx-auto"></div>
-                    <h2 class="text-base md:text-xl font-serif text-brown-800 mb-4">Ifahamu Maghettoni</h2>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <div class="slide-in-left">
-                        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Tunawezaje Kukusaidia?</h3>
-                        <p class="text-lg mb-6">
-                            Maghettoni ni kampuni ya KiTanzania yenye viwango vya kimataifa inayowasaidia wawekezaji kwenye nyumba
-                            za kupangisha kutimiza ndoto zao 
-                        </p>
-                        <p class="text-lg">
-                            Kwa kutumia teknolojia ya kisasa, tunakupa uwezo wa kufuatilia malipo, kudhibiti gharama, 
-                            na kuongeza faida yako kwa urahisi.
-                        </p>
-                    </div>
-                    <div class="slide-in-right">
-                        <div class="bg-brown-900 text-white p-8 rounded-xl shadow-xl">
-                            <h3 class="text-2xl font-serif font-bold mb-4">Watu Nyuma ya Mradi</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-start">
-                                    <div class="bg-brown-700 rounded-full mr-4 flex items-center justify-center">
-                                                <img 
-                                                    src="{% static 'images/matowo.jpeg' %}" 
-                                                    alt="Matowo" 
-                                                    class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
-                                                />
-                                    </div>
+      <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto">
+          <div class="text-center mb-16 fade-in">
+            <h2
+              class="text-3xl md:text-4xl font-serif font-bold text-brown-900 mb-4"
+            >
+              Kuhusu Sisi
+            </h2>
+            <div class="w-24 h-1 bg-brown-900 mx-auto"></div>
+            <h2 class="text-base md:text-xl font-serif text-brown-800 mb-4">
+              Ifahamu Maghettoni
+            </h2>
+          </div>
 
-                                    <div>
-                                        <h4 class="font-bold">Godlisten Gerald</h4>
-                                        <p class="text-brown-200">Mwanzilishi - Kutoka Tanzania</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <div class="bg-brown-700 p-5 w-6 h-6 rounded-full mr-4 flex items-center justify-center">
-                                        <i class="fas fa-user text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold">Gift Christian</h4>
-                                        <p class="text-brown-200">Mwanzilishi - Mtanzania aliepo Marekani</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="mt-6 text-brown-200">
-                                Utafiti tuliofanya juu ya biashara ya nyumba za kupanga Tanzania na Marekani 
-                                uligundua kuwa wanaofanya biashara hii Marekani wanafanikiwa kwa kasi, 
-                                wakitengeneza faida zaidi, pasina kuwa na stress kulinganisha na Tanzania. 
-                                Hii ni kwa sababu wanatumia mifumo bora na ya kisasa kufanya kazi zao.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+          <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="slide-in-left">
+              <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">
+                Tunawezaje Kukusaidia?
+              </h3>
+              <p class="text-lg mb-6">
+                Maghettoni ni kampuni ya KiTanzania yenye viwango vya kimataifa
+                inayowasaidia wawekezaji kwenye nyumba za kupangisha kutimiza
+                ndoto zao
+              </p>
+              <p class="text-lg">
+                Kwa kutumia teknolojia ya kisasa, tunakupa uwezo wa kufuatilia
+                malipo, kudhibiti gharama, na kuongeza faida yako kwa urahisi.
+              </p>
             </div>
+            <div class="slide-in-right">
+              <div class="bg-brown-900 text-white p-8 rounded-xl shadow-xl">
+                <h3 class="text-2xl font-serif font-bold mb-4">
+                  Watu Nyuma ya Mradi
+                </h3>
+                <div class="space-y-4">
+                  <div class="flex items-start">
+                    <div
+                      class="bg-brown-700 rounded-full mr-4 flex items-center justify-center"
+                    >
+                      <img
+                        src="{% static 'images/matowo.jpeg' %}"
+                        alt="Matowo"
+                        class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
+                      />
+                    </div>
+
+                    <div>
+                      <h4 class="font-bold">Godlisten Gerald</h4>
+                      <p class="text-brown-200">
+                        Mwanzilishi - Kutoka Tanzania
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-start">
+                    <div
+                      class="bg-brown-700 p-5 w-6 h-6 rounded-full mr-4 flex items-center justify-center"
+                    >
+                      <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-bold">Gift Christian</h4>
+                      <p class="text-brown-200">
+                        Mwanzilishi - Mtanzania aliepo Marekani
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <p class="mt-6 text-brown-200">
+                  Utafiti tuliofanya juu ya biashara ya nyumba za kupanga
+                  Tanzania na Marekani uligundua kuwa wanaofanya biashara hii
+                  Marekani wanafanikiwa kwa kasi, wakitengeneza faida zaidi,
+                  pasina kuwa na stress kulinganisha na Tanzania. Hii ni kwa
+                  sababu wanatumia mifumo bora na ya kisasa kufanya kazi zao.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Assessment Section -->
     <section id="assessment" class="py-20 bg-brown-50">
-        <div class="container mx-auto px-6">
-            <div class="max-w-3xl mx-auto">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-brown-900 mb-4">Tathmini Yako Ya Kwanza</h2>
-                    <p class="text-lg text-brown-700">
-                        Jibu maswali yafuatayo ili upate kufahamu kama mfumo huu unaweza kukusaidia kuendesha biashara yako ya nyumba za kisasa kwa ufanisi mkubwa.
-                    </p>
-                </div>
-                
-                <!-- Progress Bar -->
-                <div class="mb-8 fade-in">
-                    <div class="flex justify-between mb-2">
-                        <span class="text-brown-900 font-medium">Maendeleo Yako</span>
-                        <span id="progress-percent" class="text-brown-900 font-medium">0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div id="progress-fill" class="progress-fill"></div>
-                    </div>
-                </div>
-                
-                <!-- Assessment Form -->
-                {% include 'yuzzaz/partials/assessment_form.html' %}
+      <div class="container mx-auto px-6">
+        <div class="max-w-3xl mx-auto">
+          <div class="text-center mb-12 fade-in">
+            <h2
+              class="text-3xl md:text-4xl font-serif font-bold text-brown-900 mb-4"
+            >
+              Tathmini Yako Ya Kwanza
+            </h2>
+            <p class="text-lg text-brown-700">
+              Jibu maswali yafuatayo ili upate kufahamu kama mfumo huu unaweza
+              kukusaidia kuendesha biashara yako ya nyumba za kisasa kwa ufanisi
+              mkubwa.
+            </p>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mb-8 fade-in">
+            <div class="flex justify-between mb-2">
+              <span class="text-brown-900 font-medium">Maendeleo Yako</span>
+              <span id="progress-percent" class="text-brown-900 font-medium"
+                >0%</span
+              >
             </div>
+            <div class="progress-bar">
+              <div id="progress-fill" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <!-- Assessment Form -->
+          {% include 'yuzzaz/partials/assessment_form.html' %}
         </div>
+      </div>
     </section>
 
-<footer class="bg-brown-900 text-white" id="footer">
-
-    <!-- Main Footer Content -->
-    <div class="py-16">
+    <footer class="bg-brown-900 text-white" id="footer">
+      <!-- Main Footer Content -->
+      <div class="py-16">
         <div class="container mx-auto px-6">
-            <div class="max-w-6xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-                    <!-- Company Info -->
-                    <div>
-                        <div class="flex items-center mb-6">
-                            <i class="fas fa-building text-brown-400 text-2xl mr-3"></i>
-                            <span class="text-2xl font-serif font-bold">MAGHETTONI</span>
-                        </div>
-                        <p class="text-brown-300 mb-6 leading-relaxed">Tunabadilisha jinsi wenyeviti wanavyosimamia nyumba zao za kupanga kupitia mfumo wa kisasa unaorahisisha usimamizi na kuongeza mapato.</p>
-                        <div class="flex space-x-4">
-                            
-                            <a href="https://www.instagram.com/maghettoni?igsh=d3hheDJkeGJ3NjV3&utm_source=qr" target="_blank" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="https://www.youtube.com/@BeThatGuyLifestyle" target="_blank" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                            <a href="tel:+255762082712" target="_blank" class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300">
-                                <i class="fas fa-phone"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Quick Links -->
-                    <div>
-                        <h3 class="text-xl font-bold mb-6 pb-3 border-b border-brown-800">Viungo Vya Haraka</h3>
-                        <ul class="space-y-3">
-                            <li>
-                                <a href="#home" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
-                                    <i class="fas fa-chevron-right text-xs text-brown-500 mr-3"></i>
-                                    Nyumbani
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#about" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
-                                    <i class="fas fa-chevron-right text-xs text-brown-500 mr-3"></i>
-                                    Kuhusu Sisi
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#assessment-form" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
-                                    <i class="fas fa-chevron-right text-xs text-brown-500 mr-3"></i>
-                                    Pata Tathmini
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Resources -->
-                    <div>
-                        <h3 class="text-xl font-bold mb-6 pb-3 border-b border-brown-800">Rasilimali</h3>
-                        <ul class="space-y-3">
-                            <li>
-                                <a href="https://www.youtube.com/@BeThatGuyLifestyle" target="_blank" class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center">
-                                    <i class="fas fa-video text-brown-500 mr-3"></i>
-                                    Mafunzo Ya Video
-                                </a>
-                            </li>
-                            
-                        </ul>
-                    </div>
-
-                    <!-- Contact Info -->
-                    <div>
-                        <h3 class="text-xl font-bold mb-6 pb-3 border-b border-brown-800">Wasiliana Nasi</h3>
-                        <ul class="space-y-4">
-                            <li class="flex items-start">
-                                <i class="fas fa-map-marker-alt text-brown-400 mt-1 mr-4"></i>
-                                <span class="text-brown-300">Dar es Salaam, Tanzania</span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-phone text-brown-400 mr-4"></i>
-                                <span class="text-brown-300"><a href="tel:+255762082712" class="hover:underline">+255 762 082 712</a></span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-envelope text-brown-400 mr-4"></i>
-                                <span class="text-brown-300"><a href="mailto:info@maghettoni.com" class="hover:underline">info@maghettoni.com</a></span>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-clock text-brown-400 mr-4"></i>
-                                <span class="text-brown-300">Jumatatu - Ijumaa: 8:00 - 17:00</span>
-                            </li>
-                        </ul>
-                    </div>
+          <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+              <!-- Company Info -->
+              <div>
+                <div class="flex items-center mb-6">
+                  <i class="fas fa-building text-brown-400 text-2xl mr-3"></i>
+                  <span class="text-2xl font-serif font-bold">MAGHETTONI</span>
                 </div>
-            </div>
-        </div>
-    </div>
+                <p class="text-brown-300 mb-6 leading-relaxed">
+                  Tunabadilisha jinsi wenyeviti wanavyosimamia nyumba zao za
+                  kupanga kupitia mfumo wa kisasa unaorahisisha usimamizi na
+                  kuongeza mapato.
+                </p>
+                <div class="flex space-x-4">
+                  <a
+                    href="https://www.instagram.com/maghettoni?igsh=d3hheDJkeGJ3NjV3&utm_source=qr"
+                    target="_blank"
+                    class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300"
+                  >
+                    <i class="fab fa-instagram"></i>
+                  </a>
+                  <a
+                    href="https://www.youtube.com/@BeThatGuyLifestyle"
+                    target="_blank"
+                    class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300"
+                  >
+                    <i class="fab fa-youtube"></i>
+                  </a>
+                  <a
+                    href="tel:+255762082712"
+                    target="_blank"
+                    class="w-10 h-10 bg-brown-800 hover:bg-brown-700 rounded-full flex items-center justify-center transition-colors duration-300"
+                  >
+                    <i class="fas fa-phone"></i>
+                  </a>
+                </div>
+              </div>
 
-    <!-- Newsletter Subscription -->
-    <div class="border-t border-brown-800 py-12">
+              <!-- Quick Links -->
+              <div>
+                <h3
+                  class="text-xl font-bold mb-6 pb-3 border-b border-brown-800"
+                >
+                  Viungo Vya Haraka
+                </h3>
+                <ul class="space-y-3">
+                  <li>
+                    <a
+                      href="#home"
+                      class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center"
+                    >
+                      <i
+                        class="fas fa-chevron-right text-xs text-brown-500 mr-3"
+                      ></i>
+                      Nyumbani
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#about"
+                      class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center"
+                    >
+                      <i
+                        class="fas fa-chevron-right text-xs text-brown-500 mr-3"
+                      ></i>
+                      Kuhusu Sisi
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#assessment-form"
+                      class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center"
+                    >
+                      <i
+                        class="fas fa-chevron-right text-xs text-brown-500 mr-3"
+                      ></i>
+                      Pata Tathmini
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Resources -->
+              <div>
+                <h3
+                  class="text-xl font-bold mb-6 pb-3 border-b border-brown-800"
+                >
+                  Rasilimali
+                </h3>
+                <ul class="space-y-3">
+                  <li>
+                    <a
+                      href="https://www.youtube.com/@BeThatGuyLifestyle"
+                      target="_blank"
+                      class="text-brown-300 hover:text-white transition-colors duration-300 flex items-center"
+                    >
+                      <i class="fas fa-video text-brown-500 mr-3"></i>
+                      Mafunzo Ya Video
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Contact Info -->
+              <div>
+                <h3
+                  class="text-xl font-bold mb-6 pb-3 border-b border-brown-800"
+                >
+                  Wasiliana Nasi
+                </h3>
+                <ul class="space-y-4">
+                  <li class="flex items-start">
+                    <i
+                      class="fas fa-map-marker-alt text-brown-400 mt-1 mr-4"
+                    ></i>
+                    <span class="text-brown-300">Dar es Salaam, Tanzania</span>
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-phone text-brown-400 mr-4"></i>
+                    <span class="text-brown-300"
+                      ><a href="tel:+255762082712" class="hover:underline"
+                        >+255 762 082 712</a
+                      ></span
+                    >
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-envelope text-brown-400 mr-4"></i>
+                    <span class="text-brown-300"
+                      ><a
+                        href="mailto:info@maghettoni.com"
+                        class="hover:underline"
+                        >info@maghettoni.com</a
+                      ></span
+                    >
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-clock text-brown-400 mr-4"></i>
+                    <span class="text-brown-300"
+                      >Jumatatu - Ijumaa: 8:00 - 17:00</span
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Newsletter Subscription -->
+      <div class="border-t border-brown-800 py-12">
         <div class="container mx-auto px-6">
-            <div class="max-w-4xl mx-auto">
-                <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
-                    <div class="text-center lg:text-left">
-                        <h3 class="text-xl font-bold mb-2">Jiandikishe Kwa Habari Zetu</h3>
-                        <p class="text-brown-300">Pata vidokezo, ushauri, na habari mpya za biashara juu ya nyumba za kupanga.</p>
-                    </div>
-                    <form class="w-full lg:w-auto flex flex-col sm:flex-row gap-4" method="POST" action="{% url 'subscribe' %}">
-                         {% csrf_token %}
-                        <input 
-                            type="email" 
-                            name="email"
-                            placeholder="Barua pepe yako" 
-                            class="flex-grow px-6 py-3 rounded-lg bg-brown-800 border border-brown-700 text-white placeholder-brown-500 focus:outline-none focus:border-brown-500 focus:ring-2 focus:ring-brown-700"
-                        >
-                        <button 
-                            type="submit" 
-                            class="bg-brown-700 hover:bg-brown-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-300 whitespace-nowrap"
-                        >
-                            Jiandikishe <i class="fas fa-paper-plane ml-2"></i>
-                        </button>
-                    </form>
-                </div>
+          <div class="max-w-4xl mx-auto">
+            <div
+              class="flex flex-col lg:flex-row items-center justify-between gap-8"
+            >
+              <div class="text-center lg:text-left">
+                <h3 class="text-xl font-bold mb-2">
+                  Jiandikishe Kwa Habari Zetu
+                </h3>
+                <p class="text-brown-300">
+                  Pata vidokezo, ushauri, na habari mpya za biashara juu ya
+                  nyumba za kupanga.
+                </p>
+              </div>
+              <form
+                class="w-full lg:w-auto flex flex-col sm:flex-row gap-4"
+                method="POST"
+                action="{% url 'subscribe' %}"
+              >
+                {% csrf_token %}
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Barua pepe yako"
+                  class="flex-grow px-6 py-3 rounded-lg bg-brown-800 border border-brown-700 text-white placeholder-brown-500 focus:outline-none focus:border-brown-500 focus:ring-2 focus:ring-brown-700"
+                />
+                <button
+                  type="submit"
+                  class="bg-brown-700 hover:bg-brown-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-300 whitespace-nowrap"
+                >
+                  Jiandikishe <i class="fas fa-paper-plane ml-2"></i>
+                </button>
+              </form>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- Bottom Bar -->
-    <div class="bg-brown-950 py-6">
+      <!-- Bottom Bar -->
+      <div class="bg-brown-950 py-6">
         <div class="container mx-auto px-6">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="text-brown-400 text-sm">
-                        <p>&copy; 2025 Maghettoni. Haki zote zimehifadhiwa.</p>
-                    </div>
-                    <div class="flex flex-wrap justify-center gap-2 text-sm">
-                        <button command="show-modal" commandfor="dialog" class="text-brown-400 hover:text-white transition-colors duration-300">
-                            Masharti ya Matumizi
-                            <span class="text-brown-600 mx-4">|</span>Sera ya Faragha
-                        </button>
-                        {% include 'yuzzaz/partials/t&c.html' %}
-                    </div>
-                </div>
+          <div class="max-w-6xl mx-auto">
+            <div
+              class="flex flex-col md:flex-row justify-between items-center gap-4"
+            >
+              <div class="text-brown-400 text-sm">
+                <p>&copy; 2025 Maghettoni. Haki zote zimehifadhiwa.</p>
+              </div>
+              <div class="flex flex-wrap justify-center gap-2 text-sm">
+                <button
+                  command="show-modal"
+                  commandfor="dialog"
+                  class="text-brown-400 hover:text-white transition-colors duration-300"
+                >
+                  Masharti ya Matumizi
+                  <span class="text-brown-600 mx-4">|</span>Sera ya Faragha
+                </button>
+                {% include 'yuzzaz/partials/t&c.html' %}
+              </div>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- Back to Top Button -->
-    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 bg-brown-700 hover:bg-brown-600 text-white rounded-full shadow-lg transition-all duration-300 opacity-0 translate-y-10">
+      <!-- Back to Top Button -->
+      <button
+        id="back-to-top"
+        class="fixed bottom-8 right-8 w-12 h-12 bg-brown-700 hover:bg-brown-600 text-white rounded-full shadow-lg transition-all duration-300 opacity-0 translate-y-10"
+      >
         <i class="fas fa-chevron-up"></i>
-    </button>
-</footer>
-{% if messages %}
+      </button>
+    </footer>
+    {% if messages %}
     <div class="fixed bottom-4 right-4 z-50 space-y-2">
-        {% for message in messages %}
-            <script>
-                Toastify({
-                    text: "{{ message }}",
-                    duration: 15000,
-                    close: true,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "{% if message.tags == 'error' %}#f56565{% elif message.tags == 'success' %}#48bb78{% elif message.tags == 'info' %}#4299e1{% endif %}",
-                    stopOnFocus: true,
-            }).showToast();
-            </script>
-        {% endfor %}
+      {% for message in messages %}
+      <script>
+        Toastify({
+          text: "{{ message }}",
+          duration: 15000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor:
+            "{% if message.tags == 'error' %}#f56565{% elif message.tags == 'success' %}#48bb78{% elif message.tags == 'info' %}#4299e1{% endif %}",
+          stopOnFocus: true,
+        }).showToast();
+      </script>
+      {% endfor %}
     </div>
-{% endif %}
-<script src="{% static 'js/home.js' %}"></script>
-</body>
+    {% endif %}
+    <script src="{% static 'js/home.js' %}"></script>
+  </body>
 </html>

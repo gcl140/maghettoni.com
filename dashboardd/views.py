@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
+from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -20,15 +21,79 @@ from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
-from .models import Property, Unit, Tenant, Payment, MaintenanceRequest
+from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Notification, TenantInvite
 from .forms import (
     PropertyForm,
+    PropertyDocumentForm,
     UnitForm,
     TenantForm,
     PaymentForm,
     MaintenanceRequestForm,
     MaintenanceStatusUpdateForm,
 )
+
+
+def _send_tenant_invite(request, tenant):
+    """
+    Create a TenantInvite, then deliver the invite link + temp credentials
+    via BOTH email and SMS.  The landlord never sees the token or password.
+    """
+    from django.core.mail import EmailMessage as _Email
+    from .services import send_sms
+
+    invite = TenantInvite.create_for_tenant(tenant, hours=72)
+
+    scheme = 'https' if request.is_secure() else 'http'
+    host   = request.get_host()
+    link   = f"{scheme}://{host}/tenant/invite/{invite.token}/"
+
+    # ── Email (full details) ─────────────────────────────────────────────
+    email_body = (
+        f"Habari {tenant.first_name},\n\n"
+        f"Umealikwa kwenye mfumo wa Maghettoni Tenant Portal na msimamizi wako.\n\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"  Jina la mtumiaji : {tenant.phone}\n"
+        f"  Nenosiri la muda : {invite.temp_password}\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"Bonyeza kiungo hapa chini kukubali mwaliko na kuweka nenosiri jipya:\n"
+        f"{link}\n\n"
+        f"Kiungo hiki kitaisha baada ya masaa 72.\n\n"
+        f"KUMBUKA: Usishirikishe mtu yeyote nenosiri hili.\n"
+        f"Ukishakubali mwaliko unaweza kubadilisha nenosiri lako wakati wowote.\n\n"
+        f"— Timu ya Maghettoni"
+    )
+    try:
+        _Email(
+            subject="Mwaliko wako wa Maghettoni Tenant Portal",
+            body=email_body,
+            to=[tenant.email],
+        ).send(fail_silently=False)
+    except Exception:
+        pass
+
+    # ── SMS (concise — credentials + link) ──────────────────────────────
+    if tenant.phone:
+        sms_body = (
+            f"Habari {tenant.first_name}! Umealikwa kwenye Maghettoni Tenant Portal.\n"
+            f"Username: {tenant.phone}\n"
+            f"Nenosiri: {invite.temp_password}\n"
+            f"Kubali hapa: {link}\n"
+            f"(Kitaisha masaa 72. Usishirikishe nenosiri.)"
+        )
+        try:
+            send_sms(tenant.phone, sms_body)
+        except Exception:
+            pass
+
+
+def _notify(user, title, message):
+    """Create an in-app notification, skipping duplicates within 60 seconds."""
+    cutoff = timezone.now() - timedelta(seconds=60)
+    if Notification.objects.filter(
+        recipient=user, title=title, message=message, created_at__gte=cutoff
+    ).exists():
+        return
+    Notification.objects.create(recipient=user, title=title, message=message)
 
 
 def _build_pdf(title, headers, rows):
@@ -522,8 +587,84 @@ def property_units(request, property_id):
 @login_required
 def property_detail(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
+    doc_search = request.GET.get('doc_q', '').strip()
+    doc_type = request.GET.get('doc_type', 'all').strip().lower()
+
+    if request.method == 'POST':
+        upload_form = PropertyDocumentForm(request.POST, request.FILES)
+        if upload_form.is_valid():
+            document = upload_form.save(commit=False)
+            document.property = property_obj
+            document.uploaded_by = request.user
+            previous = property_obj.documents.filter(title=document.title).order_by('-version', '-uploaded_at').first()
+            if previous:
+                document.version = previous.version + 1
+                document.previous_version = previous
+            document.save()
+            if document.version > 1:
+                messages.success(request, f'Document uploaded as version v{document.version}.')
+            else:
+                messages.success(request, 'Document uploaded successfully.')
+            return redirect('property_detail', property_id=property_obj.id)
+        messages.error(request, 'Please fix the document upload errors below.')
+    else:
+        upload_form = PropertyDocumentForm()
+
     units = property_obj.units_list.all()
     tenants = property_obj.tenants.all()
+    documents_qs = property_obj.documents.select_related('uploaded_by').all()
+
+    if doc_search:
+        documents_qs = documents_qs.filter(
+            Q(title__icontains=doc_search) |
+            Q(notes__icontains=doc_search) |
+            Q(file__icontains=doc_search)
+        )
+
+    if doc_type == 'image':
+        documents_qs = documents_qs.filter(
+            Q(file__iendswith='.jpg') |
+            Q(file__iendswith='.jpeg') |
+            Q(file__iendswith='.png') |
+            Q(file__iendswith='.gif') |
+            Q(file__iendswith='.webp')
+        )
+    elif doc_type == 'pdf':
+        documents_qs = documents_qs.filter(file__iendswith='.pdf')
+    elif doc_type == 'doc':
+        documents_qs = documents_qs.filter(
+            Q(file__iendswith='.doc') |
+            Q(file__iendswith='.docx') |
+            Q(file__iendswith='.txt')
+        )
+    elif doc_type == 'other':
+        documents_qs = documents_qs.exclude(
+            Q(file__iendswith='.jpg') |
+            Q(file__iendswith='.jpeg') |
+            Q(file__iendswith='.png') |
+            Q(file__iendswith='.gif') |
+            Q(file__iendswith='.webp') |
+            Q(file__iendswith='.pdf') |
+            Q(file__iendswith='.doc') |
+            Q(file__iendswith='.docx') |
+            Q(file__iendswith='.txt')
+        )
+
+    documents = []
+    seen_titles = set()
+    for doc in documents_qs.order_by('-version', '-uploaded_at'):
+        title_key = doc.title.strip().lower()
+        if title_key in seen_titles:
+            continue
+        seen_titles.add(title_key)
+
+        doc.history_versions = list(
+            property_obj.documents
+            .select_related('uploaded_by')
+            .filter(title=doc.title, version__lt=doc.version)
+            .order_by('-version', '-uploaded_at')
+        )
+        documents.append(doc)
     
     # Calculate property statistics
     total_units = units.count()
@@ -547,9 +688,25 @@ def property_detail(request, property_id):
         'vacancy_rate': round(vacancy_rate, 2),
         'recent_payments': recent_payments,
         'maintenance_requests': maintenance_requests,
+        'documents': documents,
+        'upload_form': upload_form,
+        'doc_search': doc_search,
+        'doc_type': doc_type,
     }
     
     return render(request, 'properties/detail.html', context)
+
+
+@login_required
+def property_document_delete(request, property_id, document_id):
+    property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
+    document = get_object_or_404(property_obj.documents, id=document_id)
+
+    if request.method == 'POST':
+        document.delete()
+        messages.success(request, 'Document deleted successfully.')
+
+    return redirect('property_detail', property_id=property_obj.id)
 
 
 
@@ -687,6 +844,8 @@ def tenant_activate(request, tenant_id):
     tenant.status = 'active'
     tenant.save()
     name = tenant.full_name()
+    _notify(request.user, f'Mkazi Amewashwa: {name}',
+            f'{name} amewashwa rasmi katika {tenant.property.name}.')
     messages.success(request, f'{name} has been activated!')
     return redirect('tenant_detail', tenant_id=tenant.id)
 
@@ -696,6 +855,8 @@ def tenant_deactivate(request, tenant_id):
     tenant.status = 'inactive'
     tenant.save()
     name = tenant.full_name()
+    _notify(request.user, f'Mkazi Amezimwa: {name}',
+            f'{name} amezimwa katika {tenant.property.name}.')
     messages.success(request, f'{name} has been deactivated!')
     return redirect('tenant_detail', tenant_id=tenant.id)
 
@@ -775,7 +936,22 @@ def tenant_edit(request, tenant_id=None):
                     tenant.unit.save()
             
             tenant.save()
-            
+
+            if is_edit:
+                _notify(request.user, f'Mkazi Amesasishwa: {tenant.full_name()}',
+                        f'Taarifa za {tenant.full_name()} zimebadilishwa.')
+            else:
+                unit_label = f', chumba {tenant.unit.unit_number}' if tenant.unit else ''
+                _notify(request.user, f'Mkazi Mpya: {tenant.full_name()}',
+                        f'{tenant.full_name()} ameongezwa katika {tenant.property.name}{unit_label}.')
+                # Send invite email to the new tenant
+                _send_tenant_invite(request, tenant)
+                messages.info(
+                    request,
+                    f'Mwaliko umetumwa kwa {tenant.email}. '
+                    'Mpangaji anapaswa kukubali ndani ya masaa 72.'
+                )
+
             messages.success(request, success_message)
             if is_edit:
                 return redirect('tenant_detail', tenant_id=tenant.id)
@@ -952,6 +1128,9 @@ def payment_detail(request, payment_id):
             payment.status = 'completed'
             payment.payment_date = timezone.now().date()
             payment.save()
+            _notify(request.user, f'Malipo Yamekamilika: {payment.tenant.full_name()}',
+                    f'{payment.tenant.full_name()} amelipa TZS. {payment.amount:,.0f} '
+                    f'({payment.property.name}).')
             messages.success(request, 'Payment marked as completed!')
             return redirect('payment_detail', payment_id=payment.id)
         elif 'status' in request.POST:
@@ -959,6 +1138,15 @@ def payment_detail(request, payment_id):
             if new_status in ['pending', 'completed', 'failed', 'refunded']:
                 payment.status = new_status
                 payment.save()
+                status_msgs = {
+                    'completed': f'Malipo Yamekamilika: {payment.tenant.full_name()}',
+                    'failed':    f'Malipo Yameshindwa: {payment.tenant.full_name()}',
+                    'refunded':  f'Malipo Yamerudishwa: {payment.tenant.full_name()}',
+                    'pending':   f'Malipo Yamerudi Kusubiri: {payment.tenant.full_name()}',
+                }
+                _notify(request.user, status_msgs.get(new_status, 'Hali ya Malipo Imebadilika'),
+                        f'TZS. {payment.amount:,.0f} — hali mpya: {payment.get_status_display()} '
+                        f'({payment.property.name}).')
                 messages.success(request, f'Status updated to {payment.get_status_display()}.')
             return redirect('payment_detail', payment_id=payment.id)
 
@@ -1074,7 +1262,16 @@ def payment_edit(request, payment_id=None):
                 payment.payment_date = timezone.now().date()
             
             payment.save()
-            
+
+            if is_edit:
+                _notify(request.user, f'Malipo Yamesasishwa: {payment.tenant.full_name()}',
+                        f'Rekodi ya malipo ya TZS. {payment.amount:,.0f} imebadilishwa '
+                        f'({payment.property.name}).')
+            else:
+                _notify(request.user, f'Malipo Mapya: {payment.tenant.full_name()}',
+                        f'Malipo ya TZS. {payment.amount:,.0f} yameandikwa kwa '
+                        f'{payment.tenant.full_name()} — {payment.property.name}.')
+
             messages.success(request, success_message)
             if is_edit:
                 return redirect('payment_detail', payment_id=payment.id)
@@ -1214,6 +1411,7 @@ def maintenance_export_pdf(request):
     return HttpResponse(buf, content_type='application/pdf',
                         headers={'Content-Disposition': 'attachment; filename="matengenezo.pdf"'})
 
+@never_cache
 @login_required
 def maintenance_request_detail(request, request_id):
     maintenance_request = get_object_or_404(
@@ -1223,10 +1421,21 @@ def maintenance_request_detail(request, request_id):
     if request.method == 'POST':
         form = MaintenanceStatusUpdateForm(request.POST, instance=maintenance_request)
         if form.is_valid():
+            old_status = maintenance_request.status
             maintenance_request = form.save(commit=False)
             if maintenance_request.status == 'completed' and not maintenance_request.completed_date:
                 maintenance_request.completed_date = timezone.now()
             maintenance_request.save()
+            if maintenance_request.status != old_status:
+                if maintenance_request.status == 'completed':
+                    _notify(request.user, f'Matengenezo Yamekamilika: {maintenance_request.title}',
+                            f'Ombi la "{maintenance_request.title}" katika '
+                            f'{maintenance_request.property.name} limekamilika.')
+                else:
+                    _notify(request.user, f'Matengenezo Yamebadilika: {maintenance_request.title}',
+                            f'"{maintenance_request.title}" — hali mpya: '
+                            f'{maintenance_request.get_status_display()} '
+                            f'({maintenance_request.property.name}).')
             messages.success(request, 'Maintenance request updated!')
             return redirect('maintenance_request_detail', request_id=maintenance_request.id)
     else:
@@ -1268,7 +1477,18 @@ def maintenance_request_edit(request, request_id=None):
                 maintenance_request.completed_date = timezone.now()
             
             maintenance_request.save()
-            
+
+            if is_edit:
+                _notify(request.user, f'Matengenezo Yamesasishwa: {maintenance_request.title}',
+                        f'Ombi "{maintenance_request.title}" limebadilishwa '
+                        f'({maintenance_request.property.name}).')
+            else:
+                priority_label = maintenance_request.get_priority_display()
+                _notify(request.user, f'Ombi Jipya la Matengenezo: {maintenance_request.title}',
+                        f'"{maintenance_request.title}" limewasilishwa na '
+                        f'{maintenance_request.tenant.full_name()} — {maintenance_request.property.name} '
+                        f'[{priority_label}].')
+
             messages.success(request, success_message)
             if is_edit:
                 return redirect('maintenance_request_detail', request_id=maintenance_request.id)

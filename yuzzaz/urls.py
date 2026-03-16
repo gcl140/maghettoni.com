@@ -22,4 +22,8 @@ urlpatterns = [
 
     path('send-gift-text/', views.send_gift_a_text, name='send_gift_text'),
     path('send-lissa-text/', views.send_lissa_text, name='send_lissa_text'),
+
+    # OTP endpoints (used by the landing page assessment form)
+    path('otp/send/', views.otp_send, name='otp_send'),
+    path('otp/verify/', views.otp_verify, name='otp_verify'),
 ]

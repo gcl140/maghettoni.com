@@ -1,6 +1,6 @@
 from django import forms
 from django.utils import timezone
-from .models import Property, Unit, Tenant, Payment, MaintenanceRequest
+from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, PropertyDocument
 
 
 class PropertyForm(forms.ModelForm):
@@ -18,6 +18,45 @@ class PropertyForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+
+class PropertyDocumentForm(forms.ModelForm):
+    MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
+    ALLOWED_EXTENSIONS = {'.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.txt', '.gif', '.webp'}
+
+    class Meta:
+        model = PropertyDocument
+        fields = ['title', 'notes', 'file']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500',
+            'placeholder': 'Lease agreement, title deed, utility bill...',
+        })
+        self.fields['file'].widget.attrs.update({
+            'class': 'w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-brown-100 file:text-brown-700 hover:file:bg-brown-200',
+            'accept': '.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.txt',
+        })
+        self.fields['notes'].widget.attrs.update({
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500',
+            'placeholder': 'Optional notes for this version...',
+            'rows': 2,
+        })
+
+    def clean_file(self):
+        document_file = self.cleaned_data['file']
+        extension = ''
+        if '.' in document_file.name:
+            extension = f".{document_file.name.rsplit('.', 1)[1].lower()}"
+
+        if extension not in self.ALLOWED_EXTENSIONS:
+            raise forms.ValidationError('Unsupported file type. Upload PDF, DOC, DOCX, JPG, PNG, GIF, WEBP, or TXT.')
+
+        if document_file.size > self.MAX_FILE_SIZE_BYTES:
+            raise forms.ValidationError('File is too large. Maximum size is 10MB.')
+
+        return document_file
 
 # class UnitForm(forms.ModelForm):
 #     class Meta:
@@ -315,9 +354,10 @@ class MaintenanceRequestForm(forms.ModelForm):
 class MaintenanceStatusUpdateForm(forms.ModelForm):
     class Meta:
         model = MaintenanceRequest
-        fields = ['status', 'priority', 'cost']
+        fields = ['status', 'priority', 'cost', 'notes']
         widgets = {
             'cost': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '0.00'}),
+            'notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add any additional notes about this maintenance request...'}),
         }
 
     def __init__(self, *args, **kwargs):

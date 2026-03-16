@@ -27,14 +27,47 @@
         </div>
         
         <div class="mt-8 flex justify-end">
-            <button type="button" class="next-step bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1"
-            onclick="hideStuff()"
-            >
+            <button type="button" id="step1-next-btn"
+                    class="bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1"
+                    onclick="requestOTP()">
                 Endelea <i class="fas fa-arrow-right ml-2"></i>
             </button>
         </div>
     </div>
-    
+
+    <!-- Step 1b: OTP Verification -->
+    <div class="form-step" id="step-otp">
+        <h3 class="text-2xl font-serif font-bold text-brown-900 mb-3">Thibitisha Nambari Yako</h3>
+        <p class="text-brown-700 mb-2">Tumekutumia msimbo wa tarakimu 6 kwa nambari:</p>
+        <p id="otp-phone-display" class="font-bold text-brown-900 mb-6"></p>
+
+        <div id="otp-error" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
+        <div id="otp-success" class="hidden mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm"></div>
+
+        <div class="flex justify-center mb-6">
+            <input type="text" id="otp-input" maxlength="6" inputmode="numeric"
+                   class="w-44 text-center text-3xl font-bold tracking-[0.4em] px-4 py-3 border-2 border-brown-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brown-700"
+                   placeholder="------" />
+        </div>
+
+        <p class="text-center text-sm text-brown-600 mb-6">
+            Haukupokea msimbo?
+            <button type="button" class="text-brown-900 font-semibold underline hover:no-underline" onclick="requestOTP(true)">Tuma tena</button>
+        </p>
+
+        <div class="flex flex-col md:flex-row gap-3 md:justify-between">
+            <button type="button" onclick="showStep('step-1')"
+                    class="text-brown-900 font-semibold py-3 px-6 rounded-lg border border-brown-900 hover:bg-brown-50 transition-all duration-300">
+                <i class="fas fa-arrow-left mr-2"></i> Nyuma
+            </button>
+            <button type="button" id="verify-otp-btn"
+                    class="bg-brown-900 text-white font-semibold py-3 px-8 rounded-lg hover:bg-brown-800 transition-all duration-300 transform hover:-translate-y-1"
+                    onclick="verifyOTP()">
+                Thibitisha <i class="fas fa-check ml-2"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Step 2: Current Situation -->
     <div class="form-step" id="step-2">
         <h3 class="text-2xl font-serif font-bold text-brown-900 mb-6">Hali Yako Ya Sasa</h3>
@@ -221,6 +254,9 @@
         </div>
     </div>
     
+    <!-- Hidden OTP-verified flag (read by submit handler) -->
+    <input type="hidden" id="otp-verified-flag" value="0" />
+
     <!-- Success Message -->
     <div class="form-step text-center py-10" id="success-message">
         <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -236,3 +272,103 @@
         </button>
     </div>
 </form>
+
+<script>
+/* ── OTP helpers for the assessment form ───────────────────────────────── */
+function showStep(id) {
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+function requestOTP(resend) {
+  const phone = document.getElementById('phone').value.trim();
+  const name  = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+
+  if (!name || !email || !phone) {
+    alert('Tafadhali jaza jina, barua pepe, na nambari ya simu kwanza.');
+    return;
+  }
+
+  const btn = document.getElementById('step1-next-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Inatuma OTP...'; }
+
+  fetch('/home/otp/send/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Endelea <i class="fas fa-arrow-right ml-2"></i>'; }
+    if (data.status === 'sent') {
+      document.getElementById('otp-phone-display').textContent = phone;
+      document.getElementById('otp-error').classList.add('hidden');
+      document.getElementById('otp-success').classList.add('hidden');
+      document.getElementById('otp-input').value = '';
+      if (resend) {
+        const s = document.getElementById('otp-success');
+        s.textContent = 'OTP mpya imetumwa!';
+        s.classList.remove('hidden');
+      }
+      if (typeof hideStuff === 'function') hideStuff();
+      showStep('step-otp');
+    } else {
+      alert(data.error || 'Imeshindwa kutuma OTP. Jaribu tena.');
+    }
+  })
+  .catch(() => {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Endelea <i class="fas fa-arrow-right ml-2"></i>'; }
+    alert('Hitilafu ya mtandao. Jaribu tena.');
+  });
+}
+
+function verifyOTP() {
+  const phone = document.getElementById('phone').value.trim();
+  const code  = document.getElementById('otp-input').value.trim();
+
+  if (code.length !== 6) {
+    const e = document.getElementById('otp-error');
+    e.textContent = 'Ingiza tarakimu 6 sahihi.';
+    e.classList.remove('hidden');
+    return;
+  }
+
+  const btn = document.getElementById('verify-otp-btn');
+  btn.disabled = true;
+  btn.textContent = 'Inathibitisha...';
+
+  fetch('/home/otp/verify/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone, code }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.innerHTML = 'Thibitisha <i class="fas fa-check ml-2"></i>';
+    if (data.verified) {
+      document.getElementById('otp-verified-flag').value = '1';
+      const s = document.getElementById('otp-success');
+      s.textContent = 'Nambari imethibitishwa!';
+      s.classList.remove('hidden');
+      document.getElementById('otp-error').classList.add('hidden');
+      // Short pause then advance to step 2
+      setTimeout(() => showStep('step-2'), 700);
+    } else {
+      const e = document.getElementById('otp-error');
+      e.textContent = data.error || 'Msimbo si sahihi.';
+      e.classList.remove('hidden');
+      document.getElementById('otp-success').classList.add('hidden');
+    }
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.innerHTML = 'Thibitisha <i class="fas fa-check ml-2"></i>';
+    const e = document.getElementById('otp-error');
+    e.textContent = 'Hitilafu ya mtandao. Jaribu tena.';
+    e.classList.remove('hidden');
+  });
+}
+</script>

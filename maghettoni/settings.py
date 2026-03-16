@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'tathmini',
     'dashboardd',
+    'tenant_portal',
     'corsheaders',
 ]
 
@@ -73,7 +74,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'dashboardd.context_processors.context',
-
+                'tenant_portal.context_processors.tenant_context',
             ],
         },
     },

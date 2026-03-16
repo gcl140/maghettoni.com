@@ -1,0 +1,18 @@
+/* Custom checkbox styling */
+input[type="checkbox"] {
+    accent-color: #603b2b;
+}
+
+/* Number input styling */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 2em;
+}
+
+/* Focus styles */
+.form-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
+    border-color: #a18072;
+}

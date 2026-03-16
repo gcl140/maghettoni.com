@@ -1,0 +1,41 @@
+{% extends 'tenant_portal/base.html' %} {% block title %}Notifications{% endblock %} {% block page_title %}Notifications{% endblock %} {% block breadcrumbs %}
+<li class="text-gray-300">/</li>
+<li class="text-gray-600 font-medium">Notifications</li>
+{% endblock %} {% block content %}
+<div class="mx-auto p-2">
+  {% if notifications %}
+  <div class="space-y-3">
+    {% for notif in notifications %}
+    <div
+      class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-start gap-3"
+    >
+      <div
+        class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 {% if notif.notification_type == 'success' %}bg-green-500/20 {% elif notif.notification_type == 'warning' %}bg-amber-500/20 {% elif notif.notification_type == 'danger' %}bg-red-500/20 {% else %}bg-blue-500/20{% endif %}"
+      >
+        <i
+          class="fas {% if notif.notification_type == 'success' %}fa-check-circle text-green-500 {% elif notif.notification_type == 'warning' %}fa-exclamation-triangle text-amber-500 {% elif notif.notification_type == 'danger' %}fa-times-circle text-red-500 {% else %}fa-bell text-blue-500{% endif %} text-sm"
+        ></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-gray-900">{{ notif.title }}</p>
+        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
+          {{ notif.message }}
+        </p>
+        <p class="text-xs text-gray-400 mt-1.5">
+          {{ notif.created_at|date:"d M Y, H:i" }}
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div
+    class="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center justify-center py-16 text-center"
+  >
+    <i class="fas fa-bell-slash text-5xl text-gray-300 mb-4"></i>
+    <p class="text-base font-semibold text-gray-900 mb-1">No Notifications</p>
+    <p class="text-sm text-gray-400">New notifications will appear here.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

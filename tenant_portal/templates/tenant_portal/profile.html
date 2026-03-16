@@ -1,0 +1,122 @@
+{% extends 'tenant_portal/base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block breadcrumbs %}
+<li class="text-gray-300">/</li>
+<li class="text-gray-600 font-medium">Profile</li>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+  <!-- Profile card -->
+  <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 mb-5">
+    <div class="flex items-center gap-5 mb-5">
+      {% if tenant.profile_picture %}
+        <img src="{{ tenant.profile_picture.url }}" class="w-20 h-20 rounded-2xl object-cover border-2 border-amber-500/40" />
+      {% else %}
+        <div class="w-20 h-20 rounded-2xl bg-amber-500/20 flex items-center justify-center text-3xl font-black text-amber-500">
+          {{ tenant.first_name|first|upper }}{{ tenant.last_name|first|upper }}
+        </div>
+      {% endif %}
+      <div>
+        <h2 class="text-xl font-bold text-gray-900">{{ tenant.first_name }} {{ tenant.last_name }}</h2>
+        <p class="text-sm text-gray-500 mt-1">{{ tenant.email }}</p>
+        <span class="mt-2 inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium
+                     {% if tenant.status == 'active' %}bg-green-500/20 text-green-600
+                     {% elif tenant.status == 'pending' %}bg-amber-500/20 text-amber-600
+                     {% else %}bg-red-500/20 text-red-600{% endif %}">
+          <span class="w-1.5 h-1.5 rounded-full
+                       {% if tenant.status == 'active' %}bg-green-500{% elif tenant.status == 'pending' %}bg-amber-500{% else %}bg-red-500{% endif %}">
+          </span>
+          {% if tenant.status == 'active' %}Active{% elif tenant.status == 'pending' %}Pending Verification{% else %}Inactive{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
+          <i class="fas fa-phone text-amber-500"></i> Phone Number
+        </p>
+        <p class="text-sm font-medium text-gray-900">{{ tenant.phone|default:"Not set" }}</p>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
+          <i class="fas fa-envelope text-amber-500"></i> Email
+        </p>
+        <p class="text-sm font-medium text-gray-900 truncate">{{ tenant.email }}</p>
+      </div>
+      {% if tenant.emergency_contact %}
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
+          <i class="fas fa-user-shield text-amber-500"></i> Emergency Contact
+        </p>
+        <p class="text-sm font-medium text-gray-900">{{ tenant.emergency_contact }}</p>
+        {% if tenant.emergency_phone %}
+          <p class="text-xs text-gray-400 mt-0.5">{{ tenant.emergency_phone }}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
+          <i class="fas fa-sign-in-alt text-amber-500"></i> Move-in Date
+        </p>
+        <p class="text-sm font-medium text-gray-900">{{ tenant.move_in_date|date:"d F Y" }}</p>
+      </div>
+      {% if tenant.move_out_date %}
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
+          <i class="fas fa-sign-out-alt text-amber-500"></i> Move-out Date
+        </p>
+        <p class="text-sm font-medium {% if stay.days_remaining and stay.days_remaining < 30 %}text-red-500{% else %}text-gray-900{% endif %}">
+          {{ tenant.move_out_date|date:"d F Y" }}
+          {% if stay.days_remaining %}
+            <span class="text-xs text-gray-400 ml-1">({{ stay.days_remaining }} days left)</span>
+          {% endif %}
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Lease / Property details -->
+  <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 mb-5">
+    <h3 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <i class="fas fa-home text-amber-500"></i> Property Details
+    </h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs text-gray-400 mb-1">Property</p>
+        <p class="text-sm font-medium text-gray-900">{{ tenant.property.name }}</p>
+        <p class="text-xs text-gray-400 mt-0.5">{{ tenant.property.address }}</p>
+      </div>
+      {% if tenant.unit %}
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs text-gray-400 mb-1">Unit</p>
+        <p class="text-sm font-medium text-gray-900">Unit {{ tenant.unit.unit_number }}</p>
+        <p class="text-xs text-gray-400 mt-0.5">
+          {{ tenant.unit.bedrooms }} bdrm · {{ tenant.unit.bathrooms }} bthrm
+          {% if tenant.unit.square_feet %} · {{ tenant.unit.square_feet }} sqft{% endif %}
+        </p>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-4">
+        <p class="text-xs text-gray-400 mb-1">Monthly Rent</p>
+        <p class="text-lg font-bold text-amber-500">TZS. {{ tenant.unit.monthly_rent|floatformat:0 }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Account settings link -->
+  <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
+    <p class="text-xs text-gray-400 mb-3">Account changes are made via</p>
+    <a href="{% url 'edit_profile' %}"
+       class="flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
+      <i class="fas fa-user-edit text-amber-500"></i>
+      <span class="text-sm text-gray-900">Edit Account Profile</span>
+      <i class="fas fa-chevron-right ml-auto text-gray-300 text-xs"></i>
+    </a>
+  </div>
+</div>
+{% endblock %}

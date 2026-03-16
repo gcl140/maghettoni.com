@@ -1,0 +1,135 @@
+{% extends 'tenant_portal/base.html' %} {% load static %} {% block title %}Edit
+Profile{% endblock %} {% block page_title %}Edit Profile{% endblock %} {% block
+breadcrumbs %}
+<li class="text-gray-300">/</li>
+<li>
+  <a
+    href="{% url 'tenant_profile' %}"
+    class="hover:text-amber-600 transition-colors"
+    >Profile</a
+  >
+</li>
+<li class="text-gray-300">/</li>
+<li class="text-gray-600 font-medium">Edit</li>
+{% endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{% static 'css/yuzzaz/edit-profile-modal.css' %}"
+/>
+{% endblock %} {% block content %}
+<div class="mx-auto p-2">
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200"
+  >
+    {% csrf_token %}
+
+    <h2 class="text-base font-bold text-gray-900 mb-5">
+      Update Your Information
+    </h2>
+
+    <!-- Profile picture preview -->
+    <div class="flex items-center gap-4 mb-6">
+      {% if viewing_user.profile_picture %}
+      <img
+        id="avatar-preview"
+        src="{{ viewing_user.profile_picture.url }}"
+        class="w-16 h-16 rounded-full object-cover border-2 border-amber-400"
+        alt="Avatar"
+      />
+      {% else %}
+      <div
+        id="avatar-preview"
+        class="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xl border-2 border-amber-400"
+      >
+        {{ viewing_user.first_name|first|upper }}{{
+        viewing_user.last_name|first|upper }}
+      </div>
+      {% endif %}
+      <div>
+        <label class="block text-sm font-medium text-gray-500 mb-1"
+          >Profile Photo</label
+        >
+        {{ form.profile_picture }}
+      </div>
+    </div>
+
+    <!-- First Name -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-500 mb-1.5"
+        >First Name</label
+      >
+      {{ form.first_name }} {% if form.first_name.errors %}
+      <p class="text-xs text-red-400 mt-1">{{ form.first_name.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-500 mb-1.5"
+        >Last Name</label
+      >
+      {{ form.last_name }} {% if form.last_name.errors %}
+      <p class="text-xs text-red-400 mt-1">{{ form.last_name.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Username -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-500 mb-1.5"
+        >Username</label
+      >
+      {{ form.username }} {% if form.username.errors %}
+      <p class="text-xs text-red-400 mt-1">{{ form.username.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Email -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-500 mb-1.5"
+        >Email</label
+      >
+      {{ form.email }} {% if form.email.errors %}
+      <p class="text-xs text-red-400 mt-1">{{ form.email.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Telephone -->
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-500 mb-1.5"
+        >Phone Number</label
+      >
+      {{ form.telephone }} {% if form.telephone.errors %}
+      <p class="text-xs text-red-400 mt-1">{{ form.telephone.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- About -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-500 mb-1.5"
+        >About</label
+      >
+      {{ form.about }} {% if form.about.errors %}
+      <p class="text-xs text-red-400 mt-1">{{ form.about.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <button
+      type="submit"
+      class="w-full py-3 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+    >
+      <i class="fas fa-save"></i> Save Changes
+    </button>
+  </form>
+
+  <a
+    href="{% url 'tenant_profile' %}"
+    class="block text-center mt-4 text-sm text-gray-400 hover:text-gray-500 transition-colors"
+  >
+    <i class="fas fa-arrow-left mr-1"></i> Back to Profile
+  </a>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="{% static 'js/yuzzaz/edit-profile-modal.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'tenant_portal/base.html' %}
+{% block title %}Payment Status{% endblock %}
+{% block page_title %}Payment Status{% endblock %}
+{% block breadcrumbs %}
+<li class="text-gray-300">/</li>
+<li><a href="{% url 'tenant_payments' %}" class="hover:text-amber-600 transition-colors">Payments</a></li>
+<li class="text-gray-300">/</li>
+<li class="text-gray-600 font-medium">Status</li>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-6">
+  <div class="bg-white rounded-2xl shadow-sm p-8 border border-gray-200 text-center">
+
+    <!-- Status icon -->
+    {% if submission.status == 'submitted' %}
+    <div class="w-20 h-20 mx-auto rounded-full bg-amber-500/20 flex items-center justify-center mb-5">
+      <i class="fas fa-clock text-4xl text-amber-400"></i>
+    </div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Submitted!</h2>
+    <p class="text-sm text-gray-500 mb-6">Your payment has been submitted. Your manager will confirm it shortly.</p>
+    {% elif submission.status == 'confirmed' %}
+    <div class="w-20 h-20 mx-auto rounded-full bg-green-500/20 flex items-center justify-center mb-5">
+      <i class="fas fa-check-circle text-4xl text-green-400"></i>
+    </div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Confirmed!</h2>
+    <p class="text-sm text-gray-500 mb-6">Your payment has been confirmed by the manager.</p>
+    {% elif submission.status == 'failed' %}
+    <div class="w-20 h-20 mx-auto rounded-full bg-red-500/20 flex items-center justify-center mb-5">
+      <i class="fas fa-times-circle text-4xl text-red-400"></i>
+    </div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Failed</h2>
+    <p class="text-sm text-gray-500 mb-6">Payment failed. Please try again.</p>
+    {% else %}
+    <div class="w-20 h-20 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center mb-5">
+      <i class="fas fa-spinner fa-spin text-4xl text-blue-400"></i>
+    </div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">Processing...</h2>
+    <p class="text-sm text-gray-500 mb-6">Your payment is being processed.</p>
+    {% endif %}
+
+    <!-- Receipt details -->
+    <div class="bg-gray-50 rounded-xl p-4 mb-6 text-left space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-gray-400">Amount</span>
+        <span class="text-sm font-bold text-amber-400">TZS. {{ submission.amount|floatformat:0 }}</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-gray-400">Method</span>
+        <span class="text-sm text-gray-900">{{ submission.get_payment_method_display }}</span>
+      </div>
+      {% if submission.payment %}
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-gray-400">Reference Number</span>
+        <span class="text-xs font-mono text-gray-900">{{ submission.payment.reference_number }}</span>
+      </div>
+      {% endif %}
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-gray-400">Date</span>
+        <span class="text-sm text-gray-900">{{ submission.created_at|date:"d M Y, H:i" }}</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-gray-400">Token</span>
+        <span class="text-xs font-mono text-gray-400">{{ submission.payment_token|truncatechars:16 }}</span>
+      </div>
+    </div>
+
+    {% if submission.payment %}
+    <div class="mb-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-300 flex items-start gap-2">
+      <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
+      <span>
+        {% if submission.payment.status == 'completed' %}
+          Payment confirmed by manager. Thank you!
+        {% else %}
+          Payment is awaiting confirmation from your manager. You will be notified when confirmed.
+        {% endif %}
+      </span>
+    </div>
+    {% endif %}
+
+    <div class="flex flex-col gap-3">
+      <a href="{% url 'tenant_payments' %}"
+         class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl transition-colors text-sm">
+        <i class="fas fa-list mr-1"></i> View Payment History
+      </a>
+      <a href="{% url 'tenant_dashboard' %}"
+         class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl transition-colors text-sm">
+        Back to Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

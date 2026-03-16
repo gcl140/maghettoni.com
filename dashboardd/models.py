@@ -1,5 +1,8 @@
+import uuid
+from datetime import timedelta
+from builtins import property as builtin_property
+
 from django.db import models
-# from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.contrib.auth import get_user_model
@@ -30,6 +33,62 @@ class Property(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.address}"
+
+
+class PropertyDocument(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='documents')
+    title = models.CharField(max_length=255)
+    file = models.FileField(upload_to='property_documents/%Y/%m/')
+    notes = models.TextField(blank=True, default='')
+    version = models.PositiveIntegerField(default=1)
+    previous_version = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='next_versions',
+    )
+    uploaded_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='property_documents_uploaded',
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-uploaded_at']
+        constraints = [
+            models.UniqueConstraint(fields=['property', 'title', 'version'], name='uniq_property_document_version'),
+        ]
+
+    def __str__(self):
+        return f"{self.property.name} - {self.title} v{self.version}"
+
+    @builtin_property
+    def file_extension(self):
+        if not self.file or not self.file.name or '.' not in self.file.name:
+            return ''
+        return self.file.name.rsplit('.', 1)[1].lower()
+
+    @builtin_property
+    def is_image(self):
+        return self.file_extension in {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+
+    @builtin_property
+    def is_pdf(self):
+        return self.file_extension == 'pdf'
+
+    @builtin_property
+    def document_type(self):
+        if self.is_image:
+            return 'image'
+        if self.is_pdf:
+            return 'pdf'
+        if self.file_extension in {'doc', 'docx', 'txt'}:
+            return 'doc'
+        return 'other'
 
 class Unit(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='units_list')
@@ -115,17 +174,17 @@ class Payment(models.Model):
 
 class MaintenanceRequest(models.Model):
     PRIORITY_LEVELS = [
-        ('low', 'Chini'),
-        ('medium', 'Wastani'),
-        ('high', 'Juu'),
-        ('emergency', 'Dharura'),
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('emergency', 'Emergency'),
     ]
-    
+
     STATUS_CHOICES = [
-        ('pending', 'Inasubiri'),
-        ('in_progress', 'Inaendelea'),
-        ('completed', 'Imekamilika'),
-        ('cancelled', 'Imefutwa'),
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
     ]
     
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='maintenance_requests')
@@ -138,7 +197,8 @@ class MaintenanceRequest(models.Model):
     reported_date = models.DateTimeField(auto_now_add=True)
     completed_date = models.DateTimeField(null=True, blank=True)
     cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    
+    notes = models.TextField(blank=True, default='')
+
     class Meta:
         ordering = ['-reported_date']
     
@@ -152,9 +212,50 @@ class Notification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications_for_user')
-    
+
     class Meta:
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return self.title
+
+
+class TenantInvite(models.Model):
+    """
+    One-time invite sent to a tenant when the landlord adds them.
+    The token is emailed to the tenant; clicking it lets them set their
+    password and activates their portal account.  The landlord never sees
+    the token or the temporary credentials.
+    """
+    tenant = models.OneToOneField(
+        'Tenant', on_delete=models.CASCADE, related_name='invite'
+    )
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    # Temporary plaintext password stored only until the tenant accepts.
+    # We keep it here so the email can include it; cleared on acceptance.
+    temp_password = models.CharField(max_length=128, blank=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    @classmethod
+    def create_for_tenant(cls, tenant, hours: int = 72) -> 'TenantInvite':
+        import secrets, string
+        alphabet = string.ascii_letters + string.digits
+        temp_pw = ''.join(secrets.choice(alphabet) for _ in range(14))
+        # Delete any existing (re-invite)
+        cls.objects.filter(tenant=tenant).delete()
+        return cls.objects.create(
+            tenant=tenant,
+            temp_password=temp_pw,
+            expires_at=timezone.now() + timedelta(hours=hours),
+        )
+
+    def __str__(self):
+        return f"Invite for {self.tenant} ({'used' if self.is_used else 'pending'})"

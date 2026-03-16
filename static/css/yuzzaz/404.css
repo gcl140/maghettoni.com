@@ -1,0 +1,19 @@
+body {
+    font-family: "Sen", sans-serif;
+}
+
+.bg-maroon {
+    background-color: #000000;
+}
+
+.text-maroon {
+    color: #ffffff;
+}
+
+.bg-maroon-700 {
+    background-color: #000000;
+}
+
+.text-maroon-600 {
+    color: #ffffff;
+}

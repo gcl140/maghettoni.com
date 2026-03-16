@@ -1,0 +1,112 @@
+{% extends 'tenant_portal/base.html' %}
+{% block title %}Payments{% endblock %}
+{% block page_title %}Payments{% endblock %}
+{% block breadcrumbs %}
+<li class="text-gray-300">/</li>
+<li class="text-gray-600 font-medium">Payments</li>
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-end mb-6">
+  <a href="{% url 'tenant_payment_initiate' %}"
+     class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-xl transition-colors">
+    <i class="fas fa-plus"></i> Pay Rent
+  </a>
+</div>
+
+<!-- Pending submissions notice -->
+{% for sub in submissions %}
+  {% if sub.status == 'submitted' and not sub.payment.status == 'completed' %}
+  <div class="mb-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-start gap-3">
+    <i class="fas fa-clock text-amber-400 mt-0.5"></i>
+    <div>
+      <p class="text-sm font-medium text-amber-300">Payment Pending Confirmation</p>
+      <p class="text-xs text-gray-500 mt-0.5">TZS. {{ sub.amount|floatformat:0 }} — Ref: {{ sub.payment.reference_number }}. Your manager will confirm it shortly.</p>
+    </div>
+  </div>
+  {% endif %}
+{% endfor %}
+
+<!-- Payments table -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+  {% if payments %}
+  <!-- Desktop table -->
+  <div class="hidden sm:block overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Amount</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Method</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Due Date</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Reference</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for payment in payments %}
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-4 py-3 text-gray-900">{{ payment.payment_date|date:"d M Y" }}</td>
+          <td class="px-4 py-3 font-semibold text-gray-900">TZS. {{ payment.amount|floatformat:0 }}</td>
+          <td class="px-4 py-3 text-gray-500">{{ payment.get_payment_method_display }}</td>
+          <td class="px-4 py-3 text-gray-500">{{ payment.due_date|date:"d M Y" }}</td>
+          <td class="px-4 py-3 text-gray-400 font-mono text-xs">{{ payment.reference_number|default:"—" }}</td>
+          <td class="px-4 py-3">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+                         {% if payment.status == 'completed' %}bg-green-500/20 text-green-400
+                         {% elif payment.status == 'pending' %}bg-amber-500/20 text-amber-400
+                         {% elif payment.status == 'failed' %}bg-red-500/20 text-red-400
+                         {% else %}bg-blue-500/20 text-blue-400{% endif %}">
+              {% if payment.status == 'completed' %}<i class="fas fa-check-circle"></i> Completed
+              {% elif payment.status == 'pending' %}<i class="fas fa-clock"></i> Pending
+              {% elif payment.status == 'failed' %}<i class="fas fa-times-circle"></i> Failed
+              {% else %}<i class="fas fa-undo"></i> {{ payment.get_status_display }}{% endif %}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile cards -->
+  <div class="sm:hidden divide-y divide-gray-100">
+    {% for payment in payments %}
+    <div class="p-4 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0
+                  {% if payment.status == 'completed' %}bg-green-500/20{% elif payment.status == 'pending' %}bg-amber-500/20{% else %}bg-red-500/20{% endif %}">
+        <i class="fas fa-money-bill text-sm
+                  {% if payment.status == 'completed' %}text-green-400{% elif payment.status == 'pending' %}text-amber-400{% else %}text-red-400{% endif %}"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-semibold text-gray-900">TZS. {{ payment.amount|floatformat:0 }}</p>
+          <span class="text-xs px-2 py-0.5 rounded-full
+                       {% if payment.status == 'completed' %}bg-green-500/20 text-green-400
+                       {% elif payment.status == 'pending' %}bg-amber-500/20 text-amber-400
+                       {% else %}bg-red-500/20 text-red-400{% endif %}">
+            {% if payment.status == 'completed' %}Completed{% elif payment.status == 'pending' %}Pending{% else %}{{ payment.get_status_display }}{% endif %}
+          </span>
+        </div>
+        <p class="text-xs text-gray-500">{{ payment.payment_date|date:"d M Y" }} · {{ payment.get_payment_method_display }}</p>
+        {% if payment.reference_number %}
+          <p class="text-xs text-gray-400 font-mono mt-0.5">{{ payment.reference_number }}</p>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="flex flex-col items-center justify-center py-16 text-center px-4">
+    <i class="fas fa-receipt text-5xl text-gray-400 mb-4"></i>
+    <p class="text-base font-semibold text-gray-900 mb-1">No Payments Yet</p>
+    <p class="text-sm text-gray-400 mb-5">Your payment records will appear here once you pay.</p>
+    <a href="{% url 'tenant_payment_initiate' %}"
+       class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-xl transition-colors">
+      <i class="fas fa-money-bill-wave"></i> Pay First Month
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
