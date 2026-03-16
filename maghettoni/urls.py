@@ -39,7 +39,7 @@ def _read_static(relative_path):
     path_ = finders.find(relative_path)
     if not path_:
         path_ = os.path.join(settings.STATIC_ROOT, relative_path)
-    with open(path_, 'r') as f:
+    with open(path_, 'r', encoding='utf-8') as f:
         return f.read()
 
 def service_worker(request):
