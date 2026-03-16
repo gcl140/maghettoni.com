@@ -32,19 +32,23 @@ def logout_then_google(request):
     logout(request)
     return redirect('/oauth/login/google-oauth2/?next=/profile/')
 
-def service_worker(request):
-    path_ = finders.find('js/sw.js')
+import os
+
+def _read_static(relative_path):
+    """Find a static file in dev (finders) or prod (STATIC_ROOT)."""
+    path_ = finders.find(relative_path)
+    if not path_:
+        path_ = os.path.join(settings.STATIC_ROOT, relative_path)
     with open(path_, 'r') as f:
-        content = f.read()
-    resp = HttpResponse(content, content_type='application/javascript')
+        return f.read()
+
+def service_worker(request):
+    resp = HttpResponse(_read_static('js/sw.js'), content_type='application/javascript')
     resp['Service-Worker-Allowed'] = '/'
     return resp
 
 def pwa_manifest(request):
-    path_ = finders.find('manifest.json')
-    with open(path_, 'r') as f:
-        content = f.read()
-    return HttpResponse(content, content_type='application/manifest+json')
+    return HttpResponse(_read_static('manifest.json'), content_type='application/manifest+json')
 
 
 urlpatterns = [
