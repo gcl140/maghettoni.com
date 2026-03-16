@@ -101,8 +101,8 @@
             </label>
             {% render_field form.title class="block w-full px-4 py-3 border
             border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500
-            focus:border-brown-500 transition-all placeholder-brown-400" %} {%
-            if form.title.errors %}
+            focus:border-brown-500 transition-all placeholder-brown-400" %} 
+            {% if form.title.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
               {{ form.title.errors.0 }}
