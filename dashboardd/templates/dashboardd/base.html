@@ -266,8 +266,7 @@
 
           <!-- Notification bell -->
           {% include "partials/not.html" %}
-          <button onclick="document.getElementById('notificationDialog').showModal()"
-                  class="relative w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-lg transition"
+          <button class="relative w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-lg transition"
                   title="Taarifa">
             <i class="fas fa-bell text-base"></i>
             {% with total=due_payments_count|add:pending_maintenance_count %}
@@ -385,6 +384,7 @@
 
 {% block extra_js %}{% endblock %}
 <script src="{% static 'js/base.js' %}" defer></script>
+<script src="{% static 'js/notifications.js' %}" defer></script>
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js', { scope: '/dashboard/' })

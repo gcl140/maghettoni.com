@@ -69,6 +69,9 @@ urlpatterns = [
     path('api/v1/maintenance/', api.api_maintenance, name='api_maintenance'),
     path('api/v1/maintenance/<int:request_id>/', api.api_maintenance_detail, name='api_maintenance_detail'),
 
+    # Notifications
+    path('api/v1/notifications/', api.api_notifications, name='api_notifications'),
+
     # SMS reminders
     path('api/v1/payments/<int:payment_id>/remind/', api.api_payment_remind, name='api_payment_remind'),
     path('api/v1/maintenance/<int:request_id>/notify/', api.api_maintenance_notify, name='api_maintenance_notify'),

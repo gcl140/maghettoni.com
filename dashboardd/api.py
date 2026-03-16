@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 from .models import Property, Unit, Tenant, Payment, MaintenanceRequest
 from .services import send_payment_reminder, send_maintenance_update
 
@@ -219,6 +220,48 @@ def api_maintenance_detail(request, request_id):
 
 
 # ── SMS Reminders ─────────────────────────────────────────────────────────────
+
+# ── Notifications ─────────────────────────────────────────────────────────────
+
+@login_required
+@require_GET
+def api_notifications(request):
+    today = timezone.now().date()
+
+    overdue = Payment.objects.filter(
+        tenant__property__owner=request.user,
+        due_date__lt=today,
+        status__in=['failed', 'pending']
+    ).select_related('tenant', 'tenant__property').order_by('due_date')
+
+    pending_maint = MaintenanceRequest.objects.filter(
+        property__owner=request.user, status='pending'
+    ).select_related('property', 'tenant').order_by('reported_date')
+
+    items = []
+    for p in overdue:
+        days = (today - p.due_date).days
+        items.append({
+            'type': 'payment',
+            'icon': 'fa-money-bill-wave',
+            'color': 'red',
+            'title': f'Malipo: {p.tenant.first_name} {p.tenant.last_name}',
+            'message': f'Ksh {p.amount:,.0f} — siku {days} zimepita',
+            'url': f'/dashboard/payments/{p.id}/',
+        })
+
+    for r in pending_maint:
+        items.append({
+            'type': 'maintenance',
+            'icon': 'fa-tools',
+            'color': 'amber',
+            'title': f'Matengenezo: {r.property.name}',
+            'message': r.description[:80] if r.description else 'Hakuna maelezo',
+            'url': f'/dashboard/maintenance/{r.id}/',
+        })
+
+    return JsonResponse({'items': items, 'count': len(items)})
+
 
 @login_required
 @require_POST

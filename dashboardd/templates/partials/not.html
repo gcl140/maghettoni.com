@@ -1,5 +1,5 @@
-<!-- Notification Modal - standard HTML dialog -->
-<dialog id="notificationDialog" class="rounded-xl shadow-2xl border border-gray-200 p-0 w-full md:max-w-md backdrop:bg-gray-900/50">
+<!-- Notification Modal -->
+<dialog id="notificationDialog" class="rounded-xl shadow-2xl p-0 w-full md:max-w-md backdrop:bg-gray-900/50">
   <div class="bg-brown-800 px-5 pt-5 pb-4">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-lg font-semibold text-white flex items-center">
@@ -10,24 +10,11 @@
         <i class="fas fa-times"></i>
       </button>
     </div>
-    {% if recent_not %}
-      <div class="space-y-3 max-h-80 overflow-y-auto">
-        {% for notification in recent_not %}
-        <div class="flex items-start gap-3 p-3 bg-brown-700/50 rounded-lg">
-          <div class="flex-shrink-0 h-8 w-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-            <i class="fas fa-info-circle text-blue-400 text-sm"></i>
-          </div>
-          <div>
-            <p class="text-sm font-medium text-white">{{ notification.title }}</p>
-            <p class="text-xs text-brown-300 mt-1">{{ notification.message }}</p>
-            <p class="text-xs text-brown-400 mt-1">{{ notification.created_at|timesince }} ago</p>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="text-sm text-brown-300 text-center py-6">Hakuna taarifa mpya.</p>
-    {% endif %}
+    <div id="notif-list" class="space-y-3 max-h-80 overflow-y-auto">
+      <p class="text-sm text-brown-300 text-center py-6">
+        <i class="fas fa-spinner fa-spin mr-2"></i> Inapakia...
+      </p>
+    </div>
   </div>
   <div class="bg-brown-700/30 px-5 py-3 flex justify-end">
     <button onclick="document.getElementById('notificationDialog').close()"
