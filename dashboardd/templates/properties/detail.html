@@ -1,6 +1,6 @@
-{% extends 'dashboardd/base.html' %} {% block title %}{{ property.name }} -
-Landlord Management System{% endblock %} {% block page_title %}{{ property.name
-}}{% endblock %} {% block breadcrumbs %}
+{% extends 'dashboardd/base.html' %} {% load static %} {% block title %}
+{{ property.name }} - Landlord Management System{% endblock %} 
+{% block page_title %} {{ property.name }}{% endblock %} {% block breadcrumbs %}
 <li class="text-gray-400">/</li>
 <li>
   <a
@@ -22,13 +22,12 @@ Landlord Management System{% endblock %} {% block page_title %}{{ property.name
         <span
           class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if property.property_type == 'nyumba' %}bg-blue-100 text-blue-800 {% elif property.property_type == 'ghorofa' %}bg-purple-100 text-purple-800 {% elif property.property_type == 'kondo' %}bg-green-100 text-green-800 {% elif property.property_type == 'nyumba_mjini' %}bg-yellow-100 text-yellow-800 {% elif property.property_type == 'biashara' %}bg-red-100 text-red-800 {% else %}bg-gray-100 text-gray-800{% endif %}"
         >
-          <i class="fas fa-tag mr-1"></i>{{ property.get_property_type_display
-          }}
+          <i class="fas fa-tag mr-1"></i>{{ property.get_property_type_display }}
         </span>
       </div>
       <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
-        <i class="fas fa-map-marker-alt text-brown-500"></i>{{ property.address
-        }}
+        <i class="fas fa-map-marker-alt text-brown-500"></i>
+        {{ property.address }}
       </p>
     </div>
     <div class="flex flex-wrap gap-2 flex-shrink-0">
@@ -262,8 +261,7 @@ Landlord Management System{% endblock %} {% block page_title %}{{ property.name
                     {{ unit.bedrooms }} bed, {{ unit.bathrooms }} bath
                   </p>
                   <p class="text-xs text-gray-400">
-                    {{ unit.description|truncatechars:30|default:"No
-                    description" }}
+                    {{ unit.description|truncatechars:30|default:"No description" }}
                   </p>
                 </td>
                 <td class="px-5 py-4">
@@ -594,39 +592,11 @@ Landlord Management System{% endblock %} {% block page_title %}{{ property.name
             name="doc_type"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500"
           >
-            <option value="all" {% if doc_type="" ="all" %}selected{% endif %}>
-              All types
-            </option>
-            <option
-              value="image"
-              {%
-              if
-              doc_type=""
-              ="image"
-              %}selected{%
-              endif
-              %}
-            >
-              Images
-            </option>
-            <option value="pdf" {% if doc_type="" ="pdf" %}selected{% endif %}>
-              PDF
-            </option>
-            <option value="doc" {% if doc_type="" ="doc" %}selected{% endif %}>
-              Documents
-            </option>
-            <option
-              value="other"
-              {%
-              if
-              doc_type=""
-              ="other"
-              %}selected{%
-              endif
-              %}
-            >
-              Other
-            </option>
+            <option value="all" {% if doc_type == "all" %}selected{% endif %}>All types</option>
+            <option value="image" {% if doc_type == "image" %}selected{% endif %}>Images</option>
+            <option value="pdf" {% if doc_type == "pdf" %}selected{% endif %}>PDF</option>
+            <option value="doc" {% if doc_type == "doc" %}selected{% endif %}>Documents</option>
+            <option value="other" {% if doc_type == "other" %}selected{% endif %}>Other</option>
           </select>
         </div>
         <div class="flex gap-2">
@@ -762,12 +732,7 @@ Landlord Management System{% endblock %} {% block page_title %}{{ property.name
                   {% endif %}
                 </div>
                 <p class="text-xs text-gray-400">
-                  {{ document.file.name|cut:'property_documents/' }} &bull; {{
-                  document.file.size|filesizeformat }} &bull; {{
-                  document.uploaded_at|date:'M d, Y H:i' }} {% if
-                  document.uploaded_by %}&bull; {{
-                  document.uploaded_by.get_full_name|default:document.uploaded_by.username
-                  }}{% endif %}
+                  {{ document.file.name|cut:'property_documents/' }} &bull; {{ document.file.size|filesizeformat }} &bull; {{ document.uploaded_at|date:'M d, Y H:i' }} {% if document.uploaded_by %} &bull; {{ document.uploaded_by.get_full_name|default:document.uploaded_by.username }} {% endif %}
                 </p>
                 {% if document.notes %}
                 <p
@@ -822,8 +787,8 @@ Landlord Management System{% endblock %} {% block page_title %}{{ property.name
               >
                 <div>
                   <p class="text-xs font-medium text-gray-700">
-                    v{{ old_doc.version }} &bull; {{ old_doc.uploaded_at|date:'M
-                    d, Y H:i' }}
+                    v{{ old_doc.version }} &bull; 
+                    {{ old_doc.uploaded_at|date:'M d, Y H:i' }}
                   </p>
                   {% if old_doc.notes %}
                   <p class="text-xs text-gray-500 mt-0.5">
@@ -900,7 +865,8 @@ Landlord Management System{% endblock %} {% block page_title %}{{ property.name
     </div>
   </div>
 </div>
-{% endblock %} {% block extra_js %}
+
+{% block extra_js %}
 <!-- Document Preview Modal -->
 <div
   id="doc-preview-modal"
@@ -965,4 +931,4 @@ Landlord Management System{% endblock %} {% block page_title %}{{ property.name
 </div>
 
 <script src="{% static 'js/property-detail-preview.js' %}" defer></script>
-{% endblock %}
+{% endblock %} {% endblock %}

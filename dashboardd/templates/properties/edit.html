@@ -85,7 +85,7 @@
                             <i class="fas fa-home mr-1 text-brown-600"></i>
                             Property Name *
                         </label>
-                        {% render_field form.name class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="e.g., Sunset Apartments" %}
+                        {% render_field form.name id="id_name" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="e.g., Sunset Apartments" %}
                         {% if form.name.errors %}
                         <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
                         {% endif %}
@@ -98,7 +98,7 @@
                             Property Type *
                         </label>
                         <div class="relative">
-                            {% render_field form.property_type class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors appearance-none bg-white" %}
+                            {% render_field form.property_type id="id_property_type" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors appearance-none bg-white" %}
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                 <i class="fas fa-chevron-down"></i>
                             </div>
@@ -160,7 +160,7 @@
                             Total Units *
                         </label>
                         <div class="relative">
-                            {% render_field form.units class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="e.g., 4" %}
+                            {% render_field form.units id="id_units" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="e.g., 4" %}
                             <div class="absolute inset-y-0 right-0 flex items-center pr-3">
                                 <span class="text-gray-500 mr-8">units</span>
                             </div>
@@ -187,7 +187,7 @@
                                     <p class="text-sm text-gray-600">Click to upload image</p>
                                     <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
                                 </div>
-                                {% render_field form.image class="hidden" %}
+                                {% render_field form.image id="id_image" class="hidden" %}
                             </label>
                         </div>
                         {% if form.image.errors %}
@@ -296,21 +296,29 @@
                 <div class="space-y-3">
                     <h4 class="text-sm font-medium text-gray-900">Best Practices:</h4>
                     <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
-                            Use clear, descriptive property names
+                        <li>
+                            <button type="button" data-focus-target="id_name" class="js-help-action w-full flex items-start text-left hover:bg-green-50 rounded-lg px-2 py-1.5 transition">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Use clear, descriptive property names</span>
+                            </button>
                         </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
-                            Include complete address information
+                        <li>
+                            <button type="button" data-focus-target="addressField" class="js-help-action w-full flex items-start text-left hover:bg-green-50 rounded-lg px-2 py-1.5 transition">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Include complete address information</span>
+                            </button>
                         </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
-                            Upload high-quality property photos
+                        <li>
+                            <button type="button" data-focus-target="id_image" data-action="pick-image" class="js-help-action w-full flex items-start text-left hover:bg-green-50 rounded-lg px-2 py-1.5 transition">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Upload high-quality property photos</span>
+                            </button>
                         </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
-                            Regularly update unit counts as needed
+                        <li>
+                            <button type="button" data-focus-target="id_units" class="js-help-action w-full flex items-start text-left hover:bg-green-50 rounded-lg px-2 py-1.5 transition">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i>
+                                <span>Regularly update unit counts as needed</span>
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -321,11 +329,11 @@
                         <ul class="space-y-2">
                             <li class="flex items-center">
                                 <i class="fas fa-book text-brown-600 mr-2"></i>
-                                <a href="#" class="text-brown-600 hover:text-brown-800">View Documentation</a>
+                                <a href="{% url 'about' %}" class="text-brown-600 hover:text-brown-800">View Documentation</a>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-headset text-brown-600 mr-2"></i>
-                                <a href="#" class="text-brown-600 hover:text-brown-800">Contact Support</a>
+                                <a href="mailto:support@maghettoni.com?subject=Property%20Form%20Help" class="text-brown-600 hover:text-brown-800">Contact Support</a>
                             </li>
                         </ul>
                     </div>
@@ -369,4 +377,5 @@
 {% endblock %}
 {% block extra_js %}
 <script src="{% static 'js/edit.js' %}"></script>
+<script src="{% static 'js/property-form-help.js' %}"></script>
 {% endblock %}
