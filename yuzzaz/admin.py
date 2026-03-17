@@ -23,8 +23,8 @@ class CustomUserAdmin(UserAdmin):
     actions = [activate_selected_users, deactivate_selected_users]  # <-- Custom actions added here
 
     fieldsets = (
-        (None, {'fields': ('username', 'first_name', 'last_name', 'password', 
-                           'is_verified', 'is_landlord')}),
+        (None, {'fields': ('username', 'first_name', 'last_name', 'password',
+                           'is_verified', 'is_landlord', 'is_tenant')}),
         ('Personal Info', {'fields': ('email', 'telephone', 'profile_picture')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important Dates', {'fields': ('last_login', 'date_joined')}),

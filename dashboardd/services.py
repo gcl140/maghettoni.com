@@ -78,6 +78,42 @@ def send_payment_reminder(tenant, payment) -> bool:
     return send_sms(tenant.phone, message)
 
 
+def send_payment_reminder_email(tenant, payment) -> bool:
+    """Send a payment reminder email to the tenant."""
+    from django.core.mail import send_mail
+    from django.utils import timezone
+    if not tenant.email:
+        return False
+    today = timezone.now().date()
+    days_overdue = (today - payment.due_date).days if payment.due_date and payment.due_date < today else 0
+    if days_overdue > 0:
+        subject = f"Overdue Payment Reminder — TZS {payment.amount:,.0f}"
+        body = (
+            f"Dear {tenant.first_name},\n\n"
+            f"Your rent payment of TZS {payment.amount:,.0f} for {payment.property.name} "
+            f"is {days_overdue} day(s) overdue (was due {payment.due_date.strftime('%d %b %Y')}).\n\n"
+            f"Reference: {payment.reference_number or 'N/A'}\n\n"
+            f"Please settle this as soon as possible.\n\n"
+            f"— Maghettoni"
+        )
+    else:
+        subject = f"Payment Reminder — TZS {payment.amount:,.0f} due {payment.due_date.strftime('%d %b %Y')}"
+        body = (
+            f"Dear {tenant.first_name},\n\n"
+            f"This is a reminder that your rent payment of TZS {payment.amount:,.0f} "
+            f"for {payment.property.name} is due on {payment.due_date.strftime('%d %b %Y')}.\n\n"
+            f"Reference: {payment.reference_number or 'N/A'}\n\n"
+            f"Please ensure payment is made on time.\n\n"
+            f"— Maghettoni"
+        )
+    try:
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [tenant.email], fail_silently=False)
+        return True
+    except Exception as e:
+        logger.error(f"Payment reminder email failed for tenant {tenant.id}: {e}")
+        return False
+
+
 def send_maintenance_update(tenant, req) -> bool:
     """Notify a tenant about their maintenance request status."""
     status_labels = {

@@ -43,7 +43,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div
-              class="w-12 h-12 bg-gradient-to-br {% if is_edit %}from-yellow-500 to-yellow-600{% else %}from-green-500 to-green-600{% endif %} rounded-xl flex items-center justify-center shadow-lg"
+              class="w-12 h-12 bg-gradient-to-br {% if is_edit %}from-brown-500 to-brown-600{% else %}from-green-500 to-green-600{% endif %} rounded-xl flex items-center justify-center shadow-lg"
             >
               <i class="fas fa-door-open text-white text-xl"></i>
             </div>
@@ -71,7 +71,9 @@
       </div>
 
       <!-- Form Content -->
-      <form method="POST" class="p-8">
+      <form method="POST" class="p-8"
+            data-property-type="{{ property.property_type }}"
+            data-is-business="{% if property.property_type in property.BUSINESS_TYPES %}1{% else %}0{% endif %}">
         {% csrf_token %} {% if form.non_field_errors %}
         <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
           <div class="flex items-center">
@@ -92,7 +94,7 @@
         <div class="mb-10">
           <div class="flex items-center mb-6">
             <div
-              class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3"
+              class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3"
             >
               <i class="fas fa-info-circle text-white text-sm"></i>
             </div>
@@ -111,7 +113,7 @@
                 <i class="fas fa-hashtag text-brown-600 mr-1"></i>
                 Unit Number *
               </label>
-              {% render_field form.unit_number class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.unit_number.errors %}
+              {% render_field form.unit_number class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %} {% if form.unit_number.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.unit_number.errors.0 }}
@@ -134,11 +136,11 @@
               </label>
               <div class="relative">
                 <div
-                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                  class="absolute inset-y-0 right-8 pl-3 flex items-center pointer-events-none"
                 >
-                  <span class="text-gray-500">$</span>
+                  <span class="text-gray-500">TZS. </span>
                 </div>
-                {% render_field form.monthly_rent class="block w-full pl-8 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+                {% render_field form.monthly_rent class="block w-full pl-4 pr-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
               </div>
               {% if form.monthly_rent.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
@@ -155,107 +157,42 @@
           </div>
         </div>
 
-        <!-- Specifications Section -->
-        <div class="mb-10">
-          <div class="flex items-center mb-6">
-            <div
-              class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3"
-            >
-              <i class="fas fa-expand-arrows-alt text-white text-sm"></i>
+        <!-- Specs + Amenities Section -->
+        <div class="mb-10" id="amenities-section">
+          <div class="flex items-center mb-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-star text-white text-sm"></i>
             </div>
             <h4 class="text-xl font-bold text-landlord-dark font-display">
-              Specifications
+              Specs &amp; Amenities
             </h4>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Bedrooms -->
-            <div>
-              <label
-                for="{{ form.bedrooms.id_for_label }}"
-                class="block text-sm font-medium text-gray-700 mb-2"
-              >
-                <i class="fas fa-bed text-brown-600 mr-1"></i>
-                Bedrooms *
-              </label>
-              <div class="relative">
-                {% render_field form.bedrooms class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
-                <div
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-                >
-                  <span class="text-gray-500">beds</span>
-                </div>
-              </div>
-              {% if form.bedrooms.errors %}
-              <p class="mt-2 text-sm text-red-600 flex items-center">
-                <i class="fas fa-exclamation-circle mr-1"></i>
-                {{ form.bedrooms.errors.0 }}
-              </p>
-              {% endif %}
-            </div>
-
-            <!-- Bathrooms -->
-            <div>
-              <label
-                for="{{ form.bathrooms.id_for_label }}"
-                class="block text-sm font-medium text-gray-700 mb-2"
-              >
-                <i class="fas fa-bath text-brown-600 mr-1"></i>
-                Bathrooms *
-              </label>
-              <div class="relative">
-                {% render_field form.bathrooms class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
-                <div
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-                >
-                  <span class="text-gray-500">baths</span>
-                </div>
-              </div>
-              {% if form.bathrooms.errors %}
-              <p class="mt-2 text-sm text-red-600 flex items-center">
-                <i class="fas fa-exclamation-circle mr-1"></i>
-                {{ form.bathrooms.errors.0 }}
-              </p>
-              {% endif %}
-            </div>
-
-            <!-- Square Feet -->
-            <div>
-              <label
-                for="{{ form.square_feet.id_for_label }}"
-                class="block text-sm font-medium text-gray-700 mb-2"
-              >
-                <i class="fas fa-ruler-combined text-brown-600 mr-1"></i>
-                Square Feet
-              </label>
-              <div class="relative">
-                {% render_field form.square_feet class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
-                <div
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-                >
-                  <span class="text-gray-500">sqft</span>
-                </div>
-              </div>
-              {% if form.square_feet.errors %}
-              <p class="mt-2 text-sm text-red-600 flex items-center">
-                <i class="fas fa-exclamation-circle mr-1"></i>
-                {{ form.square_feet.errors.0 }}
-              </p>
-              {% endif %} {% if form.square_feet.help_text %}
-              <p class="mt-2 text-xs text-brown-500 flex items-center">
-                <i class="fas fa-info-circle mr-1"></i>
-                {{ form.square_feet.help_text }}
-              </p>
-              {% endif %}
-            </div>
+          <!-- Property type badge -->
+          <div class="mb-4 ml-11 inline-flex items-center gap-2 px-3 py-1.5 border border-gray-200 border-l-4 border-l-brown-400 bg-brown-50 text-xs text-brown-700 font-medium">
+            <i class="fas fa-tag text-brown-500"></i>
+            {{ property.get_property_type_display }}
           </div>
+
+          <!-- Specs row (bed/bath/sqft) — built by JS -->
+          <div id="amenities-specs" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5"></div>
+
+          <p class="text-xs text-gray-400 mb-3">Click to mark as available. Tap again to remove.</p>
+          <!-- Amenity chips — built by JS -->
+          <div id="amenities-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2"></div>
+
+          <!-- Hidden inputs so Django form still processes these fields -->
+          <input type="hidden" name="bedrooms"    id="spec_bedrooms"    value="{{ unit.bedrooms|default:'' }}">
+          <input type="hidden" name="bathrooms"   id="spec_bathrooms"   value="{{ unit.bathrooms|default:'' }}">
+          <input type="hidden" name="square_feet" id="spec_sqft"        value="{{ unit.square_feet|default:'' }}">
+          <input type="hidden" name="amenities"   id="id_amenities"     value="{{ existing_amenities }}">
         </div>
 
         <!-- Status & Description Section -->
         <div class="mb-10">
           <div class="flex items-center mb-6">
             <div
-              class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3"
+              class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3"
             >
               <i class="fas fa-sliders-h text-white text-sm"></i>
             </div>
@@ -264,33 +201,65 @@
             </h4>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Description -->
+          <div class="mt-6">
+            <label
+              for="{{ form.description.id_for_label }}"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              <i class="fas fa-sticky-note text-brown-600 mr-1"></i>
+              Description (Optional)
+            </label>
+            {% render_field form.description class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" rows="4" %} {% if form.description.errors %}
+            <p class="mt-2 text-sm text-red-600 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i>
+              {{ form.description.errors.0 }}
+            </p>
+            {% endif %}
+            <p class="mt-2 text-xs text-brown-500 flex items-center">
+              <i class="fas fa-lightbulb mr-1"></i>
+              Add any special features, amenities, or notes about this unit
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <!-- Occupancy Status -->
             <div>
-              <label
-                for="{{ form.is_occupied.id_for_label }}"
-                class="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="fas fa-user-check text-brown-600 mr-1"></i>
                 Occupancy Status *
               </label>
+              {% if active_tenant %}
+              {# Tenant exists — lock the field and force is_occupied = true #}
+              <input type="hidden" name="is_occupied" value="on">
+              <div class="p-4 border border-green-200 bg-green-50 rounded-xl flex items-start gap-3">
+                <div class="flex-shrink-0 w-9 h-9 bg-green-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-user text-green-600"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-green-800">
+                    {{ active_tenant.first_name }} {{ active_tenant.last_name }}
+                  </p>
+                  <p class="text-xs text-green-600 mt-0.5">
+                    Active tenant — occupancy is locked while a tenant is assigned
+                  </p>
+                  <a href="{% url 'tenant_detail' active_tenant.id %}"
+                     class="inline-flex items-center mt-2 text-xs text-green-700 font-medium hover:underline">
+                    <i class="fas fa-external-link-alt mr-1"></i>View tenant profile
+                  </a>
+                </div>
+              </div>
+              {% else %}
               <div class="p-4 border border-brown-200 rounded-xl bg-brown-50">
                 <div class="flex items-center">
                   <div class="flex items-center h-5">
                     {% render_field form.is_occupied class="h-5 w-5 text-brown-600 border-brown-300 rounded focus:ring-brown-500" %}
                   </div>
                   <div class="ml-3">
-                    <label
-                      for="{{ form.is_occupied.id_for_label }}"
-                      class="text-sm font-medium text-gray-700"
-                    >
+                    <label for="{{ form.is_occupied.id_for_label }}" class="text-sm font-medium text-gray-700">
                       Mark as occupied
                     </label>
-                    <p class="text-xs text-brown-500 mt-1">
-                      {% if is_edit and unit.is_occupied %} Currently occupied
-                      by a tenant {% else %} Uncheck to mark as available for
-                      rent {% endif %}
-                    </p>
+                    <p class="text-xs text-brown-500 mt-1">Uncheck to mark as available for rent</p>
                   </div>
                 </div>
               </div>
@@ -299,6 +268,7 @@
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.is_occupied.errors.0 }}
               </p>
+              {% endif %}
               {% endif %}
             </div>
 
@@ -318,27 +288,6 @@
               </div>
               <input type="hidden" name="property" value="{{ property.id }}" />
             </div>
-          </div>
-
-          <!-- Description -->
-          <div class="mt-6">
-            <label
-              for="{{ form.description.id_for_label }}"
-              class="block text-sm font-medium text-gray-700 mb-2"
-            >
-              <i class="fas fa-sticky-note text-brown-600 mr-1"></i>
-              Description (Optional)
-            </label>
-            {% render_field form.description class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" rows="4" %} {% if form.description.errors %}
-            <p class="mt-2 text-sm text-red-600 flex items-center">
-              <i class="fas fa-exclamation-circle mr-1"></i>
-              {{ form.description.errors.0 }}
-            </p>
-            {% endif %}
-            <p class="mt-2 text-xs text-brown-500 flex items-center">
-              <i class="fas fa-lightbulb mr-1"></i>
-              Add any special features, amenities, or notes about this unit
-            </p>
           </div>
         </div>
 
@@ -370,7 +319,7 @@
               class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun"
             >
               <i class="fas fa-save mr-2"></i>
-              {% if is_edit %}Update Unit 🚀{% else %}Create Unit 🎉{% endif %}
+              {% if is_edit %}Update Unit{% else %}Create Unit{% endif %}
             </button>
           </div>
         </div>
@@ -441,11 +390,11 @@
               Common Unit Types:
             </h4>
             <div class="space-y-3">
-              <div class="flex items-center p-3 bg-blue-50 rounded-xl">
+              <div class="flex items-center p-3 bg-brown-50 rounded-xl">
                 <div
-                  class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3"
+                  class="w-8 h-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3"
                 >
-                  <span class="text-xs font-bold text-blue-600">S</span>
+                  <span class="text-xs font-bold text-brown-600">S</span>
                 </div>
                 <span class="text-sm font-medium text-gray-900"
                   >Studio (0 bed, 1 bath)</span
@@ -461,11 +410,11 @@
                   >1 Bedroom (1 bed, 1 bath)</span
                 >
               </div>
-              <div class="flex items-center p-3 bg-yellow-50 rounded-xl">
+              <div class="flex items-center p-3 bg-brown-50 rounded-xl">
                 <div
-                  class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3"
+                  class="w-8 h-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3"
                 >
-                  <span class="text-xs font-bold text-yellow-600">2B</span>
+                  <span class="text-xs font-bold text-brown-600">2B</span>
                 </div>
                 <span class="text-sm font-medium text-gray-900"
                   >2 Bedroom (2 bed, 1-2 bath)</span
@@ -478,8 +427,10 @@
     </div>
   </div>
 </div>
-{% endblock %} {% block extra_head %}
+{% endblock %}
+{% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/property-unit-edit.css' %}" />
-{% endblock %} {% block extra_js %}
-<script src="{% static 'js/property-unit-edit.js' %}" defer></script>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/property-unit-edit.js' %}"></script>
 {% endblock %}

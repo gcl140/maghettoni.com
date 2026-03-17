@@ -7,17 +7,14 @@ from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Propert
 class PropertyForm(forms.ModelForm):
     class Meta:
         model = Property
-        fields = ['name', 'property_type', 'address', 'units', 'image']
-        widgets = {
-            'address': forms.Textarea(attrs={'rows': 3}),
-        }
+        fields = ['name', 'property_type', 'units']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Add CSS classes to form fields
         for field in self.fields:
             self.fields[field].widget.attrs.update({
-                'class': 'form-control'
+                'class': 'form-input'
             })
 
 
@@ -32,17 +29,17 @@ class PropertyDocumentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({
-            'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500',
+            'class': 'w-full px-3 py-2 border border-gray-200 border-l-4 border-l-brown-400 focus:outline-none focus:ring-0 focus:border-l-brown-600',
             'placeholder': 'Lease agreement, title deed, utility bill...',
         })
         self.fields['file'].widget.attrs.update({
-            'class': 'w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-brown-100 file:text-brown-700 hover:file:bg-brown-200',
+            'class': 'w-full text-gray-700 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:file:font-medium file:bg-brown-100 file:text-brown-700 hover:file:bg-brown-200',
             'accept': '.pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.txt',
         })
         self.fields['notes'].widget.attrs.update({
-            'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500',
+            'class': 'w-full px-3 py-2 border border-gray-200 border-l-4 border-l-brown-400 focus:outline-none focus:ring-0 focus:border-l-brown-600',
             'placeholder': 'Optional notes for this version...',
-            'rows': 2,
+            'rows': 1,
         })
 
     def clean_file(self):
@@ -89,11 +86,15 @@ class UnitForm(forms.ModelForm):
         self.fields['monthly_rent'].widget.attrs['placeholder'] = '0.00'
         self.fields['description'].widget.attrs['placeholder'] = 'Any special features or notes...'
         
+        # Bedrooms/bathrooms are residential-only — not required (JS hides them for business)
+        self.fields['bedrooms'].required = False
+        self.fields['bathrooms'].required = False
+
         # Add help text
         self.fields['bedrooms'].help_text = 'Number of bedrooms'
         self.fields['bathrooms'].help_text = 'Number of bathrooms'
         self.fields['square_feet'].help_text = 'Optional - for record keeping'
-        self.fields['monthly_rent'].help_text = 'Monthly rent amount in USD'
+        self.fields['monthly_rent'].help_text = 'Monthly rent amount in TZS'
     
     def clean_unit_number(self):
         unit_number = self.cleaned_data['unit_number']

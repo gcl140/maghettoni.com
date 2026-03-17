@@ -184,7 +184,7 @@
             <span class="sb-label text-sm font-medium flex-1">Maintenance</span>
             {% if pending_maintenance_count > 0 %}
             <span
-              class="sb-badge text-xs bg-amber-500 text-white px-1.5 py-0.5 rounded-full leading-none"
+              class="sb-badge text-xs bg-brown-600 text-white px-1.5 py-0.5 rounded-full leading-none"
               >{{ pending_maintenance_count }}</span
             >
             {% endif %}
@@ -350,19 +350,11 @@
                     class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition"
                   >
                     <i
-                      class="fas fa-money-bill-wave text-blue-600 w-4 text-center"
+                      class="fas fa-money-bill-wave text-brown-600 w-4 text-center"
                     ></i>
                     Record Payment
                   </a>
-                  <div class="border-t border-gray-100 mt-1 pt-1">
-                    <a
-                      href="{% url 'maintenance_request_create' %}"
-                      class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition"
-                    >
-                      <i class="fas fa-tools text-red-600 w-4 text-center"></i>
-                      New Issue
-                    </a>
-                  </div>
+
                 </div>
               </div>
 
@@ -508,7 +500,7 @@
                 <i class="fas fa-tools text-lg"></i>
                 {% if pending_maintenance_count > 0 %}
                 <span
-                  class="absolute -top-1 -right-1 w-2 h-2 bg-amber-500 rounded-full"
+                  class="absolute -top-1 -right-1 w-2 h-2 bg-brown-600 rounded-full"
                 ></span>
                 {% endif %}
               </div>

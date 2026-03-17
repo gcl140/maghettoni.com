@@ -21,6 +21,22 @@ input[type="radio"]:checked+div {
     border-color: #22c55e !important;
 }
 
+/* Base form input style */
+.form-input {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid #8b5e52;
+    border-radius: 0;
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #111827;
+    transition: border-color 0.15s;
+    outline: none;
+}
+
 /* Hover effects for select options */
 .form-input option:hover {
     background-color: #f2e8e5;
@@ -29,8 +45,9 @@ input[type="radio"]:checked+div {
 /* Focus styles */
 .form-input:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(191, 160, 148, 0.1);
-    border-color: #a18072;
+    box-shadow: none;
+    border-color: #e5e7eb;
+    border-left-color: #6b3d2e;
 }
 
 /* Transition for radio button groups */

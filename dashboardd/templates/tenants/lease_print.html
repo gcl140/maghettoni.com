@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% if lang == 'sw' %}Mkataba wa Kukaa — {% else %}Tenancy Agreement — {% endif %}{{ tenant.full_name }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Georgia, serif; font-size: 13px; color: #1a1a1a; background: #fff; padding: 40px; max-width: 800px; margin: 0 auto; }
+    .header { text-align: center; border-bottom: 2px solid #7c5c45; padding-bottom: 20px; margin-bottom: 32px; }
+    .header h1 { font-size: 22px; letter-spacing: 1px; color: #3b2512; margin-bottom: 4px; }
+    .header p { font-size: 12px; color: #666; }
+    .section { margin-bottom: 28px; }
+    .section-title { font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px; color: #7c5c45; border-bottom: 1px solid #d1c4bc; padding-bottom: 6px; margin-bottom: 14px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; }
+    .field label { font-size: 11px; color: #888; display: block; margin-bottom: 2px; }
+    .field span { font-size: 13px; color: #1a1a1a; }
+    .clause { margin-bottom: 12px; }
+    .clause strong { font-size: 12px; }
+    .clause p { font-size: 12px; color: #444; margin-top: 3px; line-height: 1.6; }
+    .signature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px; }
+    .sig-box { border-top: 1px solid #aaa; padding-top: 8px; font-size: 11px; color: #666; }
+    .no-print { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; }
+    .btn { padding: 8px 16px; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 7px; }
+    .btn-close { background: #f3f0ee; color: #3b2512; border: 1px solid #d1c4bc; }
+    .btn-print { background: #7c5c45; color: #fff; }
+    .btn-close:hover { background: #e8e0da; }
+    .btn-print:hover { background: #6b4d38; }
+    @media print {
+      .no-print { display: none; }
+      body { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="no-print">
+  <button class="btn btn-close" onclick="window.close()">
+    <i class="fas fa-times"></i>
+    {% if lang == 'sw' %}Funga{% else %}Close{% endif %}
+  </button>
+  <button class="btn btn-print" onclick="window.print()">
+    <i class="fas fa-print"></i>
+    {% if lang == 'sw' %}Chapisha / Hifadhi PDF{% else %}Print / Save PDF{% endif %}
+  </button>
+</div>
+
+<div class="header">
+  <h1>{% if lang == 'sw' %}MKATABA WA KUKAA{% else %}TENANCY AGREEMENT{% endif %}</h1>
+  <p>Maghettoni Property Management &nbsp;|&nbsp; Ref: TEN-{{ tenant.id|stringformat:"04d" }}</p>
+</div>
+
+<div class="section">
+  <div class="section-title">{% if lang == 'sw' %}Taarifa za Mpangaji{% else %}Tenant Information{% endif %}</div>
+  <div class="grid">
+    <div class="field"><label>{% if lang == 'sw' %}Jina Kamili{% else %}Full Name{% endif %}</label><span>{{ tenant.full_name }}</span></div>
+    <div class="field"><label>{% if lang == 'sw' %}Barua Pepe{% else %}Email{% endif %}</label><span>{{ tenant.email }}</span></div>
+    <div class="field"><label>{% if lang == 'sw' %}Simu{% else %}Phone{% endif %}</label><span>{{ tenant.phone|default:"—" }}</span></div>
+    <div class="field"><label>{% if lang == 'sw' %}Mawasiliano ya Dharura{% else %}Emergency Contact{% endif %}</label><span>{{ tenant.emergency_contact|default:"—" }}{% if tenant.emergency_phone %} &nbsp;({{ tenant.emergency_phone }}){% endif %}</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">{% if lang == 'sw' %}Mali na Chumba{% else %}Property &amp; Unit{% endif %}</div>
+  <div class="grid">
+    <div class="field"><label>{% if lang == 'sw' %}Mali{% else %}Property{% endif %}</label><span>{{ tenant.property.name }}</span></div>
+    <div class="field"><label>{% if lang == 'sw' %}Anwani{% else %}Address{% endif %}</label><span>{{ tenant.property.address }}</span></div>
+    <div class="field"><label>{% if lang == 'sw' %}Nambari ya Chumba{% else %}Unit Number{% endif %}</label><span>{{ tenant.unit.unit_number|default:"—" }}</span></div>
+    <div class="field"><label>{% if lang == 'sw' %}Kodi ya Kila Mwezi{% else %}Monthly Rent{% endif %}</label><span>{% if tenant.unit %}TZS {{ tenant.unit.monthly_rent|floatformat:2 }}{% else %}—{% endif %}</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">{% if lang == 'sw' %}Muda wa Kukaa{% else %}Tenancy Period{% endif %}</div>
+  <div class="grid">
+    <div class="field"><label>{% if lang == 'sw' %}Tarehe ya Kuingia{% else %}Move-in Date{% endif %}</label><span>{{ tenant.move_in_date|date:"F j, Y"|default:"—" }}</span></div>
+    <div class="field"><label>{% if lang == 'sw' %}Tarehe ya Kutoka{% else %}Move-out Date{% endif %}</label><span>{{ tenant.move_out_date|date:"F j, Y"|default:"{% if lang == 'sw' %}Wazi{% else %}Open-ended{% endif %}" }}</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">{% if lang == 'sw' %}Masharti na Hali{% else %}Terms &amp; Conditions{% endif %}</div>
+  {% if lang == 'sw' %}
+  <div class="clause"><strong>1. Malipo ya Kodi</strong><p>Kodi hulipwa siku ya kwanza ya kila mwezi. Malipo ya kuchelewa yanaweza kusababisha faini kama ilivyokubaliwa na mwenye nyumba.</p></div>
+  <div class="clause"><strong>2. Utunzaji wa Nyumba</strong><p>Mpangaji anakubali kutunza nyumba katika hali nzuri na safi, na kuripoti uharibifu wowote haraka iwezekanavyo.</p></div>
+  <div class="clause"><strong>3. Mabadiliko</strong><p>Hakuna mabadiliko wala nyongeza yoyote inayoruhusiwa kufanywa bila idhini ya maandishi kutoka kwa mwenye nyumba.</p></div>
+  <div class="clause"><strong>4. Kusimamisha Mkataba</strong><p>Upande wowote unaweza kusimamisha mkataba huu kwa taarifa ya maandishi ya siku 30 isipokuwa pande zote zimekubaliana vinginevyo.</p></div>
+  <div class="clause"><strong>5. Kukodisha kwa Mtu Mwingine</strong><p>Mpangaji haruhusiwi kukodisha nyumba au sehemu yake kwa mtu mwingine bila idhini ya maandishi ya mwenye nyumba.</p></div>
+  {% else %}
+  <div class="clause"><strong>1. Rent Payment</strong><p>Rent is due on the 1st of each month. Late payments may attract a penalty charge as agreed with the landlord.</p></div>
+  <div class="clause"><strong>2. Care of Premises</strong><p>The tenant agrees to maintain the premises in a clean and habitable condition and to report any damage promptly.</p></div>
+  <div class="clause"><strong>3. Alterations</strong><p>No alterations or additions may be made to the premises without prior written consent from the landlord.</p></div>
+  <div class="clause"><strong>4. Termination</strong><p>Either party may terminate this agreement with 30 days' written notice unless otherwise agreed in writing.</p></div>
+  <div class="clause"><strong>5. Subletting</strong><p>The tenant may not sublet the premises or any part thereof without the prior written consent of the landlord.</p></div>
+  {% endif %}
+</div>
+
+{% if tenant.notes %}
+<div class="section">
+  <div class="section-title">{% if lang == 'sw' %}Masharti Maalum{% else %}Special Conditions{% endif %}</div>
+  <p style="font-size:12px;color:#444;line-height:1.7;">{{ tenant.notes }}</p>
+</div>
+{% endif %}
+
+<div class="section">
+  <div class="section-title">{% if lang == 'sw' %}Saini{% else %}Signatures{% endif %}</div>
+  <div class="signature-row">
+    <div class="sig-box">
+      <p>{% if lang == 'sw' %}Mwenye Nyumba{% else %}Landlord{% endif %}: {{ tenant.property.owner.get_full_name|default:tenant.property.owner.username }}</p>
+      <br><br>
+      <p>{% if lang == 'sw' %}Saini &amp; Tarehe{% else %}Signature &amp; Date{% endif %}: ________________________</p>
+    </div>
+    <div class="sig-box">
+      <p>{% if lang == 'sw' %}Mpangaji{% else %}Tenant{% endif %}: {{ tenant.full_name }}</p>
+      <br><br>
+      <p>{% if lang == 'sw' %}Saini &amp; Tarehe{% else %}Signature &amp; Date{% endif %}: ________________________</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

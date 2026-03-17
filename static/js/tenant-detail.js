@@ -1,18 +1,14 @@
 (function () {
-  function navigateWithConfirm(message, url) {
-    if (url && window.confirm(message)) {
-      window.location.href = url;
-    }
-  }
-
   function wireButton(buttonId, message) {
     var button = document.getElementById(buttonId);
-    if (!button) {
-      return;
-    }
+    if (!button) return;
 
     button.addEventListener("click", function () {
-      navigateWithConfirm(message, button.dataset.url);
+      var url = button.dataset.url;
+      if (!url) return;
+      showConfirm(message, function () {
+        window.location.href = url;
+      });
     });
   }
 

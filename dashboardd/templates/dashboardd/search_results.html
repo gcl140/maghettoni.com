@@ -30,7 +30,7 @@
                 <div class="text-sm text-gray-600">Mali</div>
             </div>
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
-                <div class="text-2xl font-bold text-blue-700 mb-1">{{ special_results.total_tenants }}</div>
+                <div class="text-2xl font-bold text-brown-700 mb-1">{{ special_results.total_tenants }}</div>
                 <div class="text-sm text-gray-600">Wakazi</div>
             </div>
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
@@ -38,11 +38,11 @@
                 <div class="text-sm text-gray-600">Malipo</div>
             </div>
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
-                <div class="text-2xl font-bold text-yellow-700 mb-1">{{ special_results.total_maintenance }}</div>
+                <div class="text-2xl font-bold text-brown-700 mb-1">{{ special_results.total_maintenance }}</div>
                 <div class="text-sm text-gray-600">Matengenezo</div>
             </div>
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
-                <div class="text-2xl font-bold text-purple-700 mb-1">{{ special_results.total_units }}</div>
+                <div class="text-2xl font-bold text-brown-700 mb-1">{{ special_results.total_units }}</div>
                 <div class="text-sm text-gray-600">Vyumba</div>
             </div>
         </div>
@@ -113,8 +113,8 @@
         <section class="bg-white rounded-2xl p-6 border border-brown-200 shadow-sm">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
-                        <i class="fas fa-users text-blue-600"></i>
+                    <div class="w-10 h-10 bg-brown-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-users text-brown-600"></i>
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-gray-900">Wakazi</h2>
@@ -136,19 +136,19 @@
                     </thead>
                     <tbody>
                         {% for tenant in tenants %}
-                        <tr class="border-b border-gray-100 hover:bg-blue-50 cursor-pointer" onclick="window.location='{% url 'tenant_detail' tenant.id %}'">
+                        <tr class="border-b border-gray-100 hover:bg-brown-50 cursor-pointer" onclick="window.location='{% url 'tenant_detail' tenant.id %}'">
                             <td class="py-3">
                                 <div class="flex items-center">
                                     {% if tenant.profile_picture %}
                                     <img src="{{ tenant.profile_picture.url }}"
                                          class="w-8 h-8 rounded-full mr-3">
                                     {% else %}
-                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-user text-blue-600 text-sm"></i>
+                                    <div class="w-8 h-8 bg-brown-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-user text-brown-600 text-sm"></i>
                                     </div>
                                     {% endif %}
                                     <div>
-                                        <p class="font-medium text-gray-900 hover:text-blue-700">{{ tenant.full_name }}</p>
+                                        <p class="font-medium text-gray-900 hover:text-brown-700">{{ tenant.full_name }}</p>
                                         <p class="text-xs text-gray-500">{{ tenant.email }}</p>
                                     </div>
                                 </div>
@@ -244,8 +244,8 @@
         <section class="bg-white rounded-2xl p-6 border border-brown-200 shadow-sm">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center mr-3">
-                        <i class="fas fa-tools text-yellow-600"></i>
+                    <div class="w-10 h-10 bg-brown-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-tools text-brown-600"></i>
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-gray-900">Matengenezo</h2>
@@ -318,8 +318,8 @@
         <section class="bg-white rounded-2xl p-6 border border-brown-200 shadow-sm">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
-                        <i class="fas fa-door-open text-purple-600"></i>
+                    <div class="w-10 h-10 bg-brown-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-door-open text-brown-600"></i>
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-gray-900">Vyumba</h2>
@@ -330,7 +330,7 @@
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {% for unit in units %}
-                <a href="{% url 'property_units' unit.property.id %}" class="block border border-gray-200 rounded-xl p-4 hover:border-purple-300 hover-lift">
+                <a href="{% url 'property_units' unit.property.id %}" class="block border border-gray-200 rounded-xl p-4 hover:border-brown-300 hover-lift">
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="font-semibold text-gray-900">Unit {{ unit.unit_number }}</h3>
                         <span class="text-xs px-2 py-1 rounded-full
@@ -354,7 +354,7 @@
                     </div>
                     
                     <div class="pt-3 border-t border-gray-100">
-                        <p class="text-lg font-bold text-purple-700">TZS {{ unit.monthly_rent|floatformat:0 }}</p>
+                        <p class="text-lg font-bold text-brown-700">TZS {{ unit.monthly_rent|floatformat:0 }}</p>
                         <p class="text-xs text-gray-500">Kodi ya kila mwezi</p>
                     </div>
                 </a>

@@ -7,14 +7,16 @@
     color: #111827;
     background-color: #f9fafb;
     border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    border-left: 4px solid #8b5e52;
+    border-radius: 0;
+    transition: border-color 0.15s;
     outline: none;
 }
 
 .input-field:focus {
-    border-color: #d97706;
-    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+    border-color: #e5e7eb;
+    border-left-color: #6b3d2e;
+    box-shadow: none;
     background-color: #ffffff;
 }
 

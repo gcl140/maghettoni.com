@@ -32,8 +32,8 @@
     <h2 class="text-xl font-bold text-gray-900 mb-2">Failed</h2>
     <p class="text-sm text-gray-500 mb-6">Payment failed. Please try again.</p>
     {% else %}
-    <div class="w-20 h-20 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center mb-5">
-      <i class="fas fa-spinner fa-spin text-4xl text-blue-400"></i>
+    <div class="w-20 h-20 mx-auto rounded-full bg-brown-500/20 flex items-center justify-center mb-5">
+      <i class="fas fa-spinner fa-spin text-4xl text-brown-400"></i>
     </div>
     <h2 class="text-xl font-bold text-gray-900 mb-2">Processing...</h2>
     <p class="text-sm text-gray-500 mb-6">Your payment is being processed.</p>
@@ -66,7 +66,7 @@
     </div>
 
     {% if submission.payment %}
-    <div class="mb-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-300 flex items-start gap-2">
+    <div class="mb-4 p-3 bg-brown-500/10 border border-brown-500/20 rounded-xl text-xs text-brown-400 flex items-start gap-2">
       <i class="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
       <span>
         {% if submission.payment.status == 'completed' %}

@@ -36,9 +36,9 @@
   <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
     <div class="flex items-center">
       <div
-        class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center"
+        class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-lg flex items-center justify-center"
       >
-        <i class="fas fa-users text-blue-600 text-xl"></i>
+        <i class="fas fa-users text-brown-600 text-xl"></i>
       </div>
       <div class="ml-4">
         <h4 class="text-sm font-medium text-gray-600">Total Tenants</h4>
@@ -170,7 +170,7 @@
           <td class="px-6 py-4">
             <div class="flex items-start">
               <div
-                class="flex-shrink-0 h-12 w-12 {% if tenant.status == 'active' %}bg-green-100{% elif tenant.status == 'pending' %}bg-yellow-100{% else %}bg-gray-100{% endif %} rounded-lg flex items-center justify-center"
+                class="flex-shrink-0 h-12 w-12 {% if tenant.status == 'active' %}bg-green-100{% elif tenant.status == 'pending' %}bg-brown-100{% else %}bg-gray-100{% endif %} rounded-lg flex items-center justify-center"
               >
                 {% if tenant.profile_picture %}
                 <img
@@ -180,7 +180,7 @@
                 />
                 {% else %}
                 <i
-                  class="fas fa-user text-{% if tenant.status == 'active' %}green{% elif tenant.status == 'pending' %}yellow{% else %}gray{% endif %}-600 text-xl"
+                  class="fas fa-user text-{% if tenant.status == 'active' %}green{% elif tenant.status == 'pending' %}brown{% else %}gray{% endif %}-600 text-xl"
                 ></i>
                 {% endif %}
               </div>
@@ -238,7 +238,7 @@
                 <i class="fas fa-envelope text-brown-600 mr-2"></i>
                 <a
                   href="mailto:{{ tenant.email }}"
-                  class="text-blue-600 hover:text-blue-800 hover:underline"
+                  class="text-brown-600 hover:text-brown-800 hover:underline"
                 >
                   {{ tenant.email|truncatechars:20 }}
                 </a>
@@ -252,7 +252,7 @@
               {% if tenant.unit %}
               <div class="text-sm font-medium text-gray-900">
                 <i class="fas fa-money-bill-wave text-green-600 mr-2"></i>
-                ${{ tenant.unit.monthly_rent }}/month
+                TZS. {{ tenant.unit.monthly_rent }}/month
               </div>
               {% endif %}
             </div>
@@ -269,7 +269,7 @@
                 </span>
                 {% elif tenant.status == 'pending' %}
                 <span
-                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-brown-100 text-brown-700"
                 >
                   <i class="fas fa-clock mr-1"></i>
                   Pending
@@ -327,7 +327,7 @@
                       <a
                         href="{% url 'tenant_deactivate' tenant.id %}"
                         onclick="return confirm('Deactivate {{ tenant.full_name }}?')"
-                        class="flex items-center px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-50"
+                        class="flex items-center px-4 py-2 text-sm text-brown-600 hover:bg-brown-50"
                       >
                         <i class="fas fa-ban mr-2"></i>
                         Deactivate

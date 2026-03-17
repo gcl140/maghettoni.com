@@ -13,6 +13,7 @@ urlpatterns = [
     path('properties/<int:property_id>/', views.property_detail, name='property_detail'),
     path('properties/<int:property_id>/documents/<int:document_id>/delete/', views.property_document_delete, name='property_document_delete'),
     path('properties/delete/<int:property_id>/', views.property_delete, name='property_delete'),
+    path('properties/images/<int:image_id>/delete/', views.delete_property_image, name='delete_property_image'),
     path('properties/units/<int:property_id>/', views.property_units, name='property_units'),
 
     path('properties/<int:property_id>/units/', views.property_units, name='property_units'),
@@ -36,6 +37,8 @@ urlpatterns = [
     path('tenants/<int:tenant_id>/activate/', views.tenant_activate, name='tenant_activate'),
     path('tenants/<int:tenant_id>/deactivate/', views.tenant_deactivate, name='tenant_deactivate'),
     path('tenants/<int:tenant_id>/delete/', views.tenant_delete, name='tenant_delete'),
+    path('tenants/<int:tenant_id>/resend-invite/', views.tenant_resend_invite, name='tenant_resend_invite'),
+    path('tenants/<int:tenant_id>/lease/', views.tenant_lease_print, name='tenant_lease_print'),
     
     # Payments URLs
     path('payments/export/csv/', views.payments_export_csv, name='payments_export_csv'),

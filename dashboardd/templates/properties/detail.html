@@ -51,9 +51,9 @@
     <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
       <div class="flex items-center gap-3">
         <div
-          class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center"
+          class="flex-shrink-0 h-10 w-10 bg-brown-100 rounded-lg flex items-center justify-center"
         >
-          <i class="fas fa-door-open text-blue-600"></i>
+          <i class="fas fa-door-open text-brown-600"></i>
         </div>
         <div>
           <p class="text-xs text-gray-500">Total Units</p>
@@ -77,9 +77,9 @@
     <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
       <div class="flex items-center gap-3">
         <div
-          class="flex-shrink-0 h-10 w-10 bg-amber-100 rounded-lg flex items-center justify-center"
+          class="flex-shrink-0 h-10 w-10 bg-brown-100 rounded-lg flex items-center justify-center"
         >
-          <i class="fas fa-bed text-amber-600"></i>
+          <i class="fas fa-bed text-brown-600"></i>
         </div>
         <div>
           <p class="text-xs text-gray-500">Vacancy Rate</p>
@@ -118,12 +118,7 @@
           <h3 class="text-base font-semibold text-gray-800">
             Property Information
           </h3>
-          <a
-            href="{% url 'property_edit' property.id %}"
-            class="text-sm text-brown-600 hover:text-brown-800 font-medium"
-          >
-            <i class="fas fa-edit mr-1"></i>Edit
-          </a>
+
         </div>
         <div class="p-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -165,25 +160,61 @@
               </div>
             </div>
           </div>
-          {% if property.image %}
+          {% if property_images or property.image %}
           <div class="mt-6">
-            <h4
-              class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3"
-            >
-              Property Image
+            <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              Photos{% if property_images %} <span class="normal-case font-normal text-gray-300 ml-1">({{ property_images|length }})</span>{% endif %}
             </h4>
-            <div class="relative h-56 rounded-lg overflow-hidden">
-              <img
-                src="{{ property.image.url }}"
-                alt="{{ property.name }}"
-                class="w-full h-full object-cover"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"
-              ></div>
+            <div class="relative h-56 overflow-hidden border border-gray-200 group" id="prop-slideshow">
+              {% if property_images %}
+                {% for img in property_images %}
+                <div class="prop-slide absolute inset-0 transition-opacity duration-300 {% if not forloop.first %}opacity-0 pointer-events-none{% endif %}">
+                  <img src="{{ img.image.url }}" alt="Photo {{ forloop.counter }}" class="w-full h-full object-cover cursor-zoom-in" onclick="openImgModal('{{ img.image.url }}')">
+                </div>
+                {% endfor %}
+              {% else %}
+                <div class="prop-slide absolute inset-0">
+                  <img src="{{ property.image.url }}" alt="{{ property.name }}" class="w-full h-full object-cover cursor-zoom-in" onclick="openImgModal('{{ property.image.url }}')">
+                </div>
+              {% endif %}
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+              {% if property_images|length > 1 %}
+              <button data-no-loading onclick="slideMove(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"><i class="fas fa-chevron-left"></i></button>
+              <button data-no-loading onclick="slideMove(1)" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs"><i class="fas fa-chevron-right"></i></button>
+              <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5" id="slide-dots">
+                {% for img in property_images %}<button data-no-loading onclick="goSlide({{ forloop.counter0 }})" class="slide-dot w-2 h-2 {% if forloop.first %}bg-white{% else %}bg-white/40{% endif %} transition-colors"></button>{% endfor %}
+              </div>
+              <span class="absolute top-2 right-2 text-xs bg-black/50 text-white px-2 py-0.5" id="slide-counter">1 / {{ property_images|length }}</span>
+              {% endif %}
             </div>
+            <script>
+            (function(){
+              var slides=document.querySelectorAll('.prop-slide'),dots=document.querySelectorAll('.slide-dot'),counter=document.getElementById('slide-counter'),cur=0;
+              if(slides.length<=1)return;
+              function show(n){
+                slides[cur].classList.add('opacity-0','pointer-events-none');
+                if(dots[cur])dots[cur].className=dots[cur].className.replace('bg-white','bg-white/40');
+                cur=(n+slides.length)%slides.length;
+                slides[cur].classList.remove('opacity-0','pointer-events-none');
+                if(dots[cur])dots[cur].className=dots[cur].className.replace('bg-white/40','bg-white');
+                if(counter)counter.textContent=(cur+1)+' / '+slides.length;
+              }
+              window.slideMove=function(d){show(cur+d);};
+              window.goSlide=function(n){show(n);};
+            })();
+            function openImgModal(src){
+              document.getElementById('img-fullscreen-src').src=src;
+              document.getElementById('img-fullscreen-modal').style.display='flex';
+            }
+            </script>
           </div>
           {% endif %}
+          <!-- Fullscreen modal — appended to <body> on load to escape stacking context -->
+          <div id="img-fullscreen-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.88);align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+            <img id="img-fullscreen-src" src="" alt="" style="max-width:92vw;max-height:90vh;object-fit:contain;">
+            <button data-no-loading onclick="document.getElementById('img-fullscreen-modal').style.display='none'" style="position:absolute;top:16px;right:20px;background:rgba(255,255,255,.12);border:none;color:#fff;width:36px;height:36px;cursor:pointer;font-size:18px;">✕</button>
+          </div>
+          <script>document.body.appendChild(document.getElementById('img-fullscreen-modal'));</script>
         </div>
       </div>
 
@@ -278,7 +309,7 @@
                   </span>
                   {% else %}
                   <span
-                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700"
+                    class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brown-100 text-brown-700"
                   >
                     <i class="fas fa-bed mr-1 text-[10px]"></i>Vacant
                   </span>
@@ -435,7 +466,7 @@
                   {{ payment.payment_date|date:"M d" }}
                 </p>
                 <span
-                  class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {% if payment.status == 'completed' or payment.status == 'imekamilika' %}bg-green-100 text-green-700 {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-700 {% else %}bg-red-100 text-red-700{% endif %}"
+                  class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {% if payment.status == 'completed' or payment.status == 'imekamilika' %}bg-green-100 text-green-700 {% elif payment.status == 'pending' %}bg-brown-100 text-brown-700 {% else %}bg-red-100 text-red-700{% endif %}"
                 >
                   {{ payment.get_status_display }}
                 </span>
@@ -480,14 +511,14 @@
                   {{ req.title }}
                 </p>
                 <span
-                  class="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {% if req.status == 'pending' %}bg-yellow-100 text-yellow-700 {% elif req.status == 'in_progress' %}bg-blue-100 text-blue-700 {% elif req.status == 'completed' %}bg-green-100 text-green-700 {% else %}bg-gray-100 text-gray-700{% endif %}"
+                  class="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {% if req.status == 'pending' %}bg-brown-100 text-brown-700 {% elif req.status == 'in_progress' %}bg-brown-100 text-brown-700 {% elif req.status == 'completed' %}bg-green-100 text-green-700 {% else %}bg-gray-100 text-gray-700{% endif %}"
                 >
                   {{ req.get_status_display }}
                 </span>
               </div>
               <p class="text-xs text-gray-400">
-                Unit {{ req.unit.unit_number }} &bull; {{
-                req.reported_date|date:"M d" }}
+                Unit {{ req.unit.unit_number }} &bull; 
+                {{ req.reported_date|date:"M d" }}
               </p>
             </div>
             {% endfor %}
@@ -517,9 +548,9 @@
         <div class="p-4 grid grid-cols-2 gap-3">
           <a
             href="{% url 'property_units' property.id %}"
-            class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+            class="flex flex-col items-center justify-center p-4 bg-brown-50 rounded-lg hover:bg-brown-100 transition-colors"
           >
-            <i class="fas fa-door-open text-blue-600 text-lg mb-1.5"></i>
+            <i class="fas fa-door-open text-brown-600 text-lg mb-1.5"></i>
             <span class="text-xs font-medium text-gray-800 text-center"
               >Manage Units</span
             >
@@ -536,19 +567,19 @@
             >
           </a>
           <a
-            href="{% url 'maintenance_request_create' %}"
-            class="flex flex-col items-center justify-center p-4 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors"
+            href="{% url 'maintenance_requests' %}"
+            class="flex flex-col items-center justify-center p-4 bg-brown-50 rounded-lg hover:bg-brown-100 transition-colors"
           >
-            <i class="fas fa-tools text-amber-600 text-lg mb-1.5"></i>
+            <i class="fas fa-tools text-brown-600 text-lg mb-1.5"></i>
             <span class="text-xs font-medium text-gray-800 text-center"
-              >Report Issue</span
+              >View Issues</span
             >
           </a>
           <a
             href="{% url 'payments_list' %}"
-            class="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+            class="flex flex-col items-center justify-center p-4 bg-brown-50 rounded-lg hover:bg-brown-100 transition-colors"
           >
-            <i class="fas fa-chart-bar text-purple-600 text-lg mb-1.5"></i>
+            <i class="fas fa-chart-bar text-brown-600 text-lg mb-1.5"></i>
             <span class="text-xs font-medium text-gray-800 text-center"
               >View Reports</span
             >
@@ -574,7 +605,7 @@
       <!-- Search/Filter -->
       <form
         method="GET"
-        class="flex flex-col sm:flex-row gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg"
+        class="flex flex-col sm:flex-row gap-3"
       >
         <div class="flex-1">
           <input
@@ -583,14 +614,14 @@
             type="text"
             value="{{ doc_search }}"
             placeholder="Search by title, notes, or filename..."
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500"
+            class="w-full px-3 py-2 border border-gray-200 border-l-4 border-l-brown-400 text-sm focus:outline-none focus:ring-0 focus:border-l-brown-600"
           />
         </div>
         <div class="sm:w-40">
           <select
             id="doc_type"
             name="doc_type"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brown-500"
+            class="w-full px-3 py-2 border border-gray-200 border-l-4 border-l-brown-400 text-sm focus:outline-none focus:ring-0 focus:border-l-brown-600"
           >
             <option value="all" {% if doc_type == "all" %}selected{% endif %}>All types</option>
             <option value="image" {% if doc_type == "image" %}selected{% endif %}>Images</option>
@@ -721,7 +752,7 @@
                   >
                   {% elif document.document_type == 'doc' %}
                   <span
-                    class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-100 text-blue-700"
+                    class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-brown-100 text-brown-700"
                     >Document</span
                   >
                   {% else %}
@@ -736,7 +767,7 @@
                 </p>
                 {% if document.notes %}
                 <p
-                  class="text-xs text-gray-600 mt-1 bg-amber-50 border border-amber-100 rounded px-2 py-1 inline-block max-w-full truncate"
+                  class="text-xs text-gray-600 mt-1 bg-brown-50 border border-brown-100 rounded px-2 py-1 inline-block max-w-full truncate"
                 >
                   {{ document.notes }}
                 </p>
@@ -747,7 +778,7 @@
               <button
                 type="button"
                 onclick="openDocPreview('{{ document.file.url }}', '{{ document.title|escapejs }}', '{{ document.document_type }}')"
-                class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-xs font-medium"
+                class="inline-flex items-center px-3 py-1.5 bg-brown-50 text-brown-700 rounded-lg hover:bg-brown-100 text-xs font-medium"
               >
                 <i class="fas fa-eye mr-1.5"></i>Preview
               </button>
@@ -892,11 +923,11 @@
     >
       <div class="flex items-center gap-3 min-w-0">
         <div
-          class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center"
+          class="flex-shrink-0 w-8 h-8 bg-brown-100 rounded-lg flex items-center justify-center"
         >
           <i
             id="doc-preview-icon"
-            class="fas fa-file text-blue-600 text-sm"
+            class="fas fa-file text-brown-600 text-sm"
           ></i>
         </div>
         <p

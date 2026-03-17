@@ -4,6 +4,7 @@
     ? document.querySelector("select[name=payment_method]")
     : null;
   var phoneField = document.getElementById("phone-field");
+  var cashCaution = document.getElementById("cash-caution");
 
   function syncMethod() {
     var checked = document.querySelector("#method-cards input:checked");
@@ -18,6 +19,11 @@
 
     if (phoneField) {
       phoneField.style.display = value === "mobile_money" ? "" : "none";
+    }
+
+    if (cashCaution) {
+      var isManual = value === "cash" || value === "cheque";
+      cashCaution.classList.toggle("hidden", !isManual);
     }
 
     radios.forEach(function (radio) {

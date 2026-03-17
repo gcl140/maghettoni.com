@@ -110,9 +110,9 @@ Rent{% endblock %} {% block page_title %}Pay Rent{% endblock %} {% block breadcr
             class="sr-only"
           />
           <div
-            class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0"
+            class="w-8 h-8 rounded-lg bg-brown-500/20 flex items-center justify-center flex-shrink-0"
           >
-            <i class="fas fa-university text-blue-400 text-sm"></i>
+            <i class="fas fa-university text-brown-400 text-sm"></i>
           </div>
           <div>
             <p class="text-sm font-medium text-gray-900">Bank Transfer</p>
@@ -180,6 +180,25 @@ Rent{% endblock %} {% block page_title %}Pay Rent{% endblock %} {% block breadcr
         >Notes <span class="text-gray-400 text-xs">(optional)</span></label
       >
       {{ form.notes }}
+    </div>
+
+    <!-- Cash/check caution (shown dynamically by JS when cash/cheque selected) -->
+    <div id="cash-caution" class="hidden mb-5 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+      <div class="flex items-start gap-2">
+        <i class="fas fa-exclamation-triangle text-amber-400 text-sm mt-0.5 flex-shrink-0"></i>
+        <div>
+          <p class="text-sm font-semibold text-amber-300 mb-1">Important — Cash/Cheque Payment</p>
+          <p class="text-sm text-gray-400 leading-relaxed">
+            If you plan to hand over cash or a cheque directly to your landlord, please submit this record
+            <strong class="text-amber-300">and then remind your landlord</strong> to confirm receipt from their end.
+            Until the landlord confirms, your payment will show as <em>pending</em>.
+          </p>
+          <p class="text-sm text-gray-500 mt-2">
+            <i class="fas fa-info-circle mr-1"></i>
+            Digital payments (M-Pesa, Bank Transfer) are confirmed automatically.
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- Security notice -->

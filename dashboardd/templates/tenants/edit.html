@@ -64,19 +64,33 @@
         </div>
       </div>
 
+      <!-- Locked banner (verified tenants) -->
+      {% if is_locked %}
+      <div class="mx-6 mt-5 p-4 bg-blue-50 border border-blue-300 rounded-xl flex items-start gap-3">
+        <i class="fas fa-lock text-blue-600 mt-0.5 flex-shrink-0"></i>
+        <div>
+          <p class="text-sm font-semibold text-blue-800">This tenant has an active portal account</p>
+          <p class="text-xs text-blue-700 mt-1 leading-relaxed">
+            All fields are read-only. You can only update the <strong>Tenant Status</strong> below.
+            To make other changes, contact the tenant directly.
+          </p>
+        </div>
+      </div>
+      {% endif %}
+
       <!-- Invite warning (new tenants only) -->
       {% if not is_edit %}
       <div
-        class="mx-6 mt-5 p-4 bg-amber-50 border border-amber-300 rounded-xl flex items-start gap-3"
+        class="mx-6 mt-5 p-4 bg-brown-50 border border-brown-300 rounded-xl flex items-start gap-3"
       >
         <i
-          class="fas fa-exclamation-triangle text-amber-600 mt-0.5 flex-shrink-0"
+          class="fas fa-exclamation-triangle text-brown-600 mt-0.5 flex-shrink-0"
         ></i>
         <div>
-          <p class="text-sm font-semibold text-amber-800">
+          <p class="text-sm font-semibold text-brown-800">
             Thibitisha Mawasiliano ya Mpangaji Kabla ya Kuendelea
           </p>
-          <p class="text-xs text-amber-700 mt-1 leading-relaxed">
+          <p class="text-xs text-brown-700 mt-1 leading-relaxed">
             Mara baada ya kuongeza mpangaji, mfumo utatuma
             <strong>mwaliko wa siri</strong> kwa barua pepe yake na maelezo ya
             kuingia kwenye portal. Hakikisha barua pepe na nambari ya simu ni
@@ -100,6 +114,7 @@
         </div>
         {% endif %}
 
+        {% if not is_locked %}
         <!-- Personal Information Section -->
         <div class="mb-10">
           <div class="flex items-center mb-6">
@@ -123,7 +138,7 @@
                 <i class="fas fa-signature text-brown-600 mr-1"></i>
                 First Name *
               </label>
-              {% render_field form.first_name class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.first_name.errors %}
+              {% render_field form.first_name class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %} {% if form.first_name.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.first_name.errors.0 }}
@@ -140,7 +155,7 @@
                 <i class="fas fa-signature text-brown-600 mr-1"></i>
                 Last Name *
               </label>
-              {% render_field form.last_name class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.last_name.errors %}
+              {% render_field form.last_name class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %} {% if form.last_name.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.last_name.errors.0 }}
@@ -173,7 +188,7 @@
                 <i class="fas fa-envelope text-brown-600 mr-1"></i>
                 Email Address *
               </label>
-              {% render_field form.email class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} 
+              {% render_field form.email class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %} 
               {% if form.email.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -191,7 +206,7 @@
                 <i class="fas fa-phone text-brown-600 mr-1"></i>
                 Phone Number *
               </label>
-              {% render_field form.phone class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} 
+              {% render_field form.phone class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %} 
               {% if form.phone.help_text %}
               <p class="mt-2 text-xs text-brown-500 flex items-center">
                 <i class="fas fa-info-circle mr-1"></i>
@@ -231,7 +246,7 @@
                 Property *
               </label>
               <div class="relative">
-                {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.property class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -256,7 +271,7 @@
                 Unit (Optional)
               </label>
               <div class="relative">
-                {% render_field form.unit class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.unit class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -300,7 +315,7 @@
                 <i class="fas fa-sign-in-alt text-brown-600 mr-1"></i>
                 Move-in Date *
               </label>
-              {% render_field form.move_in_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %} 
+              {% render_field form.move_in_date class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %} 
               {% if form.move_in_date.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -318,7 +333,7 @@
                 <i class="fas fa-sign-out-alt text-brown-600 mr-1"></i>
                 Move-out Date
               </label>
-              {% render_field form.move_out_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all optional-date" %} {% if form.move_out_date.help_text %}
+              {% render_field form.move_out_date class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all optional-date" %} {% if form.move_out_date.help_text %}
               <p class="mt-2 text-xs text-brown-500 flex items-center">
                 <i class="fas fa-info-circle mr-1"></i>
                 {{ form.move_out_date.help_text }}
@@ -356,7 +371,7 @@
                 <i class="fas fa-user-friends text-brown-600 mr-1"></i>
                 Emergency Contact
               </label>
-              {% render_field form.emergency_contact class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.emergency_contact.errors %}
+              {% render_field form.emergency_contact class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %} {% if form.emergency_contact.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.emergency_contact.errors.0 }}
@@ -373,7 +388,7 @@
                 <i class="fas fa-phone-alt text-brown-600 mr-1"></i>
                 Emergency Phone
               </label>
-              {% render_field form.emergency_phone class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %} {% if form.emergency_phone.help_text %}
+              {% render_field form.emergency_phone class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %} {% if form.emergency_phone.help_text %}
               <p class="mt-2 text-xs text-brown-500 flex items-center">
                 <i class="fas fa-info-circle mr-1"></i>
                 {{ form.emergency_phone.help_text }}
@@ -387,6 +402,20 @@
             </div>
           </div>
         </div>
+
+        {% else %}
+        <!-- Read-only summary when tenant is locked -->
+        <div class="mb-10 p-6 bg-gray-50 border border-gray-200 rounded-xl">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div><span class="font-medium text-gray-500">Name:</span> <span class="text-gray-800">{{ tenant.full_name }}</span></div>
+            <div><span class="font-medium text-gray-500">Email:</span> <span class="text-gray-800">{{ tenant.email }}</span></div>
+            <div><span class="font-medium text-gray-500">Phone:</span> <span class="text-gray-800">{{ tenant.phone|default:"—" }}</span></div>
+            <div><span class="font-medium text-gray-500">Property:</span> <span class="text-gray-800">{{ tenant.property.name }}</span></div>
+            <div><span class="font-medium text-gray-500">Unit:</span> <span class="text-gray-800">{{ tenant.unit.unit_number|default:"—" }}</span></div>
+            <div><span class="font-medium text-gray-500">Move-in:</span> <span class="text-gray-800">{{ tenant.move_in_date|default:"—" }}</span></div>
+          </div>
+        </div>
+        {% endif %}
 
         <!-- Additional Information Section -->
         <div class="mb-10">
@@ -412,7 +441,7 @@
                 Tenant Status *
               </label>
               <div class="relative">
-                {% render_field form.status class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.status class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -427,67 +456,42 @@
               {% endif %}
             </div>
 
-            <!-- Profile Picture -->
-            <div>
-              <label
-                for="{{ form.profile_picture.id_for_label }}"
-                class="block text-sm font-medium text-gray-700 mb-2"
-              >
+            <!-- Profile Picture (hidden when locked) -->
+            {% if not is_locked %}<div>
+              <label for="{{ form.profile_picture.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="fas fa-camera text-brown-600 mr-1"></i>
                 Profile Picture
               </label>
-              <div class="mt-1 flex items-center">
-                <label for="id_profile_picture" class="cursor-pointer w-full">
-                  <div
-                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-brown-300 rounded-xl hover:border-brown-500 hover:bg-brown-50 transition-all duration-300"
-                  >
-                    <i
-                      class="fas fa-cloud-upload-alt text-brown-400 text-3xl mb-2"
-                    ></i>
-                    <p class="text-sm text-brown-600 font-medium">
-                      Click to upload photo
-                    </p>
-                    <p class="text-xs text-brown-500 mt-1">
-                      JPG, PNG up to 5MB
-                    </p>
-                  </div>
-                  {% render_field form.profile_picture class="hidden" %}
-                </label>
-              </div>
+              {% render_field form.profile_picture id="id_profile_picture" class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-colors" %}
               {% if form.profile_picture.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.profile_picture.errors.0 }}
               </p>
-              {% endif %} {% if is_edit and tenant.profile_picture %}
-              <div class="mt-4">
-                <p class="text-sm font-medium text-gray-700 mb-2">
-                  Current Photo:
-                </p>
-                <div
-                  class="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-brown-200 shadow"
-                >
-                  <img
-                    src="{{ tenant.profile_picture.url }}"
-                    alt="{{ tenant.full_name }}"
-                    class="w-full h-full object-cover"
-                  />
-                  <div class="absolute top-2 right-2">
-                    <a
-                      href="{{ tenant.profile_picture.url }}"
-                      target="_blank"
-                      class="bg-black/70 text-white p-1.5 rounded-full hover:bg-black/90 transition-all"
-                    >
-                      <i class="fas fa-expand text-xs"></i>
-                    </a>
-                  </div>
+              {% endif %}
+              <div id="tenant-pic-preview-wrap" class="mt-3 {% if not is_edit or not tenant.profile_picture %}hidden{% endif %}">
+                <p class="text-xs text-gray-400 mb-1">Preview</p>
+                <div class="w-24 h-24 overflow-hidden border border-gray-200 border-l-4 border-l-brown-300">
+                  <img id="tenant-pic-preview" src="{% if is_edit and tenant.profile_picture %}{{ tenant.profile_picture.url }}{% endif %}" alt="Preview" class="w-full h-full object-cover">
                 </div>
               </div>
-              {% endif %}
-            </div>
+              <script>
+              document.getElementById('id_profile_picture').addEventListener('change', function () {
+                  if (this.files && this.files[0]) {
+                      var reader = new FileReader();
+                      reader.onload = function (e) {
+                          document.getElementById('tenant-pic-preview').src = e.target.result;
+                          document.getElementById('tenant-pic-preview-wrap').classList.remove('hidden');
+                      };
+                      reader.readAsDataURL(this.files[0]);
+                  }
+              });
+              </script>
+            </div>{% endif %}
           </div>
 
-          <!-- Notes -->
+          <!-- Notes (hidden when locked) -->
+          {% if not is_locked %}
           <div class="mt-6">
             <label
               for="{{ form.notes.id_for_label }}"
@@ -496,13 +500,14 @@
               <i class="fas fa-edit text-brown-600 mr-1"></i>
               Additional Notes
             </label>
-            {% render_field form.notes class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" placeholder="Any special notes about this tenant..." %} {% if form.notes.errors %}
+            {% render_field form.notes class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" placeholder="Any special notes about this tenant..." %} {% if form.notes.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
               {{ form.notes.errors.0 }}
             </p>
             {% endif %}
           </div>
+          {% endif %}
         </div>
 
         <!-- Form Actions -->
@@ -543,121 +548,13 @@
               class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun"
             >
               <i class="fas fa-save mr-2"></i>
-              {% if is_edit %}Update Tenant 🚀{% else %}Create Tenant 🎉{% endif %}
+              {% if is_locked %}Update Status{% elif is_edit %}Update Tenant{% else %}Create Tenant{% endif %}
             </button>
           </div>
         </div>
       </form>
     </div>
 
-    <!-- Tips & Guidelines Card -->
-    <div
-      class="mt-8 bg-white rounded-2xl shadow-lg border border-brown-200 overflow-hidden glass"
-    >
-      <div
-        class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-brown-50 to-white"
-      >
-        <div class="flex items-center">
-          <div
-            class="w-10 h-10 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-4"
-          >
-            <i class="fas fa-lightbulb text-white"></i>
-          </div>
-          <h3 class="text-xl font-bold text-landlord-dark font-display">
-            Tips & Best Practices
-          </h3>
-        </div>
-      </div>
-      <div class="p-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h4 class="text-lg font-semibold text-gray-800 mb-4">
-              For Best Results:
-            </h4>
-            <ul class="space-y-3">
-              <li class="flex items-start">
-                <i
-                  class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"
-                ></i>
-                <span class="text-sm text-gray-700"
-                  >Use complete contact information for easy communication</span
-                >
-              </li>
-              <li class="flex items-start">
-                <i
-                  class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"
-                ></i>
-                <span class="text-sm text-gray-700"
-                  >Always add emergency contact details for safety</span
-                >
-              </li>
-              <li class="flex items-start">
-                <i
-                  class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"
-                ></i>
-                <span class="text-sm text-gray-700"
-                  >Upload a clear profile picture for easy identification</span
-                >
-              </li>
-              <li class="flex items-start">
-                <i
-                  class="fas fa-check-circle text-green-500 mt-0.5 mr-3 text-lg"
-                ></i>
-                <span class="text-sm text-gray-700"
-                  >Keep move-in/out dates accurate for lease tracking</span
-                >
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-lg font-semibold text-gray-800 mb-4">
-              Quick Actions:
-            </h4>
-            <div class="space-y-3">
-              <a
-                href="#"
-                class="flex items-center p-3 bg-brown-50 rounded-xl hover:bg-brown-100 transition-colors group"
-              >
-                <div
-                  class="w-8 h-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform"
-                >
-                  <i class="fas fa-file-contract text-brown-600"></i>
-                </div>
-                <span class="text-sm font-medium text-gray-900"
-                  >Generate Lease Agreement</span
-                >
-              </a>
-              <a
-                href="#"
-                class="flex items-center p-3 bg-green-50 rounded-xl hover:bg-green-100 transition-colors group"
-              >
-                <div
-                  class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform"
-                >
-                  <i class="fas fa-envelope-open-text text-green-600"></i>
-                </div>
-                <span class="text-sm font-medium text-gray-900"
-                  >Send Welcome Email</span
-                >
-              </a>
-              <a
-                href="#"
-                class="flex items-center p-3 bg-brown-50 rounded-xl hover:bg-brown-100 transition-colors group"
-              >
-                <div
-                  class="w-8 h-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform"
-                >
-                  <i class="fas fa-qrcode text-brown-600"></i>
-                </div>
-                <span class="text-sm font-medium text-gray-900"
-                  >Create Tenant QR Code</span
-                >
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div

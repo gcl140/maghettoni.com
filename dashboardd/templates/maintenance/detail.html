@@ -66,7 +66,7 @@
                             <!-- Status -->
                             <div>
                                 <label for="id_status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                                <select name="status" id="id_status" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 bg-white">
+                                <select name="status" id="id_status" class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 bg-white">
                                     {% for val, label in form.fields.status.choices %}
                                     <option value="{{ val }}" {% if form.status.value == val %}selected{% endif %}>{{ label }}</option>
                                     {% endfor %}
@@ -76,7 +76,7 @@
                             <!-- Priority -->
                             <div>
                                 <label for="id_priority" class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                                <select name="priority" id="id_priority" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 bg-white">
+                                <select name="priority" id="id_priority" class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 bg-white">
                                     {% for val, label in form.fields.priority.choices %}
                                     <option value="{{ val }}" {% if form.priority.value == val %}selected{% endif %}>{{ label }}</option>
                                     {% endfor %}
@@ -126,7 +126,7 @@
     <div class="space-y-6">
         <!-- Property & Tenant Info -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
                 <h3 class="text-lg font-semibold text-gray-800 font-sans">Location Details</h3>
             </div>
             <div class="p-6">
@@ -165,8 +165,8 @@
                 <div>
                     <h4 class="text-sm font-medium text-gray-700 mb-2">Reported By</h4>
                     <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                        <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-blue-600"></i>
+                        <div class="flex-shrink-0 h-10 w-10 bg-brown-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-brown-600"></i>
                         </div>
                         <div class="ml-4">
                             <p class="text-sm font-medium text-gray-900">{{ request.tenant.full_name }}</p>
@@ -174,7 +174,7 @@
                         </div>
                     </div>
                     <a href="{% url 'tenant_detail' request.tenant.id %}" 
-                       class="mt-2 inline-flex items-center text-xs text-blue-600 hover:text-blue-800">
+                       class="mt-2 inline-flex items-center text-xs text-brown-600 hover:text-brown-800">
                         <i class="fas fa-external-link-alt mr-1"></i>
                         View Tenant
                     </a>
@@ -230,7 +230,7 @@
                         {% if request.status == 'completed' %}
                         <p class="text-xs text-green-600 mt-1">Paid</p>
                         {% else %}
-                        <p class="text-xs text-yellow-600 mt-1">Pending Payment</p>
+                        <p class="text-xs text-brown-600 mt-1">Pending Payment</p>
                         {% endif %}
                     </div>
                 </div>
@@ -246,8 +246,8 @@
             <div class="p-6">
                 <div class="space-y-3">
                     <a href="#" class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <div class="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-phone text-blue-600"></i>
+                        <div class="flex-shrink-0 h-8 w-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-phone text-brown-600"></i>
                         </div>
                         <span class="text-sm font-medium text-gray-900">Call Tenant</span>
                     </a>

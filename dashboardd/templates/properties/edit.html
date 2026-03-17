@@ -85,7 +85,7 @@
                             <i class="fas fa-home mr-1 text-brown-600"></i>
                             Property Name *
                         </label>
-                        {% render_field form.name id="id_name" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="e.g., Sunset Apartments" %}
+                        {% render_field form.name id="id_name" class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-colors" placeholder="e.g., Sunset Apartments" %}
                         {% if form.name.errors %}
                         <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
                         {% endif %}
@@ -98,7 +98,7 @@
                             Property Type *
                         </label>
                         <div class="relative">
-                            {% render_field form.property_type id="id_property_type" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors appearance-none bg-white" %}
+                            {% render_field form.property_type id="id_property_type" class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-colors appearance-none bg-white" %}
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                 <i class="fas fa-chevron-down"></i>
                             </div>
@@ -117,29 +117,42 @@
                     Address Information
                 </h4>
 
-                <div class="mb-4">
-                    <label for="id_address" class="block text-sm font-medium text-gray-700 mb-2">
-                        Full Address *
-                    </label>
+                <!-- Hidden inputs — JS populates these before submit -->
+                <input type="hidden" name="address_name" id="id_address_name" value="{{ property.address|default:'' }}">
+                <input type="hidden" name="address_lat" id="id_address_lat" value="{{ property.address_data.lat|default:'' }}">
+                <input type="hidden" name="address_lng" id="id_address_lng" value="{{ property.address_data.lng|default:'' }}">
+                <input type="hidden" name="address_source" id="id_address_source" value="{{ property.address_data.source|default:'' }}">
 
-                    {% render_field form.address id="addressField" rows="2" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="Click Use my location to autofill, or type manually" %}
-
-                    {% if form.address.errors %}
-                    <p class="mt-1 text-sm text-red-600">{{ form.address.errors.0 }}</p>
-                    {% endif %}
-
-                    <p class="mt-2 text-sm text-amber-600 flex items-start gap-2">
-                        <i class="fas fa-exclamation-triangle mt-0.5"></i>
-                        You must be physically present at this exact location. This address will be locked once filled.
-                    </p>
+                <!-- Current address display -->
+                <div id="address-display" class="mb-4 flex items-start gap-3 p-3 bg-brown-50 border border-gray-200 border-l-4 border-l-brown-500 {% if not property.address %}hidden{% endif %}">
+                    <i class="fas fa-map-marker-alt text-brown-600 mt-0.5 shrink-0"></i>
+                    <div class="flex-1 min-w-0">
+                        <p id="address-display-text" class="text-sm text-gray-800 font-medium break-words">{{ property.address|default:'' }}</p>
+                        <span id="address-source-badge" class="mt-1 inline-block text-[10px] bg-brown-200 text-brown-800 px-2 py-0.5 font-semibold uppercase tracking-wide {% if not property.address_data.source %}hidden{% endif %}">{{ property.address_data.source|default:'' }}</span>
+                    </div>
+                    <button type="button" data-no-loading onclick="clearAddress()" class="shrink-0 text-gray-400 hover:text-red-500 transition-colors" title="Clear address">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
 
-                <button type="button"
-                        onclick="getLocation()"
-                        class="inline-flex items-center px-4 py-2 rounded-lg bg-brown-600 text-white font-medium hover:bg-brown-700 transition">
-                    <i class="fas fa-crosshairs mr-2"></i>
-                    Use my precise location
-                </button>
+                <!-- Option prompt -->
+                <p class="text-sm font-medium text-gray-700 mb-3">
+                    <i class="fas fa-question-circle text-brown-400 mr-1"></i>
+                    Are you currently at this property's location?
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button type="button" data-no-loading onclick="fetchGPSLocation()"
+                            class="inline-flex items-center justify-center px-5 py-2.5 bg-brown-600 text-white text-sm font-medium hover:bg-brown-700 transition-colors">
+                        <i class="fas fa-crosshairs mr-2"></i>
+                        Yes — Track my precise location
+                    </button>
+                    <button type="button" data-no-loading onclick="openMapModal()"
+                            class="inline-flex items-center justify-center px-5 py-2.5 border border-brown-600 text-brown-700 text-sm font-medium hover:bg-brown-50 transition-colors">
+                        <i class="fas fa-map-marked-alt mr-2"></i>
+                        No — Pin it on a map
+                    </button>
+                </div>
+                <p class="mt-2 text-xs text-gray-400">Coordinates and address name are stored securely. The address is resolved via Google Maps.</p>
             </div>
 
 
@@ -160,7 +173,7 @@
                             Total Units *
                         </label>
                         <div class="relative">
-                            {% render_field form.units id="id_units" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-colors" placeholder="e.g., 4" %}
+                            {% render_field form.units id="id_units" class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-colors" placeholder="e.g., 4" %}
                             <div class="absolute inset-y-0 right-0 flex items-center pr-3">
                                 <span class="text-gray-500 mr-8">units</span>
                             </div>
@@ -173,40 +186,86 @@
                         </p>
                     </div>
 
-                    <!-- Image Upload -->
+                    <!-- Property Images -->
                     <div>
-                        <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-image mr-1 text-brown-600"></i>
-                            Property Image
-                        </label>
-                        {% comment %} <div class="mt-1 flex items-center"> {% endcomment %}
-                        <div class="mt-1 ">
-                            <label for="id_image" class="cursor-pointer">
-                                <div class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg hover:border-brown-500 hover:bg-brown-50 transition-colors">
-                                    <i class="fas fa-cloud-upload-alt text-gray-400 text-2xl mb-2"></i>
-                                    <p class="text-sm text-gray-600">Click to upload image</p>
-                                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
-                                </div>
-                                {% render_field form.image id="id_image" class="hidden" %}
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-700">
+                                <i class="fas fa-images mr-1 text-brown-600"></i>
+                                Property Images
                             </label>
+                            <span id="img-slot-count" class="text-xs text-gray-400">
+                                {% with existing_images|length as n %}{{ n }}/5 used{% endwith %}
+                            </span>
                         </div>
-                        {% if form.image.errors %}
-                        <p class="mt-1 text-sm text-red-600">{{ form.image.errors.0 }}</p>
-                        {% endif %}
-                        
-                        {% if is_edit and property.image %}
-                        <div class="mt-4">
-                            <p class="text-sm font-medium text-gray-700 mb-2">Current Image:</p>
-                            <div class="relative w-32 md:w-full h-32 rounded-lg overflow-hidden border border-gray-200">
-                                <img src="{{ property.image.url }}" alt="{{ property.name }}" class="w-full h-full object-cover">
-                                <div class="absolute top-2 right-2">
-                                    <a href="{{ property.image.url }}" target="_blank" class="bg-black/50 text-white p-1 rounded-full hover:bg-black/70">
-                                        <i class="fas fa-expand text-xs"></i>
-                                    </a>
+
+                        {% if existing_images %}
+                        <div class="grid grid-cols-3 gap-2 mb-3" id="existing-imgs-grid">
+                            {% for img in existing_images %}
+                            <div class="relative group" id="img-wrap-{{ img.pk }}">
+                                <div class="h-24 overflow-hidden border border-gray-200 border-l-4 border-l-brown-300">
+                                    <img src="{{ img.image.url }}" alt="Image {{ forloop.counter }}" class="w-full h-full object-cover">
                                 </div>
+                                {% if forloop.first %}<span class="absolute top-1 left-1 text-[9px] bg-brown-600 text-white px-1 py-0.5 font-semibold">MAIN</span>{% endif %}
+                                <button type="button" data-no-loading
+                                    onclick="deletePropertyImage({{ img.pk }}, '{% url 'delete_property_image' img.pk %}')"
+                                    class="absolute top-1 right-1 w-6 h-6 bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
+                            {% endfor %}
                         </div>
                         {% endif %}
+
+                        {% with existing_images|length as n %}{% if n < 5 %}
+                        <input type="file" name="new_images" id="id_new_images" multiple accept="image/*"
+                            class="w-full text-sm text-gray-600 border border-gray-200 border-l-4 border-l-brown-400 px-3 py-2 file:mr-3 file:py-1.5 file:px-3 file:border-0 file:text-xs file:font-semibold file:bg-brown-100 file:text-brown-700 hover:file:bg-brown-200 cursor-pointer">
+                        <p class="text-xs text-gray-400 mt-1">Select up to {{ slots_remaining }} more — first image becomes the main thumbnail.</p>
+                        {% else %}
+                        <p class="text-xs text-gray-400 border border-gray-200 border-l-4 border-l-brown-200 px-3 py-2">Maximum 5 images reached. Delete one to add more.</p>
+                        {% endif %}{% endwith %}
+
+                        <!-- New-file previews -->
+                        <div id="new-img-previews" class="grid grid-cols-3 gap-2 mt-2 hidden"></div>
+
+                        <script>
+                        (function () {
+                            var inp = document.getElementById('id_new_images');
+                            if (!inp) return;
+                            inp.addEventListener('change', function () {
+                                var wrap = document.getElementById('new-img-previews');
+                                wrap.innerHTML = '';
+                                var files = Array.from(this.files).slice(0, 5);
+                                if (!files.length) { wrap.classList.add('hidden'); return; }
+                                wrap.classList.remove('hidden');
+                                files.forEach(function (f) {
+                                    var r = new FileReader();
+                                    r.onload = function (e) {
+                                        var d = document.createElement('div');
+                                        d.className = 'h-24 overflow-hidden border border-gray-200 border-l-4 border-l-brown-300';
+                                        d.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
+                                        wrap.appendChild(d);
+                                    };
+                                    r.readAsDataURL(f);
+                                });
+                            });
+                        })();
+
+                        function deletePropertyImage(id, url) {
+                            if (!confirm('Remove this image?')) return;
+                            var csrf = document.cookie.match(/csrftoken=([^;]+)/);
+                            fetch(url, {
+                                method: 'POST',
+                                headers: { 'X-CSRFToken': csrf ? csrf[1] : '', 'X-Requested-With': 'XMLHttpRequest' }
+                            })
+                                .then(function (r) { return r.json(); })
+                                .then(function (d) {
+                                    if (d.ok) {
+                                        var el = document.getElementById('img-wrap-' + id);
+                                        if (el) el.remove();
+                                    }
+                                });
+                        }
+                        </script>
                     </div>
                 </div>
             </div>
@@ -228,7 +287,7 @@
                                 Created Date
                             </label>
                             <input type="text" value="{{ property.created_at|date:'F j, Y, g:i a' }}" 
-                                   class="block w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                   class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-gray-300 bg-gray-100" readonly>
                         </div>
                         {% endif %}
 
@@ -240,7 +299,7 @@
                                 Last Updated
                             </label>
                             <input type="text" value="{{ property.updated_at|date:'F j, Y, g:i a' }}" 
-                                   class="block w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                   class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-gray-300 bg-gray-100" readonly>
                         </div>
                         {% endif %}
                     </div>
@@ -285,9 +344,9 @@
 
     <!-- Help/Info Card -->
     <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
             <h3 class="text-lg font-semibold text-gray-800 font-sans">
-                <i class="fas fa-lightbulb text-blue-600 mr-2"></i>
+                <i class="fas fa-lightbulb text-brown-600 mr-2"></i>
                 Tips & Guidelines
             </h3>
         </div>
@@ -374,8 +433,57 @@
 
 
 </div>
+
+<!-- Map Modal -->
+<div id="map-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);" class="flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl flex flex-col shadow-2xl" style="max-height:90vh;">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 shrink-0">
+            <h3 class="text-base font-semibold text-gray-800">
+                <i class="fas fa-map-marked-alt text-brown-600 mr-2"></i>
+                Pin Your Property Location
+            </h3>
+            <button type="button" data-no-loading onclick="closeMapModal()" class="text-gray-400 hover:text-gray-700 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <!-- Body -->
+        <div class="p-4 flex-1 overflow-auto">
+            <input id="map-search-input" type="text" placeholder="Search for a city, street or area…"
+                   class="w-full px-4 py-2.5 border border-gray-200 border-l-4 border-l-brown-400 text-sm focus:outline-none focus:border-l-brown-600 mb-3">
+            <!-- No API key message -->
+            <div id="map-no-key-msg" class="hidden p-4 bg-amber-50 border border-amber-200 border-l-4 border-l-amber-500 text-sm text-amber-800 mb-3">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                Google Maps API key not configured. Add <code>GOOGLE_MAPS_API_KEY</code> to your <code>.env</code> file to enable the map.
+            </div>
+            <!-- Map container -->
+            <div id="google-map" style="height:380px;" class="border border-gray-200"></div>
+            <!-- Picked address preview -->
+            <div id="map-address-preview" class="hidden mt-3 px-4 py-3 bg-brown-50 border border-gray-200 border-l-4 border-l-brown-500 text-sm text-gray-700"></div>
+            <p class="mt-2 text-xs text-gray-400">Click anywhere on the map or drag the marker to pin your property's exact location.</p>
+        </div>
+        <!-- Footer -->
+        <div class="flex items-center justify-end gap-3 px-5 py-4 border-t border-gray-200 shrink-0">
+            <button type="button" data-no-loading onclick="closeMapModal()"
+                    class="px-5 py-2 border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors">
+                Cancel
+            </button>
+            <button type="button" data-no-loading onclick="confirmMapLocation()"
+                    class="px-5 py-2 bg-brown-600 text-white text-sm font-medium hover:bg-brown-700 transition-colors">
+                <i class="fas fa-check mr-1"></i> Use This Location
+            </button>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 {% block extra_js %}
 <script src="{% static 'js/edit.js' %}"></script>
 <script src="{% static 'js/property-form-help.js' %}"></script>
+{% if is_edit %}
+<script>window.PROPERTY_DELETE_URL = "{% url 'property_delete' property.id %}";</script>
+{% endif %}
+{% if google_maps_api_key %}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+{% endif %}
 {% endblock %}

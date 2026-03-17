@@ -11,16 +11,19 @@ User = get_user_model()
 
 class Property(models.Model):
     PROPERTY_TYPES = [
-        ('nyumba', 'Nyumba'),
-        ('ghorofa', 'Ghorofa'),
-        ('kondo', 'Kondo'),
-        ('nyumba_mjini', 'Nyumba ya Mjini'),
-        ('biashara', 'Biashara'),
+        ('house', 'House'),
+        ('apartment', 'Apartment'),
+        ('business', 'Commercial / Business'),
+        ('other', 'Other'),
     ]
+
+    RESIDENTIAL_TYPES = {'house', 'apartment', 'other'}
+    BUSINESS_TYPES = {'business'}
     
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='properties')
     name = models.CharField(max_length=200)
     address = models.TextField()
+    address_data = models.JSONField(null=True, blank=True)
     property_type = models.CharField(max_length=50, choices=PROPERTY_TYPES)
     units = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -31,8 +34,28 @@ class Property(models.Model):
         verbose_name_plural = "Properties"
         ordering = ['-created_at']
     
+    @builtin_property
+    def primary_image(self):
+        first = self.images.first()
+        if first:
+            return first.image
+        return self.image  # fallback to legacy single-image field
+
     def __str__(self):
         return f"{self.name} - {self.address}"
+
+
+class PropertyImage(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='property_images/')
+    order = models.PositiveIntegerField(default=0)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', 'uploaded_at']
+
+    def __str__(self):
+        return f"{self.property.name} — image {self.pk}"
 
 
 class PropertyDocument(models.Model):
@@ -93,12 +116,13 @@ class PropertyDocument(models.Model):
 class Unit(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='units_list')
     unit_number = models.CharField(max_length=50)
-    bedrooms = models.IntegerField()
-    bathrooms = models.IntegerField()
+    bedrooms = models.IntegerField(null=True, blank=True)
+    bathrooms = models.IntegerField(null=True, blank=True)
     square_feet = models.IntegerField(null=True, blank=True)
     monthly_rent = models.DecimalField(max_digits=10, decimal_places=2)
     is_occupied = models.BooleanField(default=False)
     description = models.TextField(blank=True)
+    amenities = models.JSONField(default=dict, blank=True)
     
     class Meta:
         unique_together = ['property', 'unit_number']
@@ -164,7 +188,19 @@ class Payment(models.Model):
     status = models.CharField(max_length=50, choices=PAYMENT_STATUS, default='pending')
     reference_number = models.CharField(max_length=100, blank=True)
     notes = models.TextField(blank=True)
+    landlord_confirmed = models.BooleanField(
+        default=False,
+        help_text="Landlord has confirmed physical receipt of this payment."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # Methods that are confirmed automatically (digital — no manual receipt needed)
+    DIGITAL_METHODS = {'mobile_money', 'bank_transfer', 'credit_card'}
+
+    @builtin_property
+    def needs_landlord_confirmation(self):
+        """True when payment was made by hand and landlord hasn't confirmed yet."""
+        return self.payment_method not in self.DIGITAL_METHODS and not self.landlord_confirmed
     
     class Meta:
         ordering = ['-payment_date']

@@ -1,6 +1,8 @@
-{% extends 'dashboardd/base.html' %} {% block title %}{{ tenant.full_name }} -
-Landlord Management System{% endblock %} {% block page_title %}{{
-tenant.full_name }}{% endblock %} {% block breadcrumbs %}
+{% extends 'dashboardd/base.html' %}
+{% load static %}
+{% block title %}{{ tenant.full_name }} - Landlord Management System{% endblock %}
+{% block page_title %}
+{{ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
 <li class="text-gray-400">/</li>
 <li>
   <a
@@ -34,7 +36,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
             </div>
             <div class="flex items-center space-x-3">
               <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if tenant.status == 'active' %}bg-green-100 text-green-800 {% elif tenant.status == 'pending' %}bg-yellow-100 text-yellow-800 {% else %}bg-gray-100 text-gray-800{% endif %}"
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if tenant.status == 'active' %}bg-green-100 text-green-800 {% elif tenant.status == 'pending' %}bg-brown-100 text-brown-700 {% else %}bg-gray-100 text-gray-800{% endif %}"
               >
                 <i class="fas fa-circle text-[6px] mr-1"></i>
                 {{ tenant.get_status_display }}
@@ -79,8 +81,8 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
                   {{ tenant.full_name }}
                 </h2>
                 <p class="text-gray-600 mt-1">
-                  {{ tenant.property.name }} • Unit {{
-                  tenant.unit.unit_number|default:"Not Assigned" }}
+                  {{ tenant.property.name }} • Unit 
+                  {{ tenant.unit.unit_number|default:"Not Assigned" }}
                 </p>
               </div>
 
@@ -95,7 +97,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
                       <p class="text-xs text-gray-500">Email</p>
                       <a
                         href="mailto:{{ tenant.email }}"
-                        class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                        class="text-sm text-brown-600 hover:text-brown-800 hover:underline"
                       >
                         {{ tenant.email }}
                       </a>
@@ -112,12 +114,10 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
                     <div>
                       <p class="text-xs text-gray-500">Emergency Contact</p>
                       <p class="text-sm text-gray-900">
-                        {{ tenant.emergency_contact|default:"Not Provided" }} {%
-                        if tenant.emergency_phone %}
+                        {{ tenant.emergency_contact|default:"Not Provided" }}
+                        {% if tenant.emergency_phone %}
                         <br />
-                        <span class="text-xs text-gray-600"
-                          >{{ tenant.emergency_phone }}</span
-                        >
+                        <span class="text-xs text-gray-600">{{ tenant.emergency_phone }}</span>
                         {% endif %}
                       </p>
                     </div>
@@ -150,8 +150,8 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
                     <div>
                       <p class="text-xs text-gray-500">Monthly Rent</p>
                       <p class="text-sm font-medium text-gray-900">
-                        {% if tenant.unit %} ${{ tenant.unit.monthly_rent }} {%
-                        else %} Not set {% endif %}
+                        {% if tenant.unit %} TZS. {{ tenant.unit.monthly_rent }} 
+                        {% else %} Not set {% endif %}
                       </p>
                     </div>
                   </div>
@@ -186,7 +186,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
             <div class="ml-4">
               <h4 class="text-sm font-medium text-gray-600">Total Paid</h4>
               <p class="text-2xl font-bold text-gray-900">
-                ${{ total_payments|floatformat:2 }}
+                TZS. {{ total_payments|floatformat:2 }}
               </p>
             </div>
           </div>
@@ -194,9 +194,9 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
         <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
           <div class="flex items-center">
             <div
-              class="flex-shrink-0 h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center"
+              class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-lg flex items-center justify-center"
             >
-              <i class="fas fa-clock text-yellow-600 text-xl"></i>
+              <i class="fas fa-clock text-brown-600 text-xl"></i>
             </div>
             <div class="ml-4">
               <h4 class="text-sm font-medium text-gray-600">
@@ -211,9 +211,9 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
         <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
           <div class="flex items-center">
             <div
-              class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center"
+              class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-lg flex items-center justify-center"
             >
-              <i class="fas fa-tools text-blue-600 text-xl"></i>
+              <i class="fas fa-tools text-brown-600 text-xl"></i>
             </div>
             <div class="ml-4">
               <h4 class="text-sm font-medium text-gray-600">Active Requests</h4>
@@ -253,7 +253,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
             >
               <div>
                 <p class="text-sm font-medium text-gray-900">
-                  ${{ payment.amount }}
+                  TZS. {{ payment.amount }}
                 </p>
                 <p class="text-xs text-gray-500">
                   {{ payment.payment_date|date:"M d, Y" }}
@@ -261,7 +261,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
               </div>
               <div class="flex items-center space-x-4">
                 <span
-                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if payment.status == 'completed' %}bg-green-100 text-green-800 {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-800 {% else %}bg-red-100 text-red-800{% endif %}"
+                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {% if payment.status == 'completed' %}bg-green-100 text-green-800 {% elif payment.status == 'pending' %}bg-brown-100 text-brown-700 {% else %}bg-red-100 text-red-800{% endif %}"
                 >
                   {{ payment.get_status_display }}
                 </span>
@@ -319,7 +319,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
                   {{ request.title }}
                 </h4>
                 <span
-                  class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {% if request.status == 'completed' %}bg-green-100 text-green-800 {% elif request.status == 'in_progress' %}bg-blue-100 text-blue-800 {% else %}bg-yellow-100 text-yellow-800{% endif %}"
+                  class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {% if request.status == 'completed' %}bg-green-100 text-green-800 {% elif request.status == 'in_progress' %}bg-brown-100 text-brown-700 {% else %}bg-brown-100 text-brown-700{% endif %}"
                 >
                   {{ request.get_status_display }}
                 </span>
@@ -332,7 +332,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
               >
                 <span>{{ request.reported_date|date:"M d, Y" }}</span>
                 {% if request.cost %}
-                <span class="font-medium">${{ request.cost }}</span>
+                <span class="font-medium">TZS. {{ request.cost }}</span>
                 {% endif %}
               </div>
             </div>
@@ -359,7 +359,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
         class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
       >
         <div
-          class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white"
+          class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white"
         >
           <h3 class="text-lg font-semibold text-gray-800 font-sans">
             Property Information
@@ -402,7 +402,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
                   bath • {{ tenant.unit.square_feet|default:"N/A" }} sqft
                 </p>
                 <p class="text-sm font-medium text-gray-900 mt-2">
-                  ${{ tenant.unit.monthly_rent }}/month
+                  TZS. {{ tenant.unit.monthly_rent|floatformat:2 }}/month
                 </p>
               </div>
             </div>
@@ -434,7 +434,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
           <div class="space-y-3">
             <a
               href="{% url 'payment_create' %}"
-              class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              class="flex items-center p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors"
             >
               <div
                 class="flex-shrink-0 h-8 w-8 bg-green-100 rounded-lg flex items-center justify-center mr-3"
@@ -447,44 +447,74 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
             </a>
 
             <a
-              href="{% url 'maintenance_request_create' %}"
-              class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              href="{% url 'maintenance_requests' %}"
+              class="flex items-center p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors"
             >
               <div
-                class="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3"
+                class="flex-shrink-0 h-8 w-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3"
               >
-                <i class="fas fa-tools text-blue-600"></i>
+                <i class="fas fa-tools text-brown-600"></i>
               </div>
               <span class="text-sm font-medium text-gray-900"
-                >Log Maintenance</span
+                >View Maintenance</span
               >
             </a>
 
             <a
               href="tel:{{ tenant.phone }}"
-              class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              class="flex items-center p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors"
             >
               <div
-                class="flex-shrink-0 h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3"
+                class="flex-shrink-0 h-8 w-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3"
               >
-                <i class="fas fa-phone text-purple-600"></i>
+                <i class="fas fa-phone text-brown-600"></i>
               </div>
               <span class="text-sm font-medium text-gray-900">Call Tenant</span>
             </a>
 
             <a
               href="mailto:{{ tenant.email }}"
-              class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              class="flex items-center p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors"
             >
               <div
-                class="flex-shrink-0 h-8 w-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3"
+                class="flex-shrink-0 h-8 w-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3"
               >
-                <i class="fas fa-envelope text-yellow-600"></i>
+                <i class="fas fa-envelope text-brown-600"></i>
               </div>
-              <span class="text-sm font-medium text-gray-900"
-                >Email Tenant</span
-              >
+              <span class="text-sm font-medium text-gray-900">Email Tenant</span>
             </a>
+
+            <button
+              type="button"
+              onclick="showLeasePicker('{% url 'tenant_lease_print' tenant.id %}')"
+              class="w-full flex items-center p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors text-left"
+            >
+              <div class="flex-shrink-0 h-8 w-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3">
+                <i class="fas fa-file-contract text-brown-600"></i>
+              </div>
+              <span class="text-sm font-medium text-gray-900">Lease Agreement</span>
+            </button>
+
+            <a
+              href="{% url 'tenant_resend_invite' tenant.id %}"
+              class="flex items-center p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              <div class="flex-shrink-0 h-8 w-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                <i class="fas fa-envelope-open-text text-green-600"></i>
+              </div>
+              <span class="text-sm font-medium text-gray-900">Resend Invite</span>
+            </a>
+
+            <button
+              type="button"
+              onclick="showQrModal('{{ tenant.full_name|escapejs }}','{{ tenant.email|escapejs }}','{{ tenant.phone|escapejs }}')"
+              class="w-full flex items-center p-3 border-b border-gray-200 hover:bg-gray-50 transition-colors text-left"
+            >
+              <div class="flex-shrink-0 h-8 w-8 bg-brown-100 rounded-lg flex items-center justify-center mr-3">
+                <i class="fas fa-qrcode text-brown-600"></i>
+              </div>
+              <span class="text-sm font-medium text-gray-900">Contact QR Code</span>
+            </button>
           </div>
         </div>
       </div>
@@ -494,10 +524,10 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
         class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
       >
         <div
-          class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r {% if tenant.status == 'active' %}from-green-50 to-green-100 {% elif tenant.status == 'pending' %}from-yellow-50 to-yellow-100 {% else %}from-gray-50 to-gray-100{% endif %}"
+          class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r {% if tenant.status == 'active' %}from-green-50 to-green-100 {% elif tenant.status == 'pending' %}from-brown-50 to-brown-100 {% else %}from-gray-50 to-gray-100{% endif %}"
         >
           <h3
-            class="text-lg font-semibold {% if tenant.status == 'active' %}text-green-800 {% elif tenant.status == 'pending' %}text-yellow-800 {% else %}text-gray-800{% endif %} font-sans"
+            class="text-lg font-semibold {% if tenant.status == 'active' %}text-green-800 {% elif tenant.status == 'pending' %}text-brown-700 {% else %}text-gray-800{% endif %} font-sans"
           >
             Tenancy Status
           </h3>
@@ -508,7 +538,7 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
               <p class="text-sm font-medium text-gray-700">Current Status</p>
               <div class="mt-2 p-3 bg-gray-50 rounded-lg">
                 <p
-                  class="text-center text-lg font-bold {% if tenant.status == 'active' %}text-green-600 {% elif tenant.status == 'pending' %}text-yellow-600 {% else %}text-gray-600{% endif %}"
+                  class="text-center text-lg font-bold {% if tenant.status == 'active' %}text-green-600 {% elif tenant.status == 'pending' %}text-brown-700 {% else %}text-gray-600{% endif %}"
                 >
                   {{ tenant.get_status_display|upper }}
                 </p>
@@ -581,8 +611,8 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
                 Linked to {{ tenant.user.username }}
               </p>
               <p class="text-xs text-gray-500 mt-1">
-                Last login: {{ tenant.user.last_login|date:"M d,
-                Y"|default:"Never" }}
+                Last login: 
+                {{ tenant.user.last_login|date:"M d, Y"|default:"Never" }}
               </p>
             </div>
             {% endif %}
@@ -622,5 +652,64 @@ tenant.full_name }}{% endblock %} {% block breadcrumbs %}
     </div>
   </div>
   <script src="{% static 'js/tenant-detail.js' %}" defer></script>
+  <script>
+  function showLeasePicker(baseUrl) {
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:flex;align-items:center;justify-content:center;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:16px;padding:28px 32px;max-width:360px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);font-family:inherit;';
+    var title = document.createElement('p');
+    title.style.cssText = 'font-weight:700;font-size:16px;color:#3b2512;margin-bottom:6px;text-align:center;';
+    title.textContent = 'Select Language';
+    var sub = document.createElement('p');
+    sub.style.cssText = 'font-size:12px;color:#888;margin-bottom:20px;text-align:center;';
+    sub.textContent = 'Choose the language for the lease agreement';
+    var btns = document.createElement('div');
+    btns.style.cssText = 'display:flex;gap:12px;';
+    function makeBtn(label, flag, lang) {
+      var b = document.createElement('button');
+      b.innerHTML = flag + ' ' + label;
+      b.style.cssText = 'flex:1;padding:14px 10px;border:1.5px solid #d1c4bc;background:#faf7f5;color:#3b2512;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;';
+      b.onmouseover = function(){ b.style.borderColor='#7c5c45'; b.style.background='#f3ede8'; };
+      b.onmouseout  = function(){ b.style.borderColor='#d1c4bc'; b.style.background='#faf7f5'; };
+      b.addEventListener('click', function() { document.body.removeChild(overlay); window.open(baseUrl + '?lang=' + lang, '_blank'); });
+      return b;
+    }
+    btns.appendChild(makeBtn('English', '🇬🇧', 'en'));
+    btns.appendChild(makeBtn('Kiswahili', '🇹🇿', 'sw'));
+    var cancel = document.createElement('button');
+    cancel.textContent = 'Cancel';
+    cancel.style.cssText = 'display:block;width:100%;margin-top:12px;padding:9px;border:none;background:transparent;color:#9ca3af;font-size:13px;cursor:pointer;font-family:inherit;';
+    cancel.addEventListener('click', function() { document.body.removeChild(overlay); });
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) document.body.removeChild(overlay); });
+    box.appendChild(title); box.appendChild(sub); box.appendChild(btns); box.appendChild(cancel);
+    overlay.appendChild(box); document.body.appendChild(overlay);
+  }
+
+  function showQrModal(name, email, phone) {
+    var vcard = 'BEGIN:VCARD\nVERSION:3.0\nFN:' + name + '\nEMAIL:' + email + '\nTEL:' + phone + '\nEND:VCARD';
+    var url = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(vcard);
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:16px;padding:28px 32px;text-align:center;min-width:280px;box-shadow:0 20px 60px rgba(0,0,0,.25);font-family:inherit;';
+    var title = document.createElement('p');
+    title.style.cssText = 'font-weight:700;font-size:15px;color:#3b2512;margin-bottom:4px;';
+    title.textContent = name;
+    var sub = document.createElement('p');
+    sub.style.cssText = 'font-size:12px;color:#888;margin-bottom:16px;';
+    sub.textContent = 'Scan to save contact';
+    var img = document.createElement('img');
+    img.src = url; img.alt = 'QR Code';
+    img.style.cssText = 'width:220px;height:220px;border:1px solid #e5e7eb;border-radius:8px;';
+    var close = document.createElement('button');
+    close.textContent = 'Close';
+    close.style.cssText = 'margin-top:18px;padding:9px 28px;border:none;background:#7c5c45;color:#fff;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;';
+    close.onclick = function() { document.body.removeChild(overlay); };
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) document.body.removeChild(overlay); });
+    box.appendChild(title); box.appendChild(sub); box.appendChild(img); box.appendChild(close);
+    overlay.appendChild(box); document.body.appendChild(overlay);
+  }
+  </script>
 </div>
 {% endblock %}

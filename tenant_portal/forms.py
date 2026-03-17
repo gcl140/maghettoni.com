@@ -1,7 +1,7 @@
 from django import forms
 
 
-_input = 'w-full bg-brown-700 border border-brown-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder-brown-400'
+_input = 'w-full bg-brown-700 border border-brown-600 border-l-4 border-l-amber-500 text-white px-4 py-3 focus:outline-none focus:ring-0 focus:border-l-amber-400 placeholder-brown-400'
 _textarea = _input + ' resize-none'
 
 

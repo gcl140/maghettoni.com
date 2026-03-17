@@ -214,6 +214,7 @@ def tenant_payment_process(request, token):
         # Generate a short reference number
         ref = f"TP-{str(submission.payment_token).replace('-', '').upper()[:10]}"
 
+        is_digital = submission.payment_method in Payment.DIGITAL_METHODS
         payment = Payment.objects.create(
             tenant=tenant,
             property=tenant.property,
@@ -221,7 +222,8 @@ def tenant_payment_process(request, token):
             payment_date=today,
             due_date=next_due,
             payment_method=submission.payment_method,
-            status='pending',
+            status='completed' if is_digital else 'pending',
+            landlord_confirmed=is_digital,
             reference_number=ref,
             notes=f"Submitted via Tenant Portal. {submission.notes}".strip('. '),
         )
@@ -410,6 +412,7 @@ def invite_accept(request, token):
                 last_name=tenant.last_name,
                 is_active=True,
                 is_verified=True,   # tenants are verified on invite acceptance
+                is_tenant=True,     # marks this account as a tenant
             )
 
             # Link user ↔ tenant

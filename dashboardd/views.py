@@ -1,6 +1,8 @@
 import json
 import csv
 import io
+import urllib.request
+import urllib.parse
 from datetime import timedelta
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
@@ -20,7 +22,7 @@ from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
-from .models import Property, Unit, Tenant, Payment, MaintenanceRequest, Notification, TenantInvite
+from .models import Property, PropertyImage, Unit, Tenant, Payment, MaintenanceRequest, Notification, TenantInvite
 from .forms import (
     PropertyForm,
     PropertyDocumentForm,
@@ -536,10 +538,21 @@ def location_api(request):
         lat = data.get("lat")
         lng = data.get("lng")
 
-        # TODO: convert lat/lng to address via geocoding
-        address = f"Fake address for ({lat}, {lng})"
+        api_key = getattr(settings, 'GOOGLE_MAPS_API_KEY', '')
+        address = None
 
-        return JsonResponse({"address": address})
+        if api_key:
+            params = urllib.parse.urlencode({'latlng': f"{lat},{lng}", 'key': api_key})
+            url = f"https://maps.googleapis.com/maps/api/geocode/json?{params}"
+            with urllib.request.urlopen(url, timeout=5) as resp:
+                geo = json.loads(resp.read().decode())
+            if geo.get('status') == 'OK' and geo.get('results'):
+                address = geo['results'][0]['formatted_address']
+
+        if not address:
+            address = f"{float(lat):.6f}, {float(lng):.6f}"
+
+        return JsonResponse({"address": address, "lat": lat, "lng": lng})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
@@ -564,22 +577,67 @@ def property_edit(request, property_id=None):
             property_obj = form.save(commit=False)
             if not is_edit:
                 property_obj.owner = request.user
-            property_obj.save()
-            messages.success(request, success_message)
-            if is_edit:
-                return redirect('property_detail', property_id=property_obj.id)
-            else:
-                return redirect('property_list')
+
+            # Handle address from JS-populated hidden inputs
+            addr_name = request.POST.get('address_name', '').strip()
+            addr_lat = request.POST.get('address_lat', '').strip()
+            addr_lng = request.POST.get('address_lng', '').strip()
+            addr_source = request.POST.get('address_source', '').strip()
+            if addr_name:
+                property_obj.address = addr_name
+                try:
+                    property_obj.address_data = {
+                        'name': addr_name,
+                        'lat': float(addr_lat) if addr_lat else None,
+                        'lng': float(addr_lng) if addr_lng else None,
+                        'source': addr_source or None,
+                    }
+                except (ValueError, TypeError):
+                    property_obj.address_data = {'name': addr_name}
+            elif not property_obj.address:
+                # New property submitted without address — require it
+                form.add_error(None, 'Please set the property location before saving.')
+                form = form  # fall through to re-render
+
+            if form.is_valid():
+                property_obj.save()
+                # Handle multiple image uploads
+                new_images = request.FILES.getlist('new_images')
+                existing_count = property_obj.images.count()
+                slots = max(0, 5 - existing_count)
+                if new_images:
+                    if len(new_images) > slots:
+                        messages.warning(request, f'Only {slots} more image(s) allowed (max 5). First {slots} uploaded.')
+                    for i, img in enumerate(new_images[:slots]):
+                        PropertyImage.objects.create(property=property_obj, image=img, order=existing_count + i)
+                messages.success(request, success_message)
+                if is_edit:
+                    return redirect('property_detail', property_id=property_obj.id)
+                else:
+                    return redirect('property_list')
     else:
         form = PropertyForm(instance=property_obj)
-    
+
     context = {
         'form': form,
         'is_edit': is_edit,
         'title': title,
         'property': property_obj,
+        'existing_images': property_obj.images.all() if property_obj else [],
+        'slots_remaining': max(0, 5 - property_obj.images.count()) if property_obj else 5,
+        'google_maps_api_key': getattr(settings, 'GOOGLE_MAPS_API_KEY', ''),
     }
     return render(request, 'properties/edit.html', context)
+
+
+@landlord_required
+def delete_property_image(request, image_id):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'POST required'}, status=405)
+    img = get_object_or_404(PropertyImage, pk=image_id, property__owner=request.user)
+    img.image.delete(save=False)
+    img.delete()
+    return JsonResponse({'ok': True})
 
 
 @landlord_required
@@ -690,8 +748,11 @@ def property_detail(request, property_id):
     # Maintenance requests
     maintenance_requests = MaintenanceRequest.objects.filter(property=property_obj).order_by('-reported_date')[:5]
     
+    property_images = list(property_obj.images.all())
+
     context = {
         'property': property_obj,
+        'property_images': property_images,
         'units': units,
         'tenants': tenants,
         'total_units': total_units,
@@ -704,7 +765,7 @@ def property_detail(request, property_id):
         'doc_search': doc_search,
         'doc_type': doc_type,
     }
-    
+
     return render(request, 'properties/detail.html', context)
 
 
@@ -919,23 +980,39 @@ def tenant_edit(request, tenant_id=None):
         tenant = get_object_or_404(Tenant, id=tenant_id, property__owner=request.user)
         is_edit = True
         title = "Edit Tenant"
-        success_message = "Tenant updated successfully! 🎉"
+        success_message = "Tenant updated successfully!"
     else:
         tenant = None
         is_edit = False
         title = "Add New Tenant"
-        success_message = "Tenant added successfully! 🎉"
-    
+        success_message = "Tenant added successfully!"
+
+    # Verified tenants (with an active portal account) are locked — only status changes allowed
+    is_locked = bool(is_edit and tenant.user_id and tenant.user.is_verified)
+
     if request.method == 'POST':
+        if is_locked:
+            # Only allow status update for verified tenants
+            new_status = request.POST.get('status', tenant.status)
+            if new_status != tenant.status:
+                tenant.status = new_status
+                tenant.save(update_fields=['status'])
+                _notify(request.user, f'Hali ya Mkazi Imebadilishwa: {tenant.full_name()}',
+                        f'Hali ya {tenant.full_name()} imebadilishwa hadi {new_status}.')
+                messages.success(request, "Tenant status updated.")
+            else:
+                messages.info(request, "No changes made.")
+            return redirect('tenant_detail', tenant_id=tenant.id)
+
         form = TenantForm(request.POST, request.FILES, instance=tenant, user=request.user)
         if form.is_valid():
             tenant = form.save(commit=False)
-            
+
             # If adding new tenant, mark the unit as occupied
             if not is_edit and tenant.unit:
                 tenant.unit.is_occupied = True
                 tenant.unit.save()
-            
+
             # If editing and changing unit, update occupancy status
             if is_edit and tenant.unit_id != form.initial.get('unit'):
                 old_unit = Unit.objects.filter(id=form.initial.get('unit')).first()
@@ -945,7 +1022,7 @@ def tenant_edit(request, tenant_id=None):
                 if tenant.unit:
                     tenant.unit.is_occupied = True
                     tenant.unit.save()
-            
+
             tenant.save()
 
             if is_edit:
@@ -970,14 +1047,35 @@ def tenant_edit(request, tenant_id=None):
                 return redirect('tenant_list')
     else:
         form = TenantForm(instance=tenant, user=request.user)
-    
+
     context = {
         'form': form,
         'is_edit': is_edit,
+        'is_locked': is_locked,
         'title': title,
         'tenant': tenant,
     }
     return render(request, 'tenants/edit.html', context)
+
+@landlord_required
+def tenant_resend_invite(request, tenant_id):
+    tenant = get_object_or_404(Tenant, id=tenant_id, property__owner=request.user)
+    if tenant.user and tenant.user.is_verified:
+        messages.warning(request, f"{tenant.full_name()} has already verified their account — no invite needed.")
+    else:
+        _send_tenant_invite(request, tenant)
+        messages.success(request, f"Invite re-sent to {tenant.email}.")
+    return redirect('tenant_detail', tenant_id=tenant.id)
+
+
+@landlord_required
+def tenant_lease_print(request, tenant_id):
+    tenant = get_object_or_404(Tenant, id=tenant_id, property__owner=request.user)
+    lang = request.GET.get('lang', 'en')
+    if lang not in ('en', 'sw'):
+        lang = 'en'
+    return render(request, 'tenants/lease_print.html', {'tenant': tenant, 'lang': lang})
+
 
 # Add this to views.py if you want dynamic unit filtering
 @landlord_required
@@ -1137,6 +1235,7 @@ def payment_detail(request, payment_id):
     if request.method == 'POST':
         if 'mark_paid' in request.POST:
             payment.status = 'completed'
+            payment.landlord_confirmed = True
             payment.payment_date = timezone.now().date()
             payment.save()
             _notify(request.user, f'Malipo Yamekamilika: {payment.tenant.full_name()}',
@@ -1684,27 +1783,36 @@ def unit_edit(request, property_id, unit_id=None):
         unit = get_object_or_404(Unit, id=unit_id, property=property_obj)
         is_edit = True
         title = "Edit Unit"
-        success_message = f"Unit {unit.unit_number} updated successfully! 🎉"
+        success_message = f"Unit {unit.unit_number} updated successfully!"
     else:
         unit = None
         is_edit = False
         title = "Add New Unit"
-        success_message = "New unit added successfully! 🎉"
+        success_message = "New unit added successfully!"
     
     if request.method == 'POST':
         form = UnitForm(request.POST, instance=unit)
         if form.is_valid():
             unit = form.save(commit=False)
-            unit.property = property_obj  # Always set the property
-            
-            # Check for duplicate unit number
+            unit.property = property_obj
+
+            try:
+                amenities = json.loads(request.POST.get('amenities', '{}'))
+            except (json.JSONDecodeError, ValueError):
+                amenities = {}
+            unit.amenities = amenities
+            # Keep dedicated model fields in sync with amenities JSON
+            if 'bedrooms'    in amenities: unit.bedrooms    = amenities['bedrooms']    or None
+            if 'bathrooms'   in amenities: unit.bathrooms   = amenities['bathrooms']   or None
+            if 'square_feet' in amenities: unit.square_feet = amenities['square_feet'] or None
+
             duplicate_units = Unit.objects.filter(
-                property=property_obj, 
+                property=property_obj,
                 unit_number=unit.unit_number
             )
             if unit.pk:
                 duplicate_units = duplicate_units.exclude(pk=unit.pk)
-            
+
             if duplicate_units.exists():
                 messages.error(request, f"Unit number {unit.unit_number} already exists in this property!")
             else:
@@ -1713,13 +1821,23 @@ def unit_edit(request, property_id, unit_id=None):
                 return redirect('property_units', property_id=property_obj.id)
     else:
         form = UnitForm(instance=unit)
-    
+
+    active_tenant = None
+    if unit:
+        today = timezone.now().date()
+        active_tenant = (
+            unit.current_tenant.filter(move_out_date__isnull=True).first()
+            or unit.current_tenant.filter(move_out_date__gte=today).first()
+        )
+
     context = {
         'form': form,
         'is_edit': is_edit,
         'title': title,
         'property': property_obj,
         'unit': unit,
+        'existing_amenities': json.dumps(unit.amenities if unit and unit.amenities else {}),
+        'active_tenant': active_tenant,
     }
     return render(request, 'properties/unit_edit.html', context)
 

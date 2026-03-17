@@ -40,7 +40,7 @@
                 <div class="mb-6 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border border-green-200">
                     <div class="text-center">
                         <p class="text-sm font-medium text-green-800 mb-2">Payment Amount</p>
-                        <p class="text-4xl font-bold text-green-900">${{ payment.amount }}</p>
+                        <p class="text-4xl font-bold text-green-900">TZS. {{ payment.amount }}</p>
                     </div>
                 </div>
                 
@@ -75,8 +75,8 @@
                             <div>
                                 <p class="text-xs text-gray-500">Tenant</p>
                                 <div class="flex items-center mt-1">
-                                    <div class="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-user text-blue-600"></i>
+                                    <div class="flex-shrink-0 h-8 w-8 bg-brown-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-brown-600"></i>
                                     </div>
                                     <div class="ml-3">
                                         <p class="text-sm font-medium text-gray-900">{{ payment.tenant.full_name }}</p>
@@ -111,64 +111,121 @@
                     </div>
                 </div>
                 {% endif %}
+
+                <!-- Receipt status -->
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    {% if payment.landlord_confirmed %}
+                    <div class="flex items-center gap-3 p-4 bg-green-50 rounded-xl border border-green-200">
+                        <i class="fas fa-check-double text-green-600"></i>
+                        <div>
+                            <p class="text-sm font-semibold text-green-800">Receipt Confirmed</p>
+                            <p class="text-sm text-green-700 mt-0.5">You have confirmed receiving this payment.</p>
+                        </div>
+                    </div>
+                    {% elif payment.needs_landlord_confirmation %}
+                    <div class="flex items-center gap-3 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                        <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                        <div>
+                            <p class="text-sm font-semibold text-amber-800">Awaiting Receipt Confirmation</p>
+                            <p class="text-sm text-amber-700 mt-0.5">Use <strong>Mark as Paid</strong> below once you have the cash in hand.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
         
         <!-- Actions Card -->
-        <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                 <h3 class="text-lg font-semibold text-gray-800 font-sans">Quick Actions</h3>
             </div>
             <div class="p-6">
                 <div class="flex flex-wrap gap-3">
                     {% if payment.status == 'pending' %}
-                    <form method="POST" class="inline">
+                    <form method="POST" class="inline" id="mark-paid-form">
                         {% csrf_token %}
-                        <button type="submit" name="mark_paid" 
+                        <input type="hidden" name="mark_paid" value="1">
+                        <button type="button" onclick="markPaid()"
                                 class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors">
                             <i class="fas fa-check-circle mr-2"></i>
                             Mark as Paid
                         </button>
                     </form>
+                    <script>
+                    function markPaid() {
+                        {% if payment.needs_landlord_confirmation %}
+                        showConfirm(
+                            'Mark TZS. {{ payment.amount }} from {{ payment.tenant.full_name }} as received? This confirms you have the cash in hand.',
+                            function () { document.getElementById('mark-paid-form').submit(); }
+                        );
+                        {% else %}
+                        document.getElementById('mark-paid-form').submit();
+                        {% endif %}
+                    }
+                    </script>
                     {% endif %}
-                    
-                    <form method="POST" class="inline">
-                        {% csrf_token %}
-                        <select name="status" 
-                                onchange="if(this.value) this.form.submit()"
-                                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brown-500 focus:border-brown-500">
-                            <option value="">Change Status</option>
-                            <option value="pending" {% if payment.status == 'pending' %}selected{% endif %}>Pending</option>
-                            <option value="completed" {% if payment.status == 'completed' %}selected{% endif %}>Completed</option>
-                            <option value="failed" {% if payment.status == 'failed' %}selected{% endif %}>Failed</option>
-                            <option value="refunded" {% if payment.status == 'refunded' %}selected{% endif %}>Refunded</option>
-                        </select>
-                    </form>
                     
                     <a href="{% url 'payment_receipt' payment.id %}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                         <i class="fas fa-file-pdf mr-2"></i>
                         Download Receipt
                     </a>
 
-                    <a href="mailto:{{ payment.tenant.email }}?subject=Payment Reminder - {{ payment.property.name }}&body=Dear {{ payment.tenant.first_name }},%0D%0A%0D%0AThis is a reminder that your payment of TZS {{ payment.amount }} for {{ payment.property.name }} is due on {{ payment.due_date|date:'F j, Y' }}.%0D%0A%0D%0AReference: {{ payment.reference_number|default:'N/A' }}%0D%0A%0D%0APlease make your payment as soon as possible. Thank you.%0D%0A%0D%0A----%0D%0A%0D%0AMpendwa {{ payment.tenant.first_name }},%0D%0A%0D%0AHii ni ukumbusho kwamba malipo yako ya TZS {{ payment.amount }} kwa {{ payment.property.name }} yanaisha tarehe {{ payment.due_date|date:'j F Y' }}.%0D%0A%0D%0AKumbukumbu: {{ payment.reference_number|default:'N/A' }}%0D%0A%0D%0ATafadhali lipa haraka iwezekanavyo. Asante."
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-envelope mr-2"></i>
-                        Email Reminder
-                    </a>
-
-                    <!-- Manual SMS: opens phone/SMS app with pre-filled message -->
-                    <a href="sms:{{ payment.tenant.phone }}?body=Mpendwa {{ payment.tenant.first_name }}, malipo yako ya TZS {{ payment.amount }} kwa {{ payment.property.name }} yanaisha tarehe {{ payment.due_date|date:'j F Y' }}. Kumb: {{ payment.reference_number|default:'N/A' }}. Tafadhali lipa haraka. - Maghettoni"
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                        <i class="fas fa-mobile-alt mr-2"></i>
-                        SMS (Manual)
-                    </a>
-
-                    <!-- Direct SMS: sends via Beem API immediately -->
-                    <button id="directSmsBtn" onclick="sendDirectReminder({{ payment.id }}, this)"
-                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors">
-                        <i class="fas fa-paper-plane mr-2"></i>
-                        Send SMS Now
-                    </button>
+                    <!-- Reminders dropdown -->
+                    <div class="relative inline-block" id="reminder-wrapper">
+                        <button type="button" onclick="toggleReminderMenu()"
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors gap-2">
+                            <i class="fas fa-bell"></i>
+                            Send Reminder
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div id="reminder-menu" class="hidden absolute left-0 mt-1 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
+                            <button onclick="sendReminder('sms')"   class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-sms w-4 text-center text-brown-500"></i> SMS</button>
+                            <button onclick="sendReminder('email')" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-envelope w-4 text-center text-brown-500"></i> Email</button>
+                            <button onclick="sendReminder('both')"  class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-paper-plane w-4 text-center text-brown-500"></i> SMS + Email</button>
+                        </div>
+                    </div>
+                    <script>
+                    function toggleReminderMenu() {
+                        document.getElementById('reminder-menu').classList.toggle('hidden');
+                    }
+                    document.addEventListener('click', function(e) {
+                        var w = document.getElementById('reminder-wrapper');
+                        if (w && !w.contains(e.target)) {
+                            document.getElementById('reminder-menu').classList.add('hidden');
+                        }
+                    });
+                    function sendReminder(channel) {
+                        document.getElementById('reminder-menu').classList.add('hidden');
+                        var btn = document.querySelector('#reminder-wrapper button');
+                        var orig = btn.innerHTML;
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+                        fetch('/dashboard/api/v1/payments/{{ payment.id }}/remind/', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: 'channel=' + channel,
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                btn.innerHTML = '<i class="fas fa-check mr-2"></i>Sent!';
+                                btn.classList.replace('bg-white', 'bg-green-50');
+                                setTimeout(function() { btn.innerHTML = orig; btn.classList.replace('bg-green-50', 'bg-white'); btn.disabled = false; }, 3000);
+                            } else {
+                                btn.innerHTML = '<i class="fas fa-times mr-2"></i>Failed';
+                                setTimeout(function() { btn.innerHTML = orig; btn.disabled = false; }, 3000);
+                            }
+                        })
+                        .catch(function() {
+                            btn.innerHTML = orig;
+                            btn.disabled = false;
+                        });
+                    }
+                    </script>
                 </div>
             </div>
         </div>
@@ -178,13 +235,13 @@
     <div class="space-y-6">
         <!-- Tenant Info Card -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-brown-50 to-white">
                 <h3 class="text-lg font-semibold text-gray-800 font-sans">Tenant Information</h3>
             </div>
             <div class="p-6">
                 <div class="flex items-center mb-4">
-                    <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-user text-blue-600 text-xl"></i>
+                    <div class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-brown-600 text-xl"></i>
                     </div>
                     <div class="ml-4">
                         <h4 class="text-sm font-semibold text-gray-900">{{ payment.tenant.full_name }}</h4>
@@ -195,7 +252,7 @@
                 <div class="space-y-3">
                     <div>
                         <p class="text-xs text-gray-500">Email</p>
-                        <a href="mailto:{{ payment.tenant.email }}" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+                        <a href="mailto:{{ payment.tenant.email }}" class="text-sm text-brown-600 hover:text-brown-800 hover:underline">
                             {{ payment.tenant.email }}
                         </a>
                     </div>

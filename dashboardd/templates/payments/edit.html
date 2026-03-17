@@ -36,7 +36,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div
-              class="w-12 h-12 bg-gradient-to-br {% if is_edit %}from-yellow-500 to-yellow-600{% else %}from-green-500 to-green-600{% endif %} rounded-xl flex items-center justify-center shadow-lg"
+              class="w-12 h-12 bg-gradient-to-br {% if is_edit %}from-brown-500 to-brown-600{% else %}from-green-500 to-green-600{% endif %} rounded-xl flex items-center justify-center shadow-lg"
             >
               <i class="fas fa-money-bill-wave text-white text-xl"></i>
             </div>
@@ -53,7 +53,7 @@
           {% if is_edit %}
           <div class="flex items-center">
             <span
-              class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium {% if payment.status == 'completed' %}bg-green-100 text-green-800 border-green-200 {% elif payment.status == 'pending' %}bg-yellow-100 text-yellow-800 border-yellow-200 {% elif payment.status == 'failed' %}bg-red-100 text-red-800 border-red-200 {% else %}bg-blue-100 text-blue-800 border-blue-200{% endif %} border"
+              class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium {% if payment.status == 'completed' %}bg-green-100 text-green-800 border-green-200 {% elif payment.status == 'pending' %}bg-brown-100 text-brown-700 border-brown-200 {% elif payment.status == 'failed' %}bg-red-100 text-red-800 border-red-200 {% else %}bg-brown-100 text-brown-700 border-brown-200{% endif %} border"
             >
               <i class="fas fa-circle text-[6px] mr-2"></i>
               {{ payment.get_status_display }}
@@ -101,11 +101,11 @@
             </label>
             <div class="relative">
               <div
-                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                class="absolute inset-y-0 right-8 pl-3 flex items-center pointer-events-none"
               >
                 <span class="text-gray-500">TZS</span>
               </div>
-              {% render_field form.amount class="block w-full pl-12 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all text-lg font-semibold" %}
+              {% render_field form.amount class="block w-full pl-12 pr-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all text-lg font-semibold" %}
             </div>
             {% if form.amount.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
@@ -124,7 +124,7 @@
         <div class="mb-10">
           <div class="flex items-center mb-6">
             <div
-              class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3"
+              class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3"
             >
               <i class="fas fa-user-tie text-white text-sm"></i>
             </div>
@@ -144,7 +144,7 @@
                 Tenant *
               </label>
               <div class="relative">
-                {% render_field form.tenant class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.tenant class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -169,7 +169,7 @@
                 Property *
               </label>
               <div class="relative">
-                {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.property class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -190,7 +190,7 @@
         <div class="mb-10">
           <div class="flex items-center mb-6">
             <div
-              class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3"
+              class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3"
             >
               <i class="fas fa-calendar-alt text-white text-sm"></i>
             </div>
@@ -209,7 +209,7 @@
                 <i class="fas fa-calendar-check text-brown-600 mr-1"></i>
                 Payment Date *
               </label>
-              {% render_field form.payment_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+              {% render_field form.payment_date class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
               {% if form.payment_date.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -227,7 +227,7 @@
                 <i class="fas fa-clock text-brown-600 mr-1"></i>
                 Due Date *
               </label>
-              {% render_field form.due_date class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+              {% render_field form.due_date class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
               {% if form.due_date.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -246,7 +246,7 @@
         <div class="mb-10">
           <div class="flex items-center mb-6">
             <div
-              class="w-8 h-8 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mr-3"
+              class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3"
             >
               <i class="fas fa-credit-card text-white text-sm"></i>
             </div>
@@ -266,7 +266,7 @@
                 Payment Method *
               </label>
               <div class="relative">
-                {% render_field form.payment_method class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.payment_method class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -291,7 +291,7 @@
                 Payment Status *
               </label>
               <div class="relative">
-                {% render_field form.status class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.status class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -331,7 +331,7 @@
                 <i class="fas fa-hashtag text-brown-600 mr-1"></i>
                 Reference Number
               </label>
-              {% render_field form.reference_number class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+              {% render_field form.reference_number class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %}
               {% if form.reference_number.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
@@ -370,7 +370,7 @@
               <i class="fas fa-edit text-brown-600 mr-1"></i>
               Notes (Optional)
             </label>
-            {% render_field form.notes class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+            {% render_field form.notes class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
             {% if form.notes.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
@@ -424,7 +424,7 @@
               class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun"
             >
               <i class="fas fa-save mr-2"></i>
-              {% if is_edit %}Save Changes 💰{% else %}Save Payment 🎉{% endif %}
+              {% if is_edit %}Save Changes{% else %}Save Payment{% endif %}
             </button>
           </div>
         </div>
@@ -495,9 +495,9 @@
               Reference Number Examples:
             </h4>
             <div class="space-y-3">
-              <div class="p-3 bg-blue-50 rounded-xl">
+              <div class="p-3 bg-brown-50 rounded-xl">
                 <div class="flex items-center">
-                  <i class="fas fa-money-bill-wave text-blue-600 mr-3"></i>
+                  <i class="fas fa-money-bill-wave text-brown-600 mr-3"></i>
                   <div>
                     <p class="text-sm font-medium text-gray-900">Cash</p>
                     <p class="text-xs text-gray-600">
@@ -517,9 +517,9 @@
                   </div>
                 </div>
               </div>
-              <div class="p-3 bg-purple-50 rounded-xl">
+              <div class="p-3 bg-brown-50 rounded-xl">
                 <div class="flex items-center">
-                  <i class="fas fa-university text-purple-600 mr-3"></i>
+                  <i class="fas fa-university text-brown-600 mr-3"></i>
                   <div>
                     <p class="text-sm font-medium text-gray-900">Bank Transfer</p>
                     <p class="text-xs text-gray-600">CRDB-12345, NMB-67890</p>

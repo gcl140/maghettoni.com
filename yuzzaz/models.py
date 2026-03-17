@@ -19,6 +19,12 @@ class CustomUser(AbstractUser):
         help_text="Grants access to the landlord dashboard. Set by admin.",
     )
 
+    is_tenant = models.BooleanField(
+        default=False,
+        verbose_name="Is Tenant",
+        help_text="Marked True automatically when a tenant accepts their invite link.",
+    )
+
     # Verification gate — landlords must be set to True by admin before they can log in.
     # Tenant accounts are created via invite and set to True automatically.
     is_verified = models.BooleanField(

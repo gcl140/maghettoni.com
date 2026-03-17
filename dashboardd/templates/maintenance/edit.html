@@ -36,7 +36,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div
-              class="w-12 h-12 bg-gradient-to-br {% if is_edit %}from-yellow-500 to-yellow-600{% else %}from-blue-500 to-blue-600{% endif %} rounded-xl flex items-center justify-center shadow-lg"
+              class="w-12 h-12 bg-gradient-to-br {% if is_edit %}from-brown-500 to-brown-600{% else %}from-brown-500 to-brown-600{% endif %} rounded-xl flex items-center justify-center shadow-lg"
             >
               <i class="fas fa-tools text-white text-xl"></i>
             </div>
@@ -81,7 +81,7 @@
         <div class="mb-10">
           <div class="flex items-center mb-6">
             <div
-              class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3"
+              class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3"
             >
               <i class="fas fa-info-circle text-white text-sm"></i>
             </div>
@@ -99,7 +99,7 @@
               <i class="fas fa-heading text-brown-600 mr-1"></i>
               Issue Title *
             </label>
-            {% render_field form.title class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all placeholder-brown-400" %}
+            {% render_field form.title class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all placeholder-brown-400" %}
             {% if form.title.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
@@ -122,7 +122,7 @@
               <i class="fas fa-align-left text-brown-600 mr-1"></i>
               Description *
             </label>
-            {% render_field form.description class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+            {% render_field form.description class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
             {% if form.description.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
               <i class="fas fa-exclamation-circle mr-1"></i>
@@ -160,7 +160,7 @@
                 Property *
               </label>
               <div class="relative">
-                {% render_field form.property class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.property class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -185,7 +185,7 @@
                 Unit *
               </label>
               <div class="relative">
-                {% render_field form.unit class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.unit class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -210,7 +210,7 @@
                 Reported By (Tenant) *
               </label>
               <div class="relative">
-                {% render_field form.tenant class="block w-full px-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all appearance-none bg-white" %}
+                {% render_field form.tenant class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all appearance-none bg-white" %}
                 <div
                   class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brown-500"
                 >
@@ -235,7 +235,7 @@
         <div class="mb-10">
           <div class="flex items-center mb-6">
             <div
-              class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3"
+              class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3"
             >
               <i class="fas fa-sliders-h text-white text-sm"></i>
             </div>
@@ -350,7 +350,7 @@
                     {% if form.status.value == choice.0 %}checked{% endif %}
                   />
                   <div
-                    class="flex items-center justify-center w-6 h-6 rounded-full border mr-3 {% if form.status.value == choice.0 %} {% if choice.0 == 'completed' %}border-green-500 bg-green-500 {% elif choice.0 == 'in_progress' %}border-blue-500 bg-blue-500 {% elif choice.0 == 'pending' %}border-yellow-500 bg-yellow-500 {% else %}border-red-500 bg-red-500{% endif %} {% else %}border-brown-300{% endif %}"
+                    class="flex items-center justify-center w-6 h-6 rounded-full border mr-3 {% if form.status.value == choice.0 %} {% if choice.0 == 'completed' %}border-green-500 bg-green-500 {% elif choice.0 == 'in_progress' %}border-brown-500 bg-brown-500 {% elif choice.0 == 'pending' %}border-brown-300 bg-brown-300 {% else %}border-red-500 bg-red-500{% endif %} {% else %}border-brown-300{% endif %}"
                   >
                     {% if form.status.value == choice.0 %}
                     <i class="fas fa-check text-white text-xs"></i>
@@ -393,7 +393,7 @@
         <div class="mb-10">
           <div class="flex items-center mb-6">
             <div
-              class="w-8 h-8 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mr-3"
+              class="w-8 h-8 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-3"
             >
               <i class="fas fa-money-bill-wave text-white text-sm"></i>
             </div>
@@ -412,11 +412,11 @@
             </label>
             <div class="relative">
               <div
-                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                class="absolute inset-y-0 right-8 pl-3 flex items-center pointer-events-none"
               >
-                <span class="text-gray-500">$</span>
+                <span class="text-gray-500">TZS. </span>
               </div>
-              {% render_field form.cost class="block w-full pl-8 pr-4 py-3 border border-brown-300 rounded-xl focus:ring-2 focus:ring-brown-500 focus:border-brown-500 transition-all" %}
+              {% render_field form.cost class="block w-full pl-4 pr-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
             </div>
             {% if form.cost.errors %}
             <p class="mt-2 text-sm text-red-600 flex items-center">
@@ -470,8 +470,7 @@
               class="inline-flex items-center px-8 py-3 border border-transparent text-white bg-gradient-to-r from-brown-600 to-brown-700 rounded-xl hover:from-brown-700 hover:to-brown-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-all font-medium shadow-lg hover:shadow-xl hover-lift fun"
             >
               <i class="fas fa-save mr-2"></i>
-              {% if is_edit %}Update Request 🛠️{% else %}Create Request 🎉{%
-              endif %}
+              {% if is_edit %}Update Request{% else %}Create Request{% endif %}
             </button>
           </div>
         </div>
@@ -483,11 +482,11 @@
       class="mt-8 bg-white rounded-2xl shadow-lg border border-brown-200 overflow-hidden glass"
     >
       <div
-        class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-blue-50 to-white"
+        class="px-8 py-6 border-b border-brown-100 bg-gradient-to-r from-brown-50 to-white"
       >
         <div class="flex items-center">
           <div
-            class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-4"
+            class="w-10 h-10 bg-gradient-to-br from-brown-500 to-brown-600 rounded-lg flex items-center justify-center mr-4"
           >
             <i class="fas fa-book text-white"></i>
           </div>
@@ -574,8 +573,10 @@
     hidden
   ></div>
 </div>
-{% endblock %} {% block extra_head %}
+{% endblock %} 
+{% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/maintenance-edit.css' %}" />
-{% endblock %} {% block extra_js %}
+{% endblock %} 
+{% block extra_js %}
 <script src="{% static 'js/maintenance-edit.js' %}" defer></script>
 {% endblock %}

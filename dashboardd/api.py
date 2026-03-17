@@ -302,10 +302,23 @@ def api_notifications(request):
 @require_POST
 @csrf_exempt
 def api_payment_remind(request, payment_id):
+    from .services import send_payment_reminder_email
     p = get_object_or_404(Payment, id=payment_id, property__owner=request.user)
-    ok = send_payment_reminder(p.tenant, p)
-    print(f"Reminder sent to {p.tenant.phone}: {ok}")
-    return JsonResponse({'success': ok, 'phone': p.tenant.phone})
+    channel = request.POST.get('channel', 'sms')  # sms | email | both
+
+    sms_ok = email_ok = None
+    if channel in ('sms', 'both'):
+        sms_ok = send_payment_reminder(p.tenant, p)
+    if channel in ('email', 'both'):
+        email_ok = send_payment_reminder_email(p.tenant, p)
+
+    success = bool(sms_ok or email_ok)
+    return JsonResponse({
+        'success': success,
+        'sms': sms_ok,
+        'email': email_ok,
+        'channel': channel,
+    })
 
 
 @login_required

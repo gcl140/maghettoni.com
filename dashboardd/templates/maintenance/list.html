@@ -22,11 +22,9 @@
         </a>
         <button onclick="window.print()"
                 class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-            <i class="fas fa-print mr-2 text-blue-600"></i> Print
+            <i class="fas fa-print mr-2 text-brown-600"></i> Print
         </button>
-        <a href="{% url 'maintenance_request_create' %}" class="inline-flex items-center px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors font-medium">
-            <i class="fas fa-plus mr-2"></i> New Request
-        </a>
+
     </div>
 </div>
 
@@ -34,8 +32,8 @@
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
         <div class="flex items-center">
-            <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <i class="fas fa-tools text-blue-600 text-xl"></i>
+            <div class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-tools text-brown-600 text-xl"></i>
             </div>
             <div class="ml-4">
                 <h4 class="text-sm font-medium text-gray-600">Total Requests</h4>
@@ -45,8 +43,8 @@
     </div>
     <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
         <div class="flex items-center">
-            <div class="flex-shrink-0 h-12 w-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <i class="fas fa-clock text-yellow-600 text-xl"></i>
+            <div class="flex-shrink-0 h-12 w-12 bg-brown-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-clock text-brown-600 text-xl"></i>
             </div>
             <div class="ml-4">
                 <h4 class="text-sm font-medium text-gray-600">Open</h4>
@@ -72,7 +70,7 @@
             </div>
             <div class="ml-4">
                 <h4 class="text-sm font-medium text-gray-600">Total Cost</h4>
-                <p class="text-2xl font-bold text-gray-900">${{ total_cost|floatformat:2 }}</p>
+                <p class="text-2xl font-bold text-gray-900">TZS. {{ total_cost|floatformat:2 }}</p>
             </div>
         </div>
 </div>
@@ -94,13 +92,13 @@
             <div class="mt-3 sm:mt-0 flex flex-col sm:flex-row gap-3">
                 <!-- Filters -->
                 <div class="flex gap-2">
-                    <select id="statusFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-brown-500 focus:border-brown-500">
+                    <select id="statusFilter" class="text-sm border border-gray-200 border-l-4 border-l-brown-400 px-3 py-2 focus:ring-0 focus:outline-none focus:border-l-brown-600">
                         <option value="">All Status</option>
                         <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
                         <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
                         <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
                     </select>
-                    <select id="priorityFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-brown-500 focus:border-brown-500">
+                    <select id="priorityFilter" class="text-sm border border-gray-200 border-l-4 border-l-brown-400 px-3 py-2 focus:ring-0 focus:outline-none focus:border-l-brown-600">
                         <option value="">All Priority</option>
                         <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>Low</option>
                         <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>Medium</option>
@@ -114,7 +112,7 @@
                     <div class="relative">
                         <input type="text" name="search" value="{{ search_query }}" 
                                placeholder="Search requests..." 
-                               class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brown-500 focus:border-brown-500 w-full sm:w-64">
+                               class="pl-10 pr-4 py-2 border border-gray-200 border-l-4 border-l-brown-400 focus:ring-0 focus:outline-none focus:border-l-brown-600 w-full sm:w-64">
                         <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                     </div>
                 </form>
@@ -155,7 +153,7 @@
                                 {% if req.cost %}
                                 <span class="ml-3">
                                     <i class="fas fa-dollar-sign mr-1"></i>
-                                    ${{ req.cost }}
+                                    TZS. {{ req.cost }}
                                 </span>
                                 {% endif %}
                             </div>
@@ -216,7 +214,7 @@
                             {% endif %}
                             {% if req.status != 'cancelled' %}
                             <button onclick="notifyTenant({{ req.id }}, this)"
-                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-brown-600 hover:bg-brown-700 transition-colors">
                                 <i class="fas fa-sms mr-2"></i>
                                 Notify
                             </button>
@@ -241,9 +239,7 @@
                 All maintenance issues are resolved or no requests have been submitted yet
                 {% endif %}
             </p>
-            <a href="{% url 'maintenance_request_create' %}" class="inline-flex items-center px-6 py-3 bg-brown-600 text-white rounded-lg hover:bg-brown-700 transition-colors font-medium">
-                <i class="fas fa-plus mr-2"></i> Create First Request
-            </a>
+            <p class="text-sm text-gray-400 italic">Tenants can report issues from their portal.</p>
         </div>
         {% endif %}
     </div>
