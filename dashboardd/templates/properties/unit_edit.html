@@ -134,25 +134,33 @@
                 <i class="fas fa-money-bill-wave text-brown-600 mr-1"></i>
                 Monthly Rent *
               </label>
-              <div class="relative">
-                <div
-                  class="absolute inset-y-0 right-8 pl-3 flex items-center pointer-events-none"
-                >
-                  <span class="text-gray-500">TZS. </span>
-                </div>
-                {% render_field form.monthly_rent class="block w-full pl-4 pr-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
-              </div>
+              {% render_field form.monthly_rent class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
               {% if form.monthly_rent.errors %}
               <p class="mt-2 text-sm text-red-600 flex items-center">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 {{ form.monthly_rent.errors.0 }}
               </p>
-              {% endif %} {% if form.monthly_rent.help_text %}
-              <p class="mt-2 text-xs text-brown-500 flex items-center">
-                <i class="fas fa-info-circle mr-1"></i>
-                {{ form.monthly_rent.help_text }}
+              {% endif %}
+              <p class="mt-2 text-xs text-brown-500"><i class="fas fa-info-circle mr-1"></i>Monthly rent amount in TZS</p>
+            </div>
+
+            <!-- Minimum Rental Months -->
+            <div>
+              <label
+                for="{{ form.min_rental_months.id_for_label }}"
+                class="block text-sm font-medium text-gray-700 mb-2"
+              >
+                <i class="fas fa-calendar-alt text-brown-600 mr-1"></i>
+                Minimum Rental Period (months) *
+              </label>
+              {% render_field form.min_rental_months class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all" %}
+              {% if form.min_rental_months.errors %}
+              <p class="mt-2 text-sm text-red-600 flex items-center">
+                <i class="fas fa-exclamation-circle mr-1"></i>
+                {{ form.min_rental_months.errors.0 }}
               </p>
               {% endif %}
+              <p class="mt-2 text-xs text-brown-500"><i class="fas fa-info-circle mr-1"></i>Minimum months tenant must pay upfront (e.g. 6)</p>
             </div>
           </div>
         </div>

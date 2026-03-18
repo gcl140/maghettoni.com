@@ -24,6 +24,9 @@
     <link rel="stylesheet" href="{% static 'css/tenant_portal/base.css' %}" />
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
+    {% if request.user.is_authenticated and request.user.preferred_language %}
+    <script>localStorage.setItem('mag-lang','{{ request.user.preferred_language }}');</script>
+    {% endif %}
     <script src="{% static 'js/tenant_portal/base-head.js' %}"></script>
     <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
@@ -213,69 +216,21 @@
               <i class="fas fa-bars"></i>
             </button>
 
-            <!-- Logo (mobile only — desktop has sidebar) -->
-            <div class="lg:hidden flex items-center gap-2 mr-2">
-              <div
-                class="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center"
-              >
-                <img
-                  src="{% static 'images/fav.png' %}"
-                  class="w-5 h-5 object-contain"
-                  alt="Maghettoni"
-                />
-              </div>
-              <span class="text-sm font-bold text-gray-900">Maghettoni</span>
-            </div>
-
             <!-- Page title -->
             <h2
-              class="font-semibold text-gray-900 text-sm truncate flex-1 ml-1"
+              class="font-semibold text-gray-900 truncate flex-1 ml-1"
             >
               {% block page_title %}Dashboard{% endblock %}
             </h2>
 
             <!-- Right actions -->
             <div class="flex items-center gap-2">
-              <!-- Language dropdown -->
-              <div class="relative" id="langWrap">
-                <button
-                  id="langBtn"
-                  class="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition text-gray-600 text-xs font-bold notranslate"
-                  title="Switch language"
-                >
-                  <i class="fas fa-globe text-sm"></i>
-                  <span id="langLabel">English</span>
-                  <i class="fas fa-chevron-down text-xs opacity-60"></i>
-                </button>
-                <div
-                  id="langMenu"
-                  class="hidden absolute right-0 mt-1.5 w-44 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-1.5 overflow-hidden notranslate"
-                >
-                  <button
-                    onclick="switchLang('en')"
-                    class="lang-opt w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition text-left"
-                    data-lang="en"
-                  >
-                    <span class="text-base">🇬🇧</span>
-                    <span>English</span>
-                  </button>
-                  <button
-                    onclick="switchLang('sw')"
-                    class="lang-opt w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 text-sm text-gray-700 transition text-left"
-                    data-lang="sw"
-                  >
-                    <span class="text-base">🇹🇿</span>
-                    <span>Kiswahili</span>
-                  </button>
-                </div>
-              </div>
-
               <!-- Pay Rent button -->
               <a
                 href="{% url 'tenant_payment_initiate' %}"
-                class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition-colors"
+                class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors"
               >
-                <i class="fas fa-plus"></i> Pay Rent
+                <i class="fas fa-money-bills"></i> Pay Rent
               </a>
 
               <!-- Bell (notification modal trigger) -->
@@ -376,30 +331,30 @@
     <!-- ===================== NOTIFICATION MODAL ===================== -->
     <dialog
       id="tp-notif-dialog"
-      class="rounded-xl shadow-2xl p-0 w-full md:max-w-md backdrop:bg-gray-900/50"
+      class="rounded-2xl shadow-2xl p-0 w-full md:max-w-md backdrop:bg-black/30"
     >
-      <div class="bg-brown-800 px-5 pt-5 pb-4">
+      <div class="bg-white px-5 pt-5 pb-4">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-white flex items-center">
-            <i class="fas fa-bell mr-2 text-brown-300"></i> Notifications
+          <h3 class="text-base font-semibold text-gray-800 flex items-center">
+            <i class="fas fa-bell mr-2 text-amber-500"></i> Notifications
           </h3>
           <button
             onclick="document.getElementById('tp-notif-dialog').close()"
-            class="text-brown-300 hover:text-white transition-colors p-1"
+            class="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100"
           >
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div id="tp-notif-list" class="space-y-3 max-h-80 overflow-y-auto">
-          <p class="text-sm text-brown-300 text-center py-6">
+        <div id="tp-notif-list" class="space-y-2 max-h-80 overflow-y-auto">
+          <p class="text-sm text-gray-400 text-center py-6">
             <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
           </p>
         </div>
       </div>
-      <div class="bg-brown-700 px-5 py-3 flex justify-end">
+      <div class="bg-gray-50 border-t border-gray-100 px-5 py-3 flex justify-end">
         <button
           onclick="document.getElementById('tp-notif-dialog').close()"
-          class="inline-flex items-center px-4 py-2 bg-red-700 hover:bg-red-800 text-white text-sm font-medium rounded-lg transition-colors"
+          class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition-colors"
         >
           Close
         </button>

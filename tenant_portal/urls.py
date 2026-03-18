@@ -18,6 +18,8 @@ urlpatterns = [
 
     # Profile
     path('profile/', views.tenant_profile, name='tenant_profile'),
+    path('profile/edit/', views.tenant_edit_profile, name='tenant_edit_profile'),
+    path('tenancy/<int:tenancy_id>/notifications/toggle/', views.toggle_tenancy_notifications, name='toggle_tenancy_notifications'),
 
     # Notifications
     path('notifications/', views.tenant_notifications, name='tenant_notifications'),

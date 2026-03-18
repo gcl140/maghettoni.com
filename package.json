@@ -1,7 +1,7 @@
 {
   "name": "maghettoni",
   "version": "1.0.0",
-  "description": "A property management system built for Kenyan landlords. Manage properties, units, tenants, payments, and maintenance requests from a single dashboard — with Swahili-first UI and Nairobi timezone support.",
+  "description": "A property management system built for Tanzanian landlords. Manage properties, units, tenants, payments, and maintenance requests from a single dashboard — with Swahili-first UI and Nairobi timezone support.",
   "main": "index.js",
   "scripts": {
     "build:tailwind": "tailwindcss -i ./assets/tailwind-input.css -o ./static/css/tailwind.css --minify",

@@ -1,122 +1,290 @@
 {% extends 'tenant_portal/base.html' %}
-{% block title %}My Profile{% endblock %}
-{% block page_title %}My Profile{% endblock %}
+{% load static %}
+{% block title %}Profile - {{ tenant.first_name }} {{ tenant.last_name }}{% endblock %}
+{% block page_title %}Profile{% endblock %}
 {% block breadcrumbs %}
 <li class="text-gray-300">/</li>
 <li class="text-gray-600 font-medium">Profile</li>
 {% endblock %}
 
 {% block content %}
-<div class="mx-auto">
+<div class="max-w-3xl mx-auto space-y-6">
 
-  <!-- Profile card -->
-  <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 mb-5">
-    <div class="flex items-center gap-5 mb-5">
-      {% if tenant.profile_picture %}
-        <img src="{{ tenant.profile_picture.url }}" class="w-20 h-20 rounded-2xl object-cover border-2 border-amber-500/40" />
-      {% else %}
-        <div class="w-20 h-20 rounded-2xl bg-amber-500/20 flex items-center justify-center text-3xl font-black text-amber-500">
-          {{ tenant.first_name|first|upper }}{{ tenant.last_name|first|upper }}
+  <!-- Profile Card -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-white">
+      <h3 class="text-lg font-semibold text-gray-800">Profile Information</h3>
+    </div>
+    <div class="p-6">
+      <div class="flex flex-col sm:flex-row sm:items-start gap-6">
+        <div class="flex-shrink-0">
+          <div class="h-24 w-24 rounded-xl overflow-hidden border-4 border-white shadow-lg">
+            {% if tenant.profile_picture %}
+            <img src="{{ tenant.profile_picture.url }}" alt="{{ tenant.first_name }}" class="h-full w-full object-cover">
+            {% else %}
+            <div class="h-full w-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+              <span class="text-amber-600 text-3xl font-black">{{ tenant.first_name|first|upper }}{{ tenant.last_name|first|upper }}</span>
+            </div>
+            {% endif %}
+          </div>
         </div>
-      {% endif %}
-      <div>
-        <h2 class="text-xl font-bold text-gray-900">{{ tenant.first_name }} {{ tenant.last_name }}</h2>
-        <p class="text-sm text-gray-500 mt-1">{{ tenant.email }}</p>
-        <span class="mt-2 inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium
-                     {% if tenant.status == 'active' %}bg-green-500/20 text-green-600
-                     {% elif tenant.status == 'pending' %}bg-amber-500/20 text-amber-600
-                     {% else %}bg-red-500/20 text-red-600{% endif %}">
-          <span class="w-1.5 h-1.5 rounded-full
-                       {% if tenant.status == 'active' %}bg-green-500{% elif tenant.status == 'pending' %}bg-amber-500{% else %}bg-red-500{% endif %}">
+        <div class="flex-1 space-y-2">
+          <h2 class="text-2xl font-bold text-gray-900">{{ tenant.first_name }} {{ tenant.last_name }}</h2>
+          <span class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium
+            {% if tenant.status == 'active' %}bg-green-100 text-green-700
+            {% elif tenant.status == 'pending' %}bg-amber-100 text-amber-700
+            {% else %}bg-red-100 text-red-600{% endif %}">
+            <span class="w-1.5 h-1.5 rounded-full {% if tenant.status == 'active' %}bg-green-500{% elif tenant.status == 'pending' %}bg-amber-500{% else %}bg-red-500{% endif %}"></span>
+            {% if tenant.status == 'active' %}Active{% elif tenant.status == 'pending' %}Pending Verification{% else %}Inactive{% endif %}
           </span>
-          {% if tenant.status == 'active' %}Active{% elif tenant.status == 'pending' %}Pending Verification{% else %}Inactive{% endif %}
-        </span>
+          <div class="flex flex-wrap gap-4 mt-3 text-sm text-gray-600">
+            {% if tenant.email %}<span><i class="fas fa-envelope text-amber-500 mr-1"></i>{{ tenant.email }}</span>{% endif %}
+            {% if tenant.phone %}<span><i class="fas fa-phone text-amber-500 mr-1"></i>{{ tenant.phone }}</span>{% endif %}
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="bg-gray-50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
-          <i class="fas fa-phone text-amber-500"></i> Phone Number
-        </p>
-        <p class="text-sm font-medium text-gray-900">{{ tenant.phone|default:"Not set" }}</p>
-      </div>
-      <div class="bg-gray-50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
-          <i class="fas fa-envelope text-amber-500"></i> Email
-        </p>
-        <p class="text-sm font-medium text-gray-900 truncate">{{ tenant.email }}</p>
-      </div>
-      {% if tenant.emergency_contact %}
-      <div class="bg-gray-50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
-          <i class="fas fa-user-shield text-amber-500"></i> Emergency Contact
-        </p>
-        <p class="text-sm font-medium text-gray-900">{{ tenant.emergency_contact }}</p>
-        {% if tenant.emergency_phone %}
-          <p class="text-xs text-gray-400 mt-0.5">{{ tenant.emergency_phone }}</p>
-        {% endif %}
-      </div>
-      {% endif %}
-      <div class="bg-gray-50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
-          <i class="fas fa-sign-in-alt text-amber-500"></i> Move-in Date
-        </p>
-        <p class="text-sm font-medium text-gray-900">{{ tenant.move_in_date|date:"d F Y" }}</p>
-      </div>
-      {% if tenant.move_out_date %}
-      <div class="bg-gray-50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-2 flex items-center gap-1.5">
-          <i class="fas fa-sign-out-alt text-amber-500"></i> Move-out Date
-        </p>
-        <p class="text-sm font-medium {% if stay.days_remaining and stay.days_remaining < 30 %}text-red-500{% else %}text-gray-900{% endif %}">
-          {{ tenant.move_out_date|date:"d F Y" }}
-          {% if stay.days_remaining %}
-            <span class="text-xs text-gray-400 ml-1">({{ stay.days_remaining }} days left)</span>
-          {% endif %}
-        </p>
-      </div>
-      {% endif %}
     </div>
   </div>
 
-  <!-- Lease / Property details -->
-  <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 mb-5">
-    <h3 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-      <i class="fas fa-home text-amber-500"></i> Property Details
-    </h3>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="bg-gray-50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-1">Property</p>
-        <p class="text-sm font-medium text-gray-900">{{ tenant.property.name }}</p>
-        <p class="text-xs text-gray-400 mt-0.5">{{ tenant.property.address }}</p>
+  <!-- Tenancies — one card per property/landlord relationship -->
+  {% if tenancies_data %}
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-white flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-800">
+        <i class="fas fa-home text-amber-500 mr-2"></i>My Tenancies
+      </h3>
+      <span class="text-xs text-gray-400">{{ tenancies_data|length }} tenancy{{ tenancies_data|length|pluralize:"ies" }}</span>
+    </div>
+    <div class="divide-y divide-gray-100">
+      {% for td in tenancies_data %}
+      <div class="p-5 {% if td.is_primary %}bg-amber-50/30{% endif %}">
+        <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+          <!-- Property info -->
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-sm font-semibold text-gray-900">{{ td.tenant.property.name }}</span>
+              {% if td.is_primary %}<span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Primary</span>{% endif %}
+              <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium
+                {% if td.tenant.status == 'active' %}bg-green-100 text-green-700
+                {% elif td.tenant.status == 'pending' %}bg-amber-100 text-amber-700
+                {% else %}bg-gray-100 text-gray-500{% endif %}">
+                {{ td.tenant.get_status_display }}
+              </span>
+            </div>
+            <div class="text-xs text-gray-500 mb-3">
+              <span><i class="fas fa-map-marker-alt text-amber-400 mr-1"></i>{{ td.tenant.property.address|truncatechars:50 }}</span>
+              {% if td.tenant.unit %} &middot; <span class="font-medium">Unit {{ td.tenant.unit.unit_number }}</span>{% endif %}
+              {% if td.tenant.property.owner %} &middot; <span>Landlord: {{ td.tenant.property.owner.get_full_name|default:td.tenant.property.owner.username }}</span>{% endif %}
+            </div>
+            <!-- Move-in and calculated eligible until -->
+            <div class="flex flex-wrap gap-3 text-xs">
+              <span class="flex items-center gap-1 bg-gray-100 text-gray-600 px-2.5 py-1 rounded-lg">
+                <i class="fas fa-sign-in-alt text-amber-500"></i>
+                Move-in: <strong>{{ td.tenant.move_in_date|date:"d M Y" }}</strong>
+              </span>
+              {% if td.eligible_until %}
+              <span class="flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium
+                {% if td.eligible_until < today %}bg-red-100 text-red-700{% elif td.days_left and td.days_left <= 30 %}bg-orange-100 text-orange-700{% else %}bg-green-100 text-green-700{% endif %}">
+                <i class="fas fa-calendar-check"></i>
+                Eligible until: <strong>{{ td.eligible_until|date:"d M Y" }}</strong>
+                {% if td.eligible_until < today %}
+                  <span class="ml-1">(expired)</span>
+                {% elif td.days_left is not None %}
+                  <span class="ml-1">({{ td.days_left }}d left)</span>
+                {% endif %}
+              </span>
+              {% else %}
+              <span class="flex items-center gap-1 bg-gray-100 text-gray-500 px-2.5 py-1 rounded-lg">
+                <i class="fas fa-calendar-times"></i>
+                No completed payments yet
+              </span>
+              {% endif %}
+              {% if td.months_paid %}
+              <span class="flex items-center gap-1 bg-gray-100 text-gray-600 px-2.5 py-1 rounded-lg">
+                <i class="fas fa-coins text-amber-500"></i>
+                {{ td.months_paid }} month{{ td.months_paid|pluralize }} paid
+              </span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Notification toggle -->
+          <div class="flex-shrink-0 flex flex-col items-end gap-2">
+            <button
+              class="notif-toggle flex items-center gap-2 text-xs px-3 py-2 rounded-lg border transition-all
+                {% if td.tenant.notifications_enabled %}border-green-200 bg-green-50 text-green-700 hover:bg-green-100{% else %}border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100{% endif %}"
+              data-tenancy-id="{{ td.tenant.pk }}"
+              data-enabled="{{ td.tenant.notifications_enabled|yesno:'true,false' }}"
+              title="Toggle move-out reminders for this tenancy"
+            >
+              <i class="fas {% if td.tenant.notifications_enabled %}fa-bell{% else %}fa-bell-slash{% endif %}"></i>
+              <span class="notif-label">{% if td.tenant.notifications_enabled %}Reminders On{% else %}Reminders Off{% endif %}</span>
+            </button>
+            <span class="text-xs text-gray-400">Turn off when leaving</span>
+          </div>
+        </div>
       </div>
-      {% if tenant.unit %}
-      <div class="bg-gray-50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-1">Unit</p>
-        <p class="text-sm font-medium text-gray-900">Unit {{ tenant.unit.unit_number }}</p>
-        <p class="text-xs text-gray-400 mt-0.5">
-          {{ tenant.unit.bedrooms }} bdrm · {{ tenant.unit.bathrooms }} bthrm
-          {% if tenant.unit.square_feet %} · {{ tenant.unit.square_feet }} sqft{% endif %}
-        </p>
-      </div>
-      <div class="bg-gray-50 rounded-xl p-4">
-        <p class="text-xs text-gray-400 mb-1">Monthly Rent</p>
-        <p class="text-lg font-bold text-amber-500">TZS. {{ tenant.unit.monthly_rent|floatformat:0 }}</p>
-      </div>
-      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Edit Form -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-white">
+      <h3 class="text-lg font-semibold text-gray-800">Edit Profile</h3>
+    </div>
+    <div class="p-6">
+      <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}<p class="text-xs text-red-500 mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}<p class="text-xs text-red-500 mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}<p class="text-xs text-red-500 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}<p class="text-xs text-red-500 mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Contact</label>
+            {{ form.emergency_contact }}
+            {% if form.emergency_contact.errors %}<p class="text-xs text-red-500 mt-1">{{ form.emergency_contact.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Emergency Phone</label>
+            {{ form.emergency_phone }}
+            {% if form.emergency_phone.errors %}<p class="text-xs text-red-500 mt-1">{{ form.emergency_phone.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
+            {{ form.profile_picture }}
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+          {{ form.notes }}
+          {% if form.notes.errors %}<p class="text-xs text-red-500 mt-1">{{ form.notes.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            <i class="fas fa-globe text-amber-500 mr-1"></i> Preferred Language
+          </label>
+          <div class="flex gap-3">
+            <label class="flex items-center gap-2 px-4 py-2 border border-gray-200 border-l-4 border-l-amber-500 cursor-pointer hover:bg-amber-50 transition-colors has-[:checked]:border-l-amber-700 has-[:checked]:bg-amber-50">
+              <input type="radio" name="preferred_language" value="en"
+                     {% if request.user.preferred_language == 'en' or not request.user.preferred_language %}checked{% endif %}
+                     class="accent-amber-600">
+              <span class="text-base">🇬🇧</span>
+              <span class="text-sm font-medium text-gray-700">EN</span>
+            </label>
+            <label class="flex items-center gap-2 px-4 py-2 border border-gray-200 border-l-4 border-l-amber-500 cursor-pointer hover:bg-amber-50 transition-colors has-[:checked]:border-l-amber-700 has-[:checked]:bg-amber-50">
+              <input type="radio" name="preferred_language" value="sw"
+                     {% if request.user.preferred_language == 'sw' %}checked{% endif %}
+                     class="accent-amber-600">
+              <span class="text-base">🇹🇿</span>
+              <span class="text-sm font-medium text-gray-700">SW</span>
+            </label>
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="submit"
+                  class="inline-flex items-center px-5 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-medium">
+            <i class="fas fa-save mr-2"></i> Save Changes
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Account settings link -->
-  <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
-    <p class="text-xs text-gray-400 mb-3">Account changes are made via</p>
-    <a href="{% url 'edit_profile' %}"
-       class="flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors">
-      <i class="fas fa-user-edit text-amber-500"></i>
-      <span class="text-sm text-gray-900">Edit Account Profile</span>
-      <i class="fas fa-chevron-right ml-auto text-gray-300 text-xs"></i>
-    </a>
+  <!-- Change Password -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-white">
+      <h3 class="text-lg font-semibold text-gray-800">Change Password</h3>
+    </div>
+    <div class="p-6">
+      {% if pw_error %}
+      <div class="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+        <i class="fas fa-exclamation-circle mr-1"></i>{{ pw_error }}
+      </div>
+      {% endif %}
+      <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="change_password">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+            <input type="password" name="current_password" autocomplete="current-password"
+                   class="w-full border border-gray-200 border-l-4 border-l-amber-500 py-2 px-3 text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-300 focus:border-l-amber-700">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+            <input type="password" name="new_password1" autocomplete="new-password"
+                   class="w-full border border-gray-200 border-l-4 border-l-amber-500 py-2 px-3 text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-300 focus:border-l-amber-700">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+            <input type="password" name="new_password2" autocomplete="new-password"
+                   class="w-full border border-gray-200 border-l-4 border-l-amber-500 py-2 px-3 text-gray-900 focus:outline-none focus:ring-0 focus:border-gray-300 focus:border-l-amber-700">
+          </div>
+        </div>
+        <div class="flex justify-end pt-2">
+          <button type="submit"
+                  class="inline-flex items-center px-5 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-medium">
+            <i class="fas fa-lock mr-2"></i> Update Password
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
+
 </div>
+
+<script>
+// Notification toggle per tenancy
+document.querySelectorAll('.notif-toggle').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var tenancyId = this.dataset.tenancyId;
+    var label = this.querySelector('.notif-label');
+    var icon = this.querySelector('i');
+    fetch('/tenant-portal/tenancy/' + tenancyId + '/notifications/toggle/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.ok) {
+        var enabled = data.enabled;
+        btn.dataset.enabled = enabled ? 'true' : 'false';
+        if (enabled) {
+          label.textContent = 'Reminders On';
+          icon.className = 'fas fa-bell';
+          btn.classList.remove('border-gray-200', 'bg-gray-50', 'text-gray-500', 'hover:bg-gray-100');
+          btn.classList.add('border-green-200', 'bg-green-50', 'text-green-700', 'hover:bg-green-100');
+        } else {
+          label.textContent = 'Reminders Off';
+          icon.className = 'fas fa-bell-slash';
+          btn.classList.remove('border-green-200', 'bg-green-50', 'text-green-700', 'hover:bg-green-100');
+          btn.classList.add('border-gray-200', 'bg-gray-50', 'text-gray-500', 'hover:bg-gray-100');
+        }
+      }
+    });
+  });
+});
+</script>
 {% endblock %}

@@ -174,7 +174,50 @@ function clearAddress() {
 
 // ── Delete confirmation ───────────────────────────────────────────────────────
 function confirmDelete() {
+  var url = window.PROPERTY_DELETE_URL
+    || (document.querySelector('[data-delete-url]') || {}).dataset.deleteUrl
+    || '#';
   showConfirm('Are you sure you want to delete this property? This action cannot be undone.', function () {
-    window.location.href = window.PROPERTY_DELETE_URL || '#';
+    window.location.href = url;
   });
+}
+
+// ── Image preview (new uploads) ───────────────────────────────────────────────
+(function () {
+  var inp = document.getElementById('id_new_images');
+  if (!inp) return;
+  inp.addEventListener('change', function () {
+    var wrap = document.getElementById('new-img-previews');
+    wrap.innerHTML = '';
+    var files = Array.from(this.files).slice(0, 5);
+    if (!files.length) { wrap.classList.add('hidden'); return; }
+    wrap.classList.remove('hidden');
+    files.forEach(function (f) {
+      var r = new FileReader();
+      r.onload = function (e) {
+        var d = document.createElement('div');
+        d.className = 'h-24 overflow-hidden border border-gray-200 border-l-4 border-l-brown-300';
+        d.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
+        wrap.appendChild(d);
+      };
+      r.readAsDataURL(f);
+    });
+  });
+})();
+
+// ── Delete existing property image ────────────────────────────────────────────
+function deletePropertyImage(id, url) {
+  if (!confirm('Remove this image?')) return;
+  var csrf = document.cookie.match(/csrftoken=([^;]+)/);
+  fetch(url, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': csrf ? csrf[1] : '', 'X-Requested-With': 'XMLHttpRequest' }
+  })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d.ok) {
+        var el = document.getElementById('img-wrap-' + id);
+        if (el) el.remove();
+      }
+    });
 }

@@ -26,14 +26,20 @@ Rent{% endblock %} {% block page_title %}Pay Rent{% endblock %} {% block breadcr
       </div>
     </div>
     {% if monthly_rent %}
-    <div
-      class="flex items-center justify-between pt-3 border-t border-gray-200"
-    >
+    <div class="flex items-center justify-between pt-3 border-t border-gray-200">
       <span class="text-sm text-gray-500">Monthly Rent</span>
-      <span class="text-lg font-bold text-amber-400"
-        >TZS. {{ monthly_rent|floatformat:0 }}</span
-      >
+      <span class="text-lg font-bold text-amber-400">TZS. {{ monthly_rent|floatformat:0 }}</span>
     </div>
+    {% endif %}
+    {% if min_amount %}
+    <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+      <span class="text-sm text-gray-500">Minimum Payment</span>
+      <span class="text-sm font-bold text-red-400">TZS. {{ min_amount|floatformat:0 }}</span>
+    </div>
+    <p class="text-xs text-gray-400 mt-1">
+      <i class="fas fa-info-circle mr-1"></i>
+      This unit requires at least {{ min_months }} month{{ min_months|pluralize }} upfront.
+    </p>
     {% endif %}
   </div>
 
@@ -203,10 +209,10 @@ Rent{% endblock %} {% block page_title %}Pay Rent{% endblock %} {% block breadcr
 
     <!-- Security notice -->
     <div
-      class="mb-5 p-3 bg-green-500/10 border border-green-500/20 rounded-xl flex items-start gap-2"
+      class="mb-5 p-3 border border-green-500/20 rounded-xl flex items-start gap-2"
     >
       <i class="fas fa-shield-alt text-green-400 text-sm mt-0.5"></i>
-      <p class="text-xs text-green-300">
+      <p class="text-xs text-green-500">
         Your payment is secure. This record will be submitted safely to your
         manager.
       </p>

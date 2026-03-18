@@ -144,3 +144,118 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+(function () {
+  var calEl    = document.getElementById('ld-calendar');
+  var calLabel = document.getElementById('ld-cal-label');
+  var prevBtn  = document.getElementById('ld-cal-prev');
+  var nextBtn  = document.getElementById('ld-cal-next');
+  var modal    = document.getElementById('ld-cal-modal');
+  if (!calEl) return;
+
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var viewYear  = new Date().getFullYear();
+  var viewMonth = new Date().getMonth() + 1;
+
+  var STATUS_CFG = {
+    completed: { bg: '#bbf7d0', color: '#166534', label: 'Paid' },
+    pending:   { bg: '#fde68a', color: '#92400e', label: 'Pending' },
+    overdue:   { bg: '#fecaca', color: '#991b1b', label: 'Overdue' },
+    upcoming:  { bg: '#dbeafe', color: '#1e40af', label: 'Upcoming' },
+    expiring:  { bg: '#fee2e2', color: '#991b1b', label: 'Lease Ends' }
+  };
+
+  function openModal(day, info) {
+    document.getElementById('ld-cal-modal-title').textContent = MONTHS[viewMonth - 1] + ' ' + day + ', ' + viewYear;
+    var total = info.items.length;
+    document.getElementById('ld-cal-modal-sub').textContent = total + ' payment' + (total !== 1 ? 's' : '');
+    document.getElementById('ld-cal-modal-body').innerHTML = info.items.map(function (item) {
+      var cfg  = STATUS_CFG[item.status] || STATUS_CFG.pending;
+      var amt  = item.amount != null ? 'TZS ' + Number(item.amount).toLocaleString('en-TZ', { maximumFractionDigits: 0 }) : '';
+      var icon = item.status === 'completed' ? '✓' : item.status === 'overdue' ? '▲' : item.status === 'upcoming' ? '◷' : item.status === 'expiring' ? '⚑' : '•';
+      return '<a href="/dashboard/payments/' + item.id + '/" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:#f9fafb;border:1px solid #f3f4f6;text-decoration:none;" onmouseover="this.style.background=\'#f3f4f6\'" onmouseout="this.style.background=\'#f9fafb\'">'
+        + '<div style="width:36px;height:36px;border-radius:50%;background:' + cfg.bg + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">' + icon + '</div>'
+        + '<div style="flex:1;min-width:0;">'
+        + '<p style="margin:0;font-size:13px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.tenant + '</p>'
+        + '<p style="margin:2px 0 0;font-size:11px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.property + '</p>'
+        + '</div>'
+        + '<div style="text-align:right;flex-shrink:0;">'
+        + '<p style="margin:0;font-size:13px;font-weight:700;color:#111827;">' + amt + '</p>'
+        + '<span style="display:inline-block;margin-top:2px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:' + cfg.bg + ';color:' + cfg.color + ';">' + cfg.label + '</span>'
+        + '</div></a>';
+    }).join('');
+    modal.style.display = 'block';
+  }
+
+  function renderCalendar(data) {
+    var year = data.year, month = data.month, days_in_month = data.days_in_month, today = data.today, days = data.days, expiring = data.expiring || {};
+    var gs = 'display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;';
+    var html = '<div style="' + gs + 'margin-bottom:4px;">';
+    DAYS.forEach(function (d) { html += '<div style="color:#9ca3af;font-size:11px;padding:4px 0;">' + d + '</div>'; });
+    html += '</div><div style="' + gs + '">';
+    var startWday = new Date(year, month - 1, 1).getDay();
+    for (var i = 0; i < startWday; i++) html += '<div></div>';
+    for (var d = 1; d <= days_in_month; d++) {
+      var info      = days[String(d)] || {};
+      var expDay    = expiring[String(d)] || [];
+      var isToday   = d === today;
+      var hasOver   = (info.overdue   || 0) > 0;
+      var hasPend   = (info.pending   || 0) > 0;
+      var hasPaid   = (info.completed || 0) > 0;
+      var hasUp     = (info.upcoming  || 0) > 0;
+      var hasExpiry = expDay.length > 0;
+      var hasItems  = (info.items || []).length > 0 || hasExpiry;
+      var bg = 'color:#374151;', dot = '', extra = '';
+      if (isToday && !hasOver && !hasPend && !hasPaid && !hasUp && !hasExpiry) {
+        bg = 'background:#3b82f6;color:#fff;font-weight:700;';
+      } else if (hasOver) {
+        bg = 'background:#fecaca;color:#991b1b;font-weight:600;';
+        dot = '<span style="display:block;font-size:8px;line-height:1.2;">▲' + info.overdue + '</span>';
+      } else if (hasPend) {
+        bg = 'background:#fde68a;color:#92400e;font-weight:600;';
+        dot = '<span style="display:block;font-size:8px;line-height:1.2;">•' + info.pending + '</span>';
+      } else if (hasPaid) {
+        bg = 'background:#bbf7d0;color:#166534;font-weight:600;';
+        dot = '<span style="display:block;font-size:8px;line-height:1.2;">✓' + info.completed + '</span>';
+      } else if (hasUp) {
+        bg = 'background:#dbeafe;color:#1e40af;font-weight:600;';
+        dot = '<span style="display:block;font-size:8px;line-height:1.2;">◷' + info.upcoming + '</span>';
+      } else if (hasExpiry) {
+        bg = 'background:#fee2e2;color:#991b1b;font-weight:600;';
+      }
+      if (hasExpiry) {
+        dot += '<span style="display:block;font-size:8px;line-height:1.2;color:#dc2626;">⚑' + expDay.length + '</span>';
+      }
+      if (hasItems) extra = 'cursor:pointer;outline:2px solid rgba(0,0,0,.08);';
+      html += '<div data-cal-day="' + d + '" style="padding:4px 2px;border-radius:6px;' + bg + extra + '">' + d + dot + '</div>';
+    }
+    html += '</div>';
+    calEl.innerHTML = html;
+    calLabel.textContent = MONTHS[month - 1] + ' ' + year;
+    calEl.querySelectorAll('[data-cal-day]').forEach(function (cell) {
+      var day     = parseInt(cell.getAttribute('data-cal-day'));
+      var info    = (data.days || {})[String(day)] || {};
+      var expDay  = (data.expiring || {})[String(day)] || [];
+      var items   = (info.items || []).slice();
+      expDay.forEach(function (e) {
+        items.push({ id: null, tenant: e.tenant, property: e.property, amount: null, status: 'expiring' });
+      });
+      if (items.length > 0) {
+        cell.addEventListener('click', function () { openModal(day, { items: items }); });
+      }
+    });
+  }
+
+  function loadCalendar(year, month) {
+    calEl.innerHTML = '<div style="text-align:center;padding:24px;color:#9ca3af;"><i class="fas fa-spinner fa-spin"></i></div>';
+    fetch('/dashboard/api/v1/calendar/?year=' + year + '&month=' + month)
+      .then(function (r) { return r.json(); })
+      .then(renderCalendar)
+      .catch(function () { calEl.innerHTML = '<p style="text-align:center;padding:16px;color:#f87171;font-size:12px;">Failed to load.</p>'; });
+  }
+
+  prevBtn.addEventListener('click', function () { viewMonth--; if (viewMonth < 1) { viewMonth = 12; viewYear--; } loadCalendar(viewYear, viewMonth); });
+  nextBtn.addEventListener('click', function () { viewMonth++; if (viewMonth > 12) { viewMonth = 1; viewYear++; } loadCalendar(viewYear, viewMonth); });
+  loadCalendar(viewYear, viewMonth);
+})();

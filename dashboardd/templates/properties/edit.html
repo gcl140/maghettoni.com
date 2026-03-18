@@ -227,45 +227,6 @@
                         <!-- New-file previews -->
                         <div id="new-img-previews" class="grid grid-cols-3 gap-2 mt-2 hidden"></div>
 
-                        <script>
-                        (function () {
-                            var inp = document.getElementById('id_new_images');
-                            if (!inp) return;
-                            inp.addEventListener('change', function () {
-                                var wrap = document.getElementById('new-img-previews');
-                                wrap.innerHTML = '';
-                                var files = Array.from(this.files).slice(0, 5);
-                                if (!files.length) { wrap.classList.add('hidden'); return; }
-                                wrap.classList.remove('hidden');
-                                files.forEach(function (f) {
-                                    var r = new FileReader();
-                                    r.onload = function (e) {
-                                        var d = document.createElement('div');
-                                        d.className = 'h-24 overflow-hidden border border-gray-200 border-l-4 border-l-brown-300';
-                                        d.innerHTML = '<img src="' + e.target.result + '" class="w-full h-full object-cover">';
-                                        wrap.appendChild(d);
-                                    };
-                                    r.readAsDataURL(f);
-                                });
-                            });
-                        })();
-
-                        function deletePropertyImage(id, url) {
-                            if (!confirm('Remove this image?')) return;
-                            var csrf = document.cookie.match(/csrftoken=([^;]+)/);
-                            fetch(url, {
-                                method: 'POST',
-                                headers: { 'X-CSRFToken': csrf ? csrf[1] : '', 'X-Requested-With': 'XMLHttpRequest' }
-                            })
-                                .then(function (r) { return r.json(); })
-                                .then(function (d) {
-                                    if (d.ok) {
-                                        var el = document.getElementById('img-wrap-' + id);
-                                        if (el) el.remove();
-                                    }
-                                });
-                        }
-                        </script>
                     </div>
                 </div>
             </div>
@@ -401,7 +362,7 @@
         </div>
     </div>
 
-    {% if is_edit %}
+    {% if is_edit and not has_occupied_units %}
     <!-- Danger Zone -->
     <div class="mt-6 bg-white rounded-xl shadow-sm border border-red-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-red-200 bg-red-50">
@@ -418,8 +379,9 @@
                         This action cannot be undone. All units, tenants, and related data will be permanently deleted.
                     </p>
                 </div>
-                <button type="button" 
+                <button type="button"
                         onclick="confirmDelete()"
+                        data-delete-url="{% url 'property_delete' property.id %}"
                         class="mt-4 sm:mt-0 inline-flex items-center px-6 py-3 border border-red-600 text-red-700 bg-white rounded-lg hover:bg-red-50 transition-colors font-medium">
                     <i class="fas fa-trash-alt mr-2"></i> Delete Property
                 </button>
@@ -480,9 +442,7 @@
 {% block extra_js %}
 <script src="{% static 'js/edit.js' %}"></script>
 <script src="{% static 'js/property-form-help.js' %}"></script>
-{% if is_edit %}
-<script>window.PROPERTY_DELETE_URL = "{% url 'property_delete' property.id %}";</script>
-{% endif %}
+
 {% if google_maps_api_key %}
 <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
 {% endif %}

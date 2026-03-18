@@ -7,7 +7,7 @@ from django.views.decorators.http import require_GET
 
 from dashboardd.models import MaintenanceRequest, Payment
 from .models import TenantNotification
-from .views import _next_due_date, tenant_required
+from .views import _next_due_date, tenant_required, _get_tenant
 
 
 def _tenant_api_guard(view_func):
@@ -15,7 +15,7 @@ def _tenant_api_guard(view_func):
     def _wrapped(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return JsonResponse({'error': 'Unauthenticated'}, status=401)
-        if not hasattr(request.user, 'tenant_profile') or request.user.tenant_profile is None:
+        if not request.user.tenant_profiles.exists():
             return JsonResponse({'error': 'No tenant profile linked'}, status=403)
         return view_func(request, *args, **kwargs)
     return _wrapped
@@ -24,7 +24,7 @@ def _tenant_api_guard(view_func):
 @_tenant_api_guard
 @require_GET
 def api_tenant_dashboard(request):
-    tenant = request.user.tenant_profile
+    tenant = _get_tenant(request.user)
     today = date.today()
     next_due = _next_due_date(tenant)
 
@@ -47,6 +47,11 @@ def api_tenant_dashboard(request):
 
     monthly_rent = float(tenant.unit.monthly_rent) if tenant.unit else 0
 
+    # Calculated eligible_until (no stored move_out_date anymore)
+    from .views import _eligibility
+    el = _eligibility(tenant)
+    eligible_until = str(el['eligible_until']) if (el and el['eligible_until']) else None
+
     return JsonResponse({
         'monthly_rent': monthly_rent,
         'next_due': str(next_due),
@@ -55,7 +60,7 @@ def api_tenant_dashboard(request):
         'pending_maintenance': pending_maint,
         'recent_payments': recent_payments,
         'stay_start': str(tenant.move_in_date),
-        'stay_end': str(tenant.move_out_date) if tenant.move_out_date else None,
+        'eligible_until': eligible_until,
     })
 
 
@@ -63,7 +68,7 @@ def api_tenant_dashboard(request):
 @require_GET
 def api_tenant_calendar(request):
     """Return payment events for a given year/month."""
-    tenant = request.user.tenant_profile
+    tenant = _get_tenant(request.user)
     today = date.today()
 
     try:
@@ -74,12 +79,10 @@ def api_tenant_calendar(request):
     except (ValueError, TypeError):
         return JsonResponse({'error': 'Invalid year/month'}, status=400)
 
-    # Payment due day based on move_in
     due_day = tenant.move_in_date.day
     last_day = cal.monthrange(year, month)[1]
     actual_due_day = min(due_day, last_day)
 
-    # Payments made this month
     made = list(
         Payment.objects.filter(
             tenant=tenant,
@@ -92,6 +95,15 @@ def api_tenant_calendar(request):
         for p in made
     ]
 
+    from .views import _eligibility
+    elig = _eligibility(tenant)
+    eligible_until = elig['eligible_until'] if elig else None
+    eligible_until_day = (
+        eligible_until.day
+        if eligible_until and eligible_until.year == year and eligible_until.month == month
+        else None
+    )
+
     return JsonResponse({
         'year': year,
         'month': month,
@@ -99,15 +111,15 @@ def api_tenant_calendar(request):
         'due_day': actual_due_day,
         'payments_made': made_out,
         'today': today.day if (today.year == year and today.month == month) else None,
+        'eligible_until_day': eligible_until_day,
     })
 
 
 @_tenant_api_guard
 @require_GET
 def api_tenant_notifications(request):
-    tenant = request.user.tenant_profile
+    tenant = _get_tenant(request.user)
 
-    # Opening the bell should clear unread state for tenant notifications.
     unread_qs = TenantNotification.objects.filter(tenant=tenant, is_read=False)
     unread_qs.update(is_read=True)
 
@@ -123,5 +135,4 @@ def api_tenant_notifications(request):
         }
         for n in notifs
     ]
-    unread_count = 0
-    return JsonResponse({'items': items, 'unread_count': unread_count})
+    return JsonResponse({'items': items, 'unread_count': 0})

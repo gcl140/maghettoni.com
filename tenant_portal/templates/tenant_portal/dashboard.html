@@ -10,78 +10,77 @@
 
 {% block content %}
 <!-- ===== GREETING + NEXT DUE HERO ===== -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 
   <!-- Greeting -->
-  <div class="md:col-span-2 bg-gradient-to-br from-brown-800 to-brown-700 rounded-2xl p-5 border border-brown-600/30">
+  <div class="bg-gradient-to-br from-brown-800 to-brown-700 rounded-2xl p-6 border border-brown-600/30 flex flex-col justify-between min-h-48">
     <div class="flex items-start justify-between">
-      <div>
-        <p id="tp-greeting" class="text-amber-400 text-sm font-medium mb-1"></p>
-        <h2 class="text-2xl font-bold text-white">{{ tenant.first_name }} {{ tenant.last_name }}</h2>
-        <p class="text-brown-300 text-sm mt-1">
-          <i class="fas fa-map-marker-alt mr-1 text-amber-500"></i>
-          {{ tenant.property.name }}
-          {% if tenant.unit %}— Unit {{ tenant.unit.unit_number }}{% endif %}
-        </p>
-      </div>
+      <p id="tp-greeting" class="text-amber-400 font-bold text-2xl"></p>
       {% if tenant.profile_picture %}
-        <img src="{{ tenant.profile_picture.url }}" class="w-16 h-16 rounded-2xl object-cover border-2 border-amber-500/40" />
+        <img src="{{ tenant.profile_picture.url }}" class="rounded-2xl object-cover border-2 border-amber-500/40 flex-shrink-0" style="width:7rem;height:7rem;object-fit:cover;" />
       {% else %}
-        <div class="w-16 h-16 rounded-2xl bg-amber-500/20 flex items-center justify-center text-2xl font-bold text-amber-300">
+        <div class="rounded-2xl bg-amber-500/20 flex items-center justify-center text-4xl font-black text-amber-300 flex-shrink-0" style="width:7rem;height:7rem;">
           {{ tenant.first_name|first|upper }}{{ tenant.last_name|first|upper }}
         </div>
       {% endif %}
     </div>
-
-    <!-- Stay info bar -->
-    <div class="mt-4 grid grid-cols-3 gap-3">
-      <div class="bg-brown-900/40 rounded-xl p-3 text-center">
-        <p class="text-xs text-brown-400 mb-1">Move-in</p>
-        <p class="text-sm font-semibold text-white">{{ stay.start|date:"d M Y" }}</p>
-      </div>
-      <div class="bg-brown-900/40 rounded-xl p-3 text-center">
-        <p class="text-xs text-brown-400 mb-1">Duration (months)</p>
-        <p class="text-xl font-bold text-amber-400">{{ stay.months }}</p>
-      </div>
-      <div class="bg-brown-900/40 rounded-xl p-3 text-center">
-        <p class="text-xs text-brown-400 mb-1">
-          {% if stay.end %}Move-out{% else %}Days So Far{% endif %}
-        </p>
-        {% if stay.end %}
-          <p class="text-sm font-semibold {% if stay.days_remaining < 30 %}text-red-400{% else %}text-white{% endif %}">
-            {{ stay.days_remaining }} days
-          </p>
-        {% else %}
-          <p class="text-sm font-semibold text-green-400">Ongoing</p>
-        {% endif %}
-      </div>
+    <div>
+      <h2 class="text-5xl font-black text-white leading-tight tracking-tight">{{ tenant.first_name }}<br>{{ tenant.last_name }}</h2>
+      <p class="text-brown-300 text-sm mt-3">
+        <i class="fas fa-map-marker-alt mr-1 text-amber-500"></i>
+        {{ tenant.property.name }}{% if tenant.unit %} · Unit {{ tenant.unit.unit_number }}{% endif %}
+      </p>
     </div>
   </div>
 
   <!-- Next Payment Due Countdown -->
-  <div class="bg-brown-800 rounded-2xl p-5 border border-brown-600/30 flex flex-col">
-    <div class="flex items-center gap-2 mb-3">
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center
-                  {% if days_until_due <= 3 %}bg-red-500/20{% elif days_until_due <= 7 %}bg-amber-500/20{% else %}bg-green-500/20{% endif %}">
-        <i class="fas fa-calendar text-sm
-                  {% if days_until_due <= 3 %}text-red-400{% elif days_until_due <= 7 %}text-amber-400{% else %}text-green-400{% endif %}">
-        </i>
+  <div class="bg-brown-800 rounded-2xl p-5 border border-brown-600/30 flex flex-col" id="due-card" data-tenancies="{{ tenancies_due_json|escape }}">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2">
+        <div id="due-icon-wrap" class="w-8 h-8 rounded-lg flex items-center justify-center">
+          <i id="due-icon" class="fas fa-calendar text-sm"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-brown-300">Next Rent Due</p>
+          <p id="due-tenancy-label" class="text-xs text-brown-400 hidden"></p>
+        </div>
       </div>
-      <p class="text-sm font-medium text-brown-300">Next Rent Due</p>
+      <!-- Carousel nav (shown only if multiple tenancies) -->
+      <div id="due-nav" class="hidden flex gap-1">
+        <button id="due-prev" class="w-6 h-6 rounded-lg bg-brown-700 hover:bg-brown-600 text-brown-300 hover:text-white text-xs flex items-center justify-center transition-colors">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <span id="due-nav-label" class="text-xs text-brown-400 self-center px-1"></span>
+        <button id="due-next" class="w-6 h-6 rounded-lg bg-brown-700 hover:bg-brown-600 text-brown-300 hover:text-white text-xs flex items-center justify-center transition-colors">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
     </div>
 
-    <div class="flex-1 flex flex-col items-center justify-center text-center">
-      <p class="text-4xl font-black
-                {% if days_until_due <= 3 %}text-red-400{% elif days_until_due <= 7 %}text-amber-400{% else %}text-green-400{% endif %}">
-        {{ days_until_due }}
-      </p>
-      <p class="text-sm text-brown-300 mt-1">
-        {% if days_until_due == 0 %}Today!{% elif days_until_due == 1 %}Tomorrow!{% else %}days{% endif %}
-      </p>
-      <p class="text-xs text-brown-400 mt-1">{{ next_due|date:"d F Y" }}</p>
-      {% if tenant.unit %}
-        <p class="mt-3 text-lg font-bold text-white">TZS. {{ tenant.unit.monthly_rent|floatformat:0 }}</p>
-      {% endif %}
+    <!-- Live Countdown -->
+    <div class="flex-1 flex flex-col justify-center text-center">
+      <div class="flex items-end justify-between gap-2 w-full mb-3">
+        <div class="flex-1 bg-brown-900/40 rounded-xl py-3">
+          <p id="cd-days" class="text-3xl font-black leading-none">--</p>
+          <p class="text-xs text-brown-400 mt-1">days</p>
+        </div>
+        <div class="flex-1 bg-brown-900/40 rounded-xl py-3">
+          <p id="cd-hours" class="text-3xl font-black leading-none">--</p>
+          <p class="text-xs text-brown-400 mt-1">hrs</p>
+        </div>
+        <div class="flex-1 bg-brown-900/40 rounded-xl py-3">
+          <p id="cd-mins" class="text-3xl font-black leading-none">--</p>
+          <p class="text-xs text-brown-400 mt-1">min</p>
+        </div>
+        <div class="flex-1 bg-brown-900/40 rounded-xl py-3">
+          <p id="cd-secs" class="text-3xl font-black leading-none">--</p>
+          <p class="text-xs text-brown-400 mt-1">sec</p>
+        </div>
+      </div>
+      <p id="cd-move-in" class="text-xs text-brown-400 mt-1"></p>
+      <p id="cd-due-date" class="text-xs text-brown-400 mt-0.5"></p>
+      <p id="cd-rent" class="mt-2 text-lg font-bold text-white"></p>
     </div>
 
     <a href="{% url 'tenant_payment_initiate' %}"
@@ -126,18 +125,22 @@
     <p class="text-xl font-bold text-gray-900">{{ pending_maintenance.count }}</p>
   </div>
 
-  <!-- Status -->
+  <!-- Eligibility -->
   <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
     <div class="flex items-center gap-2 mb-2">
-      <div class="w-8 h-8 rounded-lg bg-brown-500/20 flex items-center justify-center">
-        <i class="fas fa-user-check text-brown-400 text-xs"></i>
+      <div class="w-8 h-8 rounded-lg {% if eligibility and eligibility.eligible_until and eligibility.eligible_until >= today %}bg-green-500/20{% else %}bg-red-500/20{% endif %} flex items-center justify-center">
+        <i class="fas fa-calendar-check {% if eligibility and eligibility.eligible_until and eligibility.eligible_until >= today %}text-green-400{% else %}text-red-400{% endif %} text-xs"></i>
       </div>
-      <p class="text-xs text-gray-500">Tenancy Status</p>
+      <p class="text-xs text-gray-500">Eligible Until</p>
     </div>
-    <p class="text-sm font-bold
-              {% if tenant.status == 'active' %}text-green-400{% elif tenant.status == 'pending' %}text-amber-400{% else %}text-red-400{% endif %}">
-      {% if tenant.status == 'active' %}Active{% elif tenant.status == 'pending' %}Pending{% else %}Inactive{% endif %}
+    {% if eligibility and eligibility.eligible_until %}
+    <p class="text-sm font-bold {% if eligibility.eligible_until < today %}text-red-400{% else %}text-green-400{% endif %}">
+      {{ eligibility.eligible_until|date:"d M Y" }}
     </p>
+    <p class="text-xs text-gray-400 mt-0.5">{{ eligibility.months_paid }} mo paid</p>
+    {% else %}
+    <p class="text-sm font-bold text-gray-400">—</p>
+    {% endif %}
   </div>
 </div>
 

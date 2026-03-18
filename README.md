@@ -1,6 +1,6 @@
 # Maghettoni
 
-A property management system built for Kenyan landlords. Manage properties, units, tenants, payments, and maintenance requests from a single dashboard — with Swahili-first UI and Nairobi timezone support.
+A property management system built for Tanzanian landlords. Manage properties, units, tenants, payments, and maintenance requests from a single dashboard — with Swahili-first UI and Nairobi timezone support.
 
 ---
 

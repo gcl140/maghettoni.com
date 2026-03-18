@@ -1,4 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
+  var picInput = document.getElementById('id_profile_picture');
+  if (picInput) {
+    picInput.addEventListener('change', function () {
+      if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('tenant-pic-preview').src = e.target.result;
+          document.getElementById('tenant-pic-preview-wrap').classList.remove('hidden');
+        };
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+  }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
   const config = document.getElementById("tenant-edit-config");
   const initialUnit = config ? config.dataset.initialUnit : "";
 

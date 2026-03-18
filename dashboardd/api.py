@@ -130,7 +130,6 @@ def _serialize_tenant(t, full=False):
         'move_in_date': t.move_in_date.isoformat() if t.move_in_date else None,
     }
     if full:
-        data['move_out_date'] = t.move_out_date.isoformat() if t.move_out_date else None
         data['emergency_contact'] = t.emergency_contact
         data['emergency_phone'] = t.emergency_phone
         data['notes'] = t.notes
@@ -248,8 +247,8 @@ def api_notifications(request):
                 'type': 'payment',
                 'icon': 'fa-money-bill-wave',
                 'color': 'red',
-                'title': f'Malipo Overdue: {p.tenant.first_name} {p.tenant.last_name}',
-                'message': f'TZS. {p.amount:,.0f} — siku {days} zimepita',
+                'title': f'Payment Overdue: {p.tenant.first_name} {p.tenant.last_name}',
+                'message': f'TZS. {p.amount:,.0f} — {days} day(s) overdue',
                 'url': f'/dashboard/payments/{p.id}/',
                 'unread': True,
                 'created_at': timezone.localtime(p.created_at).strftime('%d %b %Y, %H:%M'),
@@ -262,7 +261,7 @@ def api_notifications(request):
                 'type': 'maintenance',
                 'icon': 'fa-tools',
                 'color': 'amber',
-                'title': f'Matengenezo Inasubiri: {r.property.name}',
+                'title': f'Maintenance Pending: {r.property.name}',
                 'message': r.title,
                 'url': f'/dashboard/maintenance/{r.id}/',
                 'unread': True,
@@ -422,10 +421,38 @@ def api_landlord_calendar(request):
             'status': item_status,
         })
 
+    # Tenants whose eligibility expires this month
+    from django.db.models import Sum
+    expiring = {}
+    for t in Tenant.objects.filter(
+        property__owner=request.user, status='active'
+    ).select_related('unit', 'property'):
+        if not t.unit or not t.unit.monthly_rent:
+            continue
+        total_paid = Payment.objects.filter(
+            tenant=t, status='completed'
+        ).aggregate(s=Sum('amount'))['s'] or 0
+        months_paid = int(total_paid / t.unit.monthly_rent)
+        if months_paid <= 0:
+            continue
+        start = t.move_in_date
+        m = start.month + months_paid - 1
+        yr = start.year + m // 12
+        mo = m % 12 + 1
+        ld = cal.monthrange(yr, mo)[1]
+        exp = date(yr, mo, min(start.day, ld))
+        if exp.year == year and exp.month == month:
+            key = str(exp.day)
+            expiring.setdefault(key, []).append({
+                'tenant': f"{t.first_name} {t.last_name}",
+                'property': t.property.name,
+            })
+
     return JsonResponse({
         'year': year,
         'month': month,
         'days_in_month': last_day,
         'today': today.day if (today.year == year and today.month == month) else None,
         'days': days,
+        'expiring': expiring,
     })

@@ -33,6 +33,14 @@ class CustomUser(AbstractUser):
         help_text="Landlords must be verified by admin. Tenant accounts are verified automatically on invite acceptance.",
     )
 
+    preferred_language = models.CharField(
+        max_length=5,
+        choices=[('en', 'English'), ('sw', 'Kiswahili')],
+        default='en',
+        blank=True,
+        verbose_name="Preferred Language",
+    )
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"

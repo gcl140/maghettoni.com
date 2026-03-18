@@ -64,28 +64,30 @@ class PropertyDocumentForm(forms.ModelForm):
 class UnitForm(forms.ModelForm):
     class Meta:
         model = Unit
-        fields = ['unit_number', 'bedrooms', 'bathrooms', 'square_feet', 
-                  'monthly_rent', 'is_occupied', 'description']
+        fields = ['unit_number', 'bedrooms', 'bathrooms', 'square_feet',
+                  'monthly_rent', 'min_rental_months', 'is_occupied', 'description']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
             'monthly_rent': forms.NumberInput(attrs={'step': '0.01'}),
+            'min_rental_months': forms.NumberInput(attrs={'min': '1'}),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         # Add CSS classes and placeholders
         for field in self.fields:
             self.fields[field].widget.attrs.update({
                 'class': 'form-input'
             })
-        
+
         # Specific field configurations
         self.fields['unit_number'].widget.attrs['placeholder'] = 'e.g., A101, Ground-1'
         self.fields['square_feet'].widget.attrs['placeholder'] = 'Square footage (optional)'
         self.fields['monthly_rent'].widget.attrs['placeholder'] = '0.00'
+        self.fields['min_rental_months'].widget.attrs['placeholder'] = '1'
         self.fields['description'].widget.attrs['placeholder'] = 'Any special features or notes...'
-        
+
         # Bedrooms/bathrooms are residential-only — not required (JS hides them for business)
         self.fields['bedrooms'].required = False
         self.fields['bathrooms'].required = False
@@ -95,6 +97,7 @@ class UnitForm(forms.ModelForm):
         self.fields['bathrooms'].help_text = 'Number of bathrooms'
         self.fields['square_feet'].help_text = 'Optional - for record keeping'
         self.fields['monthly_rent'].help_text = 'Monthly rent amount in TZS'
+        self.fields['min_rental_months'].help_text = 'Minimum months tenant must pay upfront (e.g. 6)'
     
     def clean_unit_number(self):
         unit_number = self.cleaned_data['unit_number']
@@ -116,12 +119,11 @@ class UnitForm(forms.ModelForm):
 class TenantForm(forms.ModelForm):
     class Meta:
         model = Tenant
-        fields = ['property', 'unit', 'first_name', 'last_name', 'email', 'phone', 
-                  'emergency_contact', 'emergency_phone', 'move_in_date', 'move_out_date',
+        fields = ['property', 'unit', 'first_name', 'last_name', 'email', 'phone',
+                  'emergency_contact', 'emergency_phone', 'move_in_date',
                   'status', 'profile_picture', 'notes']
         widgets = {
             'move_in_date': forms.DateInput(attrs={'type': 'date'}),
-            'move_out_date': forms.DateInput(attrs={'type': 'date', 'class': 'optional-date'}),
             'notes': forms.Textarea(attrs={'rows': 4}),
         }
     
@@ -162,7 +164,6 @@ class TenantForm(forms.ModelForm):
         # Add help text
         self.fields['phone'].help_text = 'Format: +255 xxx xxx xxx'
         self.fields['emergency_phone'].help_text = 'Optional - for emergencies only'
-        self.fields['move_out_date'].help_text = 'Leave empty for current tenants'
     
     def clean_phone(self):
         phone = self.cleaned_data.get('phone', '').strip()
@@ -181,16 +182,6 @@ class TenantForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        move_in_date = cleaned_data.get('move_in_date')
-        move_out_date = cleaned_data.get('move_out_date')
-        
-        # Validate date logic
-        if move_in_date and move_out_date:
-            if move_out_date < move_in_date:
-                raise forms.ValidationError({
-                    'move_out_date': 'Move-out date cannot be before move-in date.'
-                })
-        
         # Validate email uniqueness (optional)
         email = cleaned_data.get('email')
         if email:
@@ -279,29 +270,42 @@ class PaymentForm(forms.ModelForm):
         if payment_date and due_date:
             if payment_date > timezone.now().date():
                 raise forms.ValidationError({
-                    'payment_date': 'Tarehe ya malipo haiwezi kuwa siku zijazo.'
+                    'payment_date': 'Payment date cannot be in the future.'
                 })
             
             if due_date < payment_date:
                 raise forms.ValidationError({
-                    'due_date': 'Tarehe ya malipo yawezi kuwa kabla ya tarehe ya malipo.'
+                    'due_date': 'Due date cannot be before the payment date.'
                 })
         
         # Validate amount
         if amount and amount <= 0:
             raise forms.ValidationError({
-                'amount': 'Kiasi cha malipo lazima kiwe chanya.'
+                'amount': 'Payment amount must be a positive number.'
             })
         
         # Ensure tenant belongs to selected property
         tenant = cleaned_data.get('tenant')
         property_obj = cleaned_data.get('property')
-        
+
         if tenant and property_obj and tenant.property != property_obj:
             raise forms.ValidationError({
-                'tenant': 'Mpangaji huyu haishi katika mali iliyochaguliwa.'
+                'tenant': 'This tenant does not live in the selected property.'
             })
-        
+
+        # Enforce unit minimum rental period
+        amount = cleaned_data.get('amount')
+        if tenant and amount and tenant.unit and tenant.unit.min_rental_months > 1:
+            minimum = tenant.unit.monthly_rent * tenant.unit.min_rental_months
+            if amount < minimum:
+                raise forms.ValidationError({
+                    'amount': (
+                        f'This unit requires a minimum payment covering {tenant.unit.min_rental_months} months. '
+                        f'Minimum amount: TZS. {minimum:,.0f} '
+                        f'({tenant.unit.min_rental_months} × TZS. {tenant.unit.monthly_rent:,.0f}/mo).'
+                    )
+                })
+
         return cleaned_data
 
 

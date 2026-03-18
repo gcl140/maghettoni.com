@@ -17,10 +17,10 @@ class UserRegistrationForm(forms.ModelForm):
         model = CustomUser
         fields = ['first_name', 'last_name', 'email', 'telephone']
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Jina la kwanza'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Jina la mwisho'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Barua pepe'}),
-            'telephone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nambari ya simu'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'telephone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
         }
 
     def clean_password2(self):
@@ -44,7 +44,7 @@ class UserRegistrationForm(forms.ModelForm):
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'email', 'telephone', 'about', 'profile_picture']
+        fields = ['first_name', 'last_name', 'username', 'email', 'telephone', 'about', 'profile_picture', 'preferred_language']
         widgets = {
             'first_name': forms.TextInput(attrs={
                 'class': 'input-field',

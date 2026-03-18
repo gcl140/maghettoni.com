@@ -74,7 +74,7 @@
   <div class="section-title">{% if lang == 'sw' %}Muda wa Kukaa{% else %}Tenancy Period{% endif %}</div>
   <div class="grid">
     <div class="field"><label>{% if lang == 'sw' %}Tarehe ya Kuingia{% else %}Move-in Date{% endif %}</label><span>{{ tenant.move_in_date|date:"F j, Y"|default:"—" }}</span></div>
-    <div class="field"><label>{% if lang == 'sw' %}Tarehe ya Kutoka{% else %}Move-out Date{% endif %}</label><span>{{ tenant.move_out_date|date:"F j, Y"|default:"{% if lang == 'sw' %}Wazi{% else %}Open-ended{% endif %}" }}</span></div>
+    <div class="field"><label>{% if lang == 'sw' %}Tarehe ya Kutoka (inakokotolewa){% else %}Eligible Until (calculated){% endif %}</label><span>{{ eligibility.eligible_until|date:"F j, Y"|default:"{% if lang == 'sw' %}Wazi{% else %}Open-ended{% endif %}" }}</span></div>
   </div>
 </div>
 

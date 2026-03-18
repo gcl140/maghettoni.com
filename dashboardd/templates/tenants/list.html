@@ -135,226 +135,41 @@
     <table class="min-w-full divide-y divide-gray-200">
       <thead class="bg-gray-50">
         <tr>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-          >
-            <div class="flex items-center">
-              <i class="fas fa-user mr-2 text-brown-600"></i>
-              Tenant Details
-            </div>
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-          >
-            Property & Unit
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-          >
-            Contact & Rent
-          </th>
-          <th
-            scope="col"
-            class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans"
-          >
-            Status & Actions
-          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans">Tenant</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans">Property</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider font-sans">Status</th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
         {% for tenant in tenants %}
         <tr class="hover:bg-brown-50 transition-colors">
           <td class="px-6 py-4">
-            <div class="flex items-start">
-              <div
-                class="flex-shrink-0 h-12 w-12 {% if tenant.status == 'active' %}bg-green-100{% elif tenant.status == 'pending' %}bg-brown-100{% else %}bg-gray-100{% endif %} rounded-lg flex items-center justify-center"
-              >
+            <a href="{% url 'tenant_detail' tenant.id %}" class="flex items-center group">
+              <div class="flex-shrink-0 h-10 w-10 {% if tenant.status == 'active' %}bg-green-100{% elif tenant.status == 'pending' %}bg-brown-100{% else %}bg-gray-100{% endif %} rounded-full flex items-center justify-center">
                 {% if tenant.profile_picture %}
-                <img
-                  src="{{ tenant.profile_picture.url }}"
-                  alt="{{ tenant.full_name }}"
-                  class="h-10 w-10 rounded-full"
-                />
+                <img src="{{ tenant.profile_picture.url }}" alt="{{ tenant.full_name }}" class="h-10 w-10 rounded-full object-cover" />
                 {% else %}
-                <i
-                  class="fas fa-user text-{% if tenant.status == 'active' %}green{% elif tenant.status == 'pending' %}brown{% else %}gray{% endif %}-600 text-xl"
-                ></i>
+                <i class="fas fa-user text-{% if tenant.status == 'active' %}green{% elif tenant.status == 'pending' %}brown{% else %}gray{% endif %}-600"></i>
                 {% endif %}
               </div>
-              <div class="ml-4">
-                <h4 class="text-sm font-semibold text-gray-900 font-sans">
-                  {{ tenant.full_name }}
-                </h4>
-                <p class="text-sm text-gray-600 mt-1">
-                  <i class="fas fa-id-card text-brown-500 mr-1"></i>
-                  ID: {{ tenant.id|stringformat:"04d" }}
-                </p>
-                <div class="flex items-center mt-1">
-                  <span
-                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-brown-100 text-brown-800"
-                  >
-                    <i class="fas fa-calendar mr-1"></i>
-                    Since: {{ tenant.move_in_date|date:"M d, Y" }}
-                  </span>
-                </div>
+              <div class="ml-3">
+                <p class="text-sm font-semibold text-brown-700 group-hover:underline">{{ tenant.full_name }}</p>
+                <p class="text-xs text-gray-500">Since {{ tenant.move_in_date|date:"M Y" }}</p>
               </div>
-            </div>
+            </a>
           </td>
           <td class="px-6 py-4">
-            <div class="space-y-2">
-              <div class="flex items-center">
-                <i class="fas fa-home text-brown-600 mr-2 text-sm"></i>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">
-                    {{ tenant.property.name }}
-                  </p>
-                  <p class="text-xs text-gray-600 truncate max-w-[200px]">
-                    {{ tenant.property.address|truncatechars:30 }}
-                  </p>
-                </div>
-              </div>
-              {% if tenant.unit %}
-              <div class="flex items-center mt-2">
-                <i class="fas fa-door-open text-brown-600 mr-2 text-sm"></i>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">
-                    Unit {{ tenant.unit.unit_number }}
-                  </p>
-                  <p class="text-xs text-gray-600">
-                    {{ tenant.unit.bedrooms }} bed, {{ tenant.unit.bathrooms }}
-                    bath
-                  </p>
-                </div>
-              </div>
-              {% endif %}
-            </div>
+            <p class="text-sm text-gray-900">{{ tenant.property.name }}</p>
+            {% if tenant.unit %}<p class="text-xs text-gray-500">Unit {{ tenant.unit.unit_number }}</p>{% endif %}
           </td>
           <td class="px-6 py-4">
-            <div class="space-y-2">
-              <div class="text-sm">
-                <i class="fas fa-envelope text-brown-600 mr-2"></i>
-                <a
-                  href="mailto:{{ tenant.email }}"
-                  class="text-brown-600 hover:text-brown-800 hover:underline"
-                >
-                  {{ tenant.email|truncatechars:20 }}
-                </a>
-              </div>
-              <div class="text-sm">
-                <i class="fas fa-phone text-brown-600 mr-2"></i>
-                <a href="tel:{{ tenant.phone }}" class="text-gray-900">
-                  {{ tenant.phone }}
-                </a>
-              </div>
-              {% if tenant.unit %}
-              <div class="text-sm font-medium text-gray-900">
-                <i class="fas fa-money-bill-wave text-green-600 mr-2"></i>
-                TZS. {{ tenant.unit.monthly_rent }}/month
-              </div>
-              {% endif %}
-            </div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="flex items-center justify-between">
-              <div>
-                {% if tenant.status == 'active' %}
-                <span
-                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
-                >
-                  <i class="fas fa-check-circle mr-1"></i>
-                  Active
-                </span>
-                {% elif tenant.status == 'pending' %}
-                <span
-                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-brown-100 text-brown-700"
-                >
-                  <i class="fas fa-clock mr-1"></i>
-                  Pending
-                </span>
-                {% else %}
-                <span
-                  class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                >
-                  <i class="fas fa-times-circle mr-1"></i>
-                  Inactive
-                </span>
-                {% endif %}
-              </div>
-              <div class="flex space-x-2">
-                <a
-                  href="{% url 'tenant_detail' tenant.id %}"
-                  class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-colors"
-                >
-                  <i class="fas fa-eye mr-2"></i>
-                  View
-                </a>
-                <div class="relative group">
-                  <button
-                    class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition-colors"
-                  >
-                    <i class="fas fa-ellipsis-h"></i>
-                  </button>
-                  <div
-                    class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200"
-                  >
-                    <div class="py-1">
-                      <a
-                        href="{% url 'tenant_edit' tenant.id %}"
-                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-brown-50 hover:text-brown-700"
-                      >
-                        <i class="fas fa-edit mr-2"></i>
-                        Edit Tenant
-                      </a>
-                      <a
-                        href="{% url 'payments_list' %}"
-                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-brown-50 hover:text-brown-700"
-                      >
-                        <i class="fas fa-file-invoice-dollar mr-2"></i>
-                        Payments
-                      </a>
-                      <a
-                        href="mailto:{{ tenant.email }}"
-                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-brown-50 hover:text-brown-700"
-                      >
-                        <i class="fas fa-envelope mr-2"></i>
-                        Message
-                      </a>
-                      <div class="border-t border-gray-100"></div>
-                      {% if tenant.status == 'active' %}
-                      <a
-                        href="{% url 'tenant_deactivate' tenant.id %}"
-                        onclick="return confirm('Deactivate {{ tenant.full_name }}?')"
-                        class="flex items-center px-4 py-2 text-sm text-brown-600 hover:bg-brown-50"
-                      >
-                        <i class="fas fa-ban mr-2"></i>
-                        Deactivate
-                      </a>
-                      {% else %}
-                      <a
-                        href="{% url 'tenant_activate' tenant.id %}"
-                        onclick="return confirm('Activate {{ tenant.full_name }}?')"
-                        class="flex items-center px-4 py-2 text-sm text-green-600 hover:bg-green-50"
-                      >
-                        <i class="fas fa-check mr-2"></i>
-                        Activate
-                      </a>
-                      {% endif %}
-                      <a
-                        href="{% url 'tenant_delete' tenant.id %}"
-                        onclick="return confirm('Permanently remove {{ tenant.full_name }}? This cannot be undone.')"
-                        class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                      >
-                        <i class="fas fa-trash-alt mr-2"></i>
-                        Remove
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {% if tenant.status == 'active' %}
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Active</span>
+            {% elif tenant.status == 'pending' %}
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brown-100 text-brown-700"><i class="fas fa-clock mr-1"></i>Pending</span>
+            {% else %}
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600"><i class="fas fa-times-circle mr-1"></i>Inactive</span>
+            {% endif %}
           </td>
         </tr>
         {% endfor %}

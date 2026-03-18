@@ -67,3 +67,32 @@
   window.openDocPreview = openDocPreview;
   window.closeDocPreview = closeDocPreview;
 })();
+
+(function () {
+  // Move fullscreen modal to body to escape stacking context
+  var modal = document.getElementById('img-fullscreen-modal');
+  if (modal) document.body.appendChild(modal);
+
+  var slides = document.querySelectorAll('.prop-slide');
+  var dots = document.querySelectorAll('.slide-dot');
+  var counter = document.getElementById('slide-counter');
+  var cur = 0;
+  if (slides.length <= 1) return;
+
+  function show(n) {
+    slides[cur].classList.add('opacity-0', 'pointer-events-none');
+    if (dots[cur]) dots[cur].className = dots[cur].className.replace('bg-white', 'bg-white/40');
+    cur = (n + slides.length) % slides.length;
+    slides[cur].classList.remove('opacity-0', 'pointer-events-none');
+    if (dots[cur]) dots[cur].className = dots[cur].className.replace('bg-white/40', 'bg-white');
+    if (counter) counter.textContent = (cur + 1) + ' / ' + slides.length;
+  }
+
+  window.slideMove = function (d) { show(cur + d); };
+  window.goSlide = function (n) { show(n); };
+})();
+
+window.openImgModal = function (src) {
+  document.getElementById('img-fullscreen-src').src = src;
+  document.getElementById('img-fullscreen-modal').style.display = 'flex';
+};

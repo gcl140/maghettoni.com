@@ -88,14 +88,14 @@
         ></i>
         <div>
           <p class="text-sm font-semibold text-brown-800">
-            Thibitisha Mawasiliano ya Mpangaji Kabla ya Kuendelea
+            Verify Tenant Contact Details Before Continuing
           </p>
           <p class="text-xs text-brown-700 mt-1 leading-relaxed">
-            Mara baada ya kuongeza mpangaji, mfumo utatuma
-            <strong>mwaliko wa siri</strong> kwa barua pepe yake na maelezo ya
-            kuingia kwenye portal. Hakikisha barua pepe na nambari ya simu ni
-            sahihi — bila hivi mpangaji hataweza kupokea mwaliko na hawezi
-            kujiunga na mfumo.
+            Once you add the tenant, the system will send a
+            <strong>secure invite</strong> to their email with portal login
+            details. Make sure the email and phone number are correct — without
+            these the tenant will not receive the invite and cannot join the
+            system.
           </p>
         </div>
       </div>
@@ -324,27 +324,7 @@
               {% endif %}
             </div>
 
-            <!-- Move-out Date -->
-            <div>
-              <label
-                for="{{ form.move_out_date.id_for_label }}"
-                class="block text-sm font-medium text-gray-700 mb-2"
-              >
-                <i class="fas fa-sign-out-alt text-brown-600 mr-1"></i>
-                Move-out Date
-              </label>
-              {% render_field form.move_out_date class="block w-full px-4 py-3 border border-gray-200 border-l-4 border-l-brown-500 focus:ring-0 focus:outline-none focus:border-gray-300 focus:border-l-brown-700 transition-all optional-date" %} {% if form.move_out_date.help_text %}
-              <p class="mt-2 text-xs text-brown-500 flex items-center">
-                <i class="fas fa-info-circle mr-1"></i>
-                {{ form.move_out_date.help_text }}
-              </p>
-              {% endif %} {% if form.move_out_date.errors %}
-              <p class="mt-2 text-sm text-red-600 flex items-center">
-                <i class="fas fa-exclamation-circle mr-1"></i>
-                {{ form.move_out_date.errors.0 }}
-              </p>
-              {% endif %}
-            </div>
+            <!-- Move-out date is calculated from payments — not editable -->
           </div>
         </div>
 
@@ -475,18 +455,6 @@
                   <img id="tenant-pic-preview" src="{% if is_edit and tenant.profile_picture %}{{ tenant.profile_picture.url }}{% endif %}" alt="Preview" class="w-full h-full object-cover">
                 </div>
               </div>
-              <script>
-              document.getElementById('id_profile_picture').addEventListener('change', function () {
-                  if (this.files && this.files[0]) {
-                      var reader = new FileReader();
-                      reader.onload = function (e) {
-                          document.getElementById('tenant-pic-preview').src = e.target.result;
-                          document.getElementById('tenant-pic-preview-wrap').classList.remove('hidden');
-                      };
-                      reader.readAsDataURL(this.files[0]);
-                  }
-              });
-              </script>
             </div>{% endif %}
           </div>
 
@@ -566,5 +534,5 @@
 {% endblock %} {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/tenants-edit.css' %}" />
 {% endblock %} {% block extra_js %}
-<script src="{% static 'js/tenants-edit.js' %}" defer></script>
+<script src="{% static 'js/tenants-edit.js' %}"></script>
 {% endblock %}

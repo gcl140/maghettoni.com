@@ -384,7 +384,7 @@ def login(request):
             messages.success(request, msg(request, 'login_success'))
 
             # Tenant users go to the tenant portal
-            if hasattr(user, 'tenant_profile') and user.tenant_profile is not None:
+            if user.tenant_profiles.exists():
                 return redirect('tenant_dashboard')
             return redirect('dashboard')
 
@@ -405,13 +405,35 @@ def logout(request):
 
 @login_required
 def profile(request, user_id):
+    from django.contrib.auth import update_session_auth_hash
     user = get_object_or_404(User, id=user_id)
+    pw_error = None
+
     if request.method == 'POST':
-        form = CustomUserForm(request.POST, request.FILES, instance=user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, msg(request, 'profile_updated'))
-            return redirect('profile', user_id=user.id)
+        action = request.POST.get('action')
+        if action == 'change_password' and user == request.user:
+            current = request.POST.get('current_password', '')
+            new1 = request.POST.get('new_password1', '')
+            new2 = request.POST.get('new_password2', '')
+            if not request.user.check_password(current):
+                pw_error = 'Current password is incorrect.'
+            elif len(new1) < 8:
+                pw_error = 'New password must be at least 8 characters.'
+            elif new1 != new2:
+                pw_error = 'New passwords do not match.'
+            else:
+                request.user.set_password(new1)
+                request.user.save()
+                update_session_auth_hash(request, request.user)
+                messages.success(request, 'Password changed successfully.')
+                return redirect('profile', user_id=user.id)
+            form = CustomUserForm(instance=user)
+        else:
+            form = CustomUserForm(request.POST, request.FILES, instance=user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, msg(request, 'profile_updated'))
+                return redirect('profile', user_id=user.id)
     else:
         form = CustomUserForm(instance=user)
 
@@ -419,6 +441,7 @@ def profile(request, user_id):
         'logged_in_user': request.user,
         'looking_at': user,
         'form': form,
+        'pw_error': pw_error,
     })
 
 
@@ -446,6 +469,17 @@ def edit_profile(request):
         'form': form,
         'viewing_user': request.user,
     })
+
+
+@login_required
+@require_POST
+def set_language_preference(request):
+    data = json.loads(request.body)
+    lang = data.get('lang', 'en')
+    if lang in ('en', 'sw'):
+        request.user.preferred_language = lang
+        request.user.save(update_fields=['preferred_language'])
+    return JsonResponse({'ok': True})
 
 
 def custom_404_view(request, exception):

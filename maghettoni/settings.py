@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'dashboardd',
     'tenant_portal',
     'corsheaders',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -141,6 +142,17 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 BEEM_API_KEY = os.getenv('BEEM_API_KEY')
 BEEM_SECRET_KEY = os.getenv('BEEM_SECRET_KEY')
 BEEM_SENDER_ID = os.getenv('BEEM_SENDER_ID', 'INFO')
+
+# ── Celery ─────────────────────────────────────────────────────────────────
+CELERY_BROKER_URL = os.getenv('REDIS_URL_PROD', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL_PROD', 'redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Dar_es_Salaam'
+
+# django-celery-beat stores periodic task schedules in the DB
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 
 # Google OAuth2 keys (now from environment)

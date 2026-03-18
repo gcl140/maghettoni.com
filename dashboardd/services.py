@@ -51,7 +51,7 @@ def send_sms(phone: str, message: str) -> bool:
 
 
 def send_otp(phone: str, code: str) -> bool:
-    message = f"Msimbo wako wa uthibitisho ni: {code}\nHalali kwa dakika 10. Usishirikishe mtu yeyote."
+    message = f"Your verification code is: {code}\nValid for 10 minutes. Do not share with anyone."
     return send_sms(phone, message)
 
 
@@ -63,16 +63,16 @@ def send_payment_reminder(tenant, payment) -> bool:
 
     if days_overdue > 0:
         message = (
-            f"Habari {tenant.first_name},\n"
-            f"Kodi yako ya TZS {payment.amount:,.0f} imechelewa siku {days_overdue}. "
-            f"Tafadhali lipa haraka iwezekanavyo.\n"
+            f"Hello {tenant.first_name},\n"
+            f"Your rent of TZS {payment.amount:,.0f} is {days_overdue} day(s) overdue. "
+            f"Please pay as soon as possible.\n"
             f"- Maghettoni"
         )
     else:
         message = (
-            f"Habari {tenant.first_name},\n"
-            f"Kodi yako ya TZS {payment.amount:,.0f} inakaribia kulipwa tarehe {payment.due_date.strftime('%d/%m/%Y')}. "
-            f"Tafadhali hakikisha umelipa kwa wakati.\n"
+            f"Hello {tenant.first_name},\n"
+            f"Your rent of TZS {payment.amount:,.0f} is due on {payment.due_date.strftime('%d/%m/%Y')}. "
+            f"Please ensure payment is made on time.\n"
             f"- Maghettoni"
         )
     return send_sms(tenant.phone, message)
@@ -114,19 +114,84 @@ def send_payment_reminder_email(tenant, payment) -> bool:
         return False
 
 
+def send_eligibility_reminder_sms(tenant, eligible_until, days_left: int, reminder_type: str) -> bool:
+    """SMS reminder about eligibility / expected move-out date."""
+    if not tenant.phone:
+        return False
+    if reminder_type == 'halfway':
+        msg = (
+            f"Habari {tenant.first_name},\n"
+            f"Uko nusu njia ya muda wako wa kukaa kwenye {tenant.property.name}. "
+            f"Muda wako unaisha {eligible_until.strftime('%d %b %Y')}. "
+            f"Hakikisha malipo yako yanafanywa kwa wakati.\n- Maghettoni"
+        )
+    elif reminder_type == 'one_month':
+        msg = (
+            f"Habari {tenant.first_name},\n"
+            f"Mwezi 1 umebaki kukaa kwenye {tenant.property.name} (Unit {tenant.unit.unit_number if tenant.unit else ''}). "
+            f"Muda wako unaisha {eligible_until.strftime('%d %b %Y')}. "
+            f"Lipa au wasiliana na landlord wako.\n- Maghettoni"
+        )
+    elif reminder_type == 'two_weeks':
+        msg = (
+            f"Habari {tenant.first_name},\n"
+            f"Siku 14 zimebaki! Muda wako kwenye {tenant.property.name} unaisha {eligible_until.strftime('%d %b %Y')}. "
+            f"Hatua ya haraka inahitajika.\n- Maghettoni"
+        )
+    else:  # daily
+        msg = (
+            f"Habari {tenant.first_name},\n"
+            f"Siku {days_left} zimebaki kwenye {tenant.property.name}. "
+            f"Muda wako unaisha {eligible_until.strftime('%d %b %Y')}.\n- Maghettoni"
+        )
+    return send_sms(tenant.phone, msg)
+
+
+def send_eligibility_reminder_email(tenant, eligible_until, days_left: int, reminder_type: str) -> bool:
+    """Email reminder about eligibility / expected move-out date."""
+    from django.core.mail import send_mail
+    if not tenant.email:
+        return False
+    unit_str = f"Unit {tenant.unit.unit_number}" if tenant.unit else ""
+    subject_map = {
+        'halfway': f"Halfway through your stay at {tenant.property.name}",
+        'one_month': f"1 month left at {tenant.property.name} — action needed",
+        'two_weeks': f"2 weeks left at {tenant.property.name}",
+        'daily': f"{days_left} day{'s' if days_left != 1 else ''} left at {tenant.property.name}",
+    }
+    subject = subject_map.get(reminder_type, f"Stay reminder — {tenant.property.name}")
+    body = (
+        f"Dear {tenant.first_name},\n\n"
+        f"This is a reminder about your tenancy at {tenant.property.name}"
+        f"{' — ' + unit_str if unit_str else ''}.\n\n"
+        f"Based on your completed payments, your eligibility expires on "
+        f"{eligible_until.strftime('%d %B %Y')} ({days_left} day{'s' if days_left != 1 else ''} remaining).\n\n"
+        f"If you plan to continue, please make a new payment to extend your stay. "
+        f"If you are leaving, you can disable these reminders from your tenant portal profile.\n\n"
+        f"— Maghettoni\n"
+        f"  {tenant.property.name}"
+    )
+    try:
+        send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [tenant.email], fail_silently=False)
+        return True
+    except Exception as e:
+        logger.error(f"Eligibility reminder email failed for tenant {tenant.id}: {e}")
+        return False
+
+
 def send_maintenance_update(tenant, req) -> bool:
     """Notify a tenant about their maintenance request status."""
     status_labels = {
-        'pending': 'inasubiri',
-        'in_progress': 'inashughulikiwa',
-        'completed': 'imekamilika',
-        'cancelled': 'imefutwa',
+        'pending': 'pending',
+        'in_progress': 'in progress',
+        'completed': 'completed',
+        'cancelled': 'cancelled',
     }
     status_text = status_labels.get(req.status, req.status)
     message = (
-        f"Habari {tenant.first_name},\n"
-        f"Ombi lako la matengenezo '{req.title}' sasa liko: {status_text}.\n"
-        f"Mali: {req.property.name}, Chumba: {req.unit.unit_number}.\n"
+        f"Hello {tenant.first_name},\n"
+        f"Your maintenance request '{req.title}' is now: {status_text}.\n"
+        f"Property: {req.property.name}, Unit: {req.unit.unit_number}.\n"
         f"- Maghettoni"
     )
     return send_sms(tenant.phone, message)

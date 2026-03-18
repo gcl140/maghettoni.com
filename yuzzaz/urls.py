@@ -19,6 +19,7 @@ urlpatterns = [
     path('resend-activation/', views.resend_activation_email, name='resend_activation_email'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('company-profile/', views.company_profile, name='company_profile'),
+    path('set-language/', views.set_language_preference, name='set_language_preference'),
 
     path('send-gift-text/', views.send_gift_a_text, name='send_gift_text'),
     path('send-lissa-text/', views.send_lissa_text, name='send_lissa_text'),

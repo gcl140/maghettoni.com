@@ -150,4 +150,17 @@
   });
 
   window.filterUnits = filterUnits;
+
+  window.toggleUnitMenu = function (id, e) {
+    e.stopPropagation();
+    var dd = document.getElementById(id);
+    if (!dd) return;
+    var isOpen = !dd.classList.contains('hidden');
+    document.querySelectorAll('[id^="unit-dd-"]').forEach(function (el) { el.classList.add('hidden'); });
+    if (!isOpen) dd.classList.remove('hidden');
+  };
+
+  document.addEventListener('click', function () {
+    document.querySelectorAll('[id^="unit-dd-"]').forEach(function (el) { el.classList.add('hidden'); });
+  });
 })();

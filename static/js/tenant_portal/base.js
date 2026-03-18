@@ -32,28 +32,28 @@ window.tpToggleSidebar = function () {
   }
 
   var colorMap = {
-    info: "bg-blue-500/20 text-blue-400",
-    success: "bg-green-500/20 text-green-400",
-    warning: "bg-amber-500/20 text-amber-400",
-    error: "bg-red-500/20 text-red-400",
+    info: "bg-blue-100 text-blue-500",
+    success: "bg-green-100 text-green-600",
+    warning: "bg-amber-100 text-amber-500",
+    danger: "bg-red-100 text-red-500",
   };
 
   var iconMap = {
     info: "fa-info-circle",
     success: "fa-check-circle",
     warning: "fa-exclamation-triangle",
-    error: "fa-times-circle",
+    danger: "fa-times-circle",
   };
 
   function itemHTML(item) {
     var dot = item.unread
-      ? '<span class="flex-shrink-0 w-2 h-2 rounded-full bg-blue-400 mt-1.5"></span>'
+      ? '<span class="flex-shrink-0 w-2 h-2 rounded-full bg-amber-400 mt-1.5"></span>'
       : "";
-    var color = colorMap[item.notification_type] || colorMap.info;
-    var icon = iconMap[item.notification_type] || iconMap.info;
+    var color = colorMap[item.type] || colorMap.info;
+    var icon = iconMap[item.type] || iconMap.info;
     return (
-      '<div class="flex items-start gap-3 p-3 rounded-lg ' +
-      (item.unread ? "bg-brown-600/60" : "bg-brown-700/40") +
+      '<div class="flex items-start gap-3 p-3 rounded-xl border ' +
+      (item.unread ? "bg-amber-50 border-amber-100" : "bg-gray-50 border-gray-100") +
       '">' +
       '<div class="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ' +
       color +
@@ -63,13 +63,13 @@ window.tpToggleSidebar = function () {
       ' text-sm"></i>' +
       "</div>" +
       '<div class="min-w-0 flex-1">' +
-      '<p class="text-sm font-medium text-white truncate">' +
+      '<p class="text-sm font-semibold text-gray-800 truncate">' +
       (item.title || "") +
       "</p>" +
-      '<p class="text-xs text-brown-300 mt-0.5">' +
+      '<p class="text-xs text-gray-500 mt-0.5">' +
       (item.message || "") +
       "</p>" +
-      '<p class="text-xs text-brown-500 mt-1">' +
+      '<p class="text-xs text-gray-400 mt-1">' +
       (item.created_at || "") +
       "</p>" +
       "</div>" +
@@ -81,14 +81,14 @@ window.tpToggleSidebar = function () {
   function renderAll(hasMore) {
     if (!allItems.length) {
       list.innerHTML =
-        '<p class="text-sm text-brown-300 text-center py-6">No new notifications.</p>';
+        '<p class="text-sm text-gray-400 text-center py-8"><i class="fas fa-bell-slash block text-2xl mb-2 text-gray-300"></i>No new notifications.</p>';
       return;
     }
 
     var html = allItems.map(itemHTML).join("");
     if (hasMore) {
       html +=
-        '<button id="tp-notif-more" class="w-full mt-2 py-2 text-xs text-brown-300 hover:text-white transition-colors text-center">' +
+        '<button id="tp-notif-more" class="w-full mt-2 py-2 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-center">' +
         '<i class="fas fa-chevron-down mr-1"></i> Load more</button>';
     }
 
@@ -127,7 +127,7 @@ window.tpToggleSidebar = function () {
     allItems = [];
     clearBellDot();
     list.innerHTML =
-      '<p class="text-sm text-brown-300 text-center py-6"><i class="fas fa-spinner fa-spin mr-2"></i> Loading...</p>';
+      '<p class="text-sm text-gray-400 text-center py-6"><i class="fas fa-spinner fa-spin mr-2"></i> Loading...</p>';
     dialog.showModal();
 
     fetchPage(1)
@@ -147,6 +147,14 @@ window.tpToggleSidebar = function () {
 
 window.switchLang = function (lang) {
   localStorage.setItem("mag-lang", lang);
+  fetch("/home/set-language/", {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ lang: lang }),
+  });
 
   var langMenu = document.getElementById("langMenu");
   if (langMenu) {
@@ -189,7 +197,7 @@ window.switchLang = function (lang) {
   if (isSwahili) {
     var label = document.getElementById("langLabel");
     if (label) {
-      label.textContent = "Kiswahili";
+      label.textContent = "SW";
     }
     document.querySelectorAll(".lang-opt").forEach(function (btn) {
       btn.classList.toggle("font-semibold", btn.dataset.lang === "sw");

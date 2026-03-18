@@ -143,7 +143,9 @@
             <div class="p-6">
                 <div class="flex flex-wrap gap-3">
                     {% if payment.status == 'pending' %}
-                    <form method="POST" class="inline" id="mark-paid-form">
+                    <form method="POST" class="inline" id="mark-paid-form"
+                          data-needs-confirmation="{% if payment.needs_landlord_confirmation %}true{% else %}false{% endif %}"
+                          data-confirm-msg="Mark TZS. {{ payment.amount }} from {{ payment.tenant.full_name|escapejs }} as received? This confirms you have the cash in hand.">
                         {% csrf_token %}
                         <input type="hidden" name="mark_paid" value="1">
                         <button type="button" onclick="markPaid()"
@@ -152,18 +154,6 @@
                             Mark as Paid
                         </button>
                     </form>
-                    <script>
-                    function markPaid() {
-                        {% if payment.needs_landlord_confirmation %}
-                        showConfirm(
-                            'Mark TZS. {{ payment.amount }} from {{ payment.tenant.full_name }} as received? This confirms you have the cash in hand.',
-                            function () { document.getElementById('mark-paid-form').submit(); }
-                        );
-                        {% else %}
-                        document.getElementById('mark-paid-form').submit();
-                        {% endif %}
-                    }
-                    </script>
                     {% endif %}
                     
                     <a href="{% url 'payment_receipt' payment.id %}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
@@ -172,7 +162,7 @@
                     </a>
 
                     <!-- Reminders dropdown -->
-                    <div class="relative inline-block" id="reminder-wrapper">
+                    <div class="relative inline-block" id="reminder-wrapper" data-payment-id="{{ payment.id }}">
                         <button type="button" onclick="toggleReminderMenu()"
                                 class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors gap-2">
                             <i class="fas fa-bell"></i>
@@ -185,47 +175,6 @@
                             <button onclick="sendReminder('both')"  class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-paper-plane w-4 text-center text-brown-500"></i> SMS + Email</button>
                         </div>
                     </div>
-                    <script>
-                    function toggleReminderMenu() {
-                        document.getElementById('reminder-menu').classList.toggle('hidden');
-                    }
-                    document.addEventListener('click', function(e) {
-                        var w = document.getElementById('reminder-wrapper');
-                        if (w && !w.contains(e.target)) {
-                            document.getElementById('reminder-menu').classList.add('hidden');
-                        }
-                    });
-                    function sendReminder(channel) {
-                        document.getElementById('reminder-menu').classList.add('hidden');
-                        var btn = document.querySelector('#reminder-wrapper button');
-                        var orig = btn.innerHTML;
-                        btn.disabled = true;
-                        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
-                        fetch('/dashboard/api/v1/payments/{{ payment.id }}/remind/', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: 'channel=' + channel,
-                        })
-                        .then(r => r.json())
-                        .then(data => {
-                            if (data.success) {
-                                btn.innerHTML = '<i class="fas fa-check mr-2"></i>Sent!';
-                                btn.classList.replace('bg-white', 'bg-green-50');
-                                setTimeout(function() { btn.innerHTML = orig; btn.classList.replace('bg-green-50', 'bg-white'); btn.disabled = false; }, 3000);
-                            } else {
-                                btn.innerHTML = '<i class="fas fa-times mr-2"></i>Failed';
-                                setTimeout(function() { btn.innerHTML = orig; btn.disabled = false; }, 3000);
-                            }
-                        })
-                        .catch(function() {
-                            btn.innerHTML = orig;
-                            btn.disabled = false;
-                        });
-                    }
-                    </script>
                 </div>
             </div>
         </div>
@@ -359,5 +308,5 @@
 </div>
 
 {% load static %}
-<script src="{% static 'js/payments-detail.js' %}" defer></script>
+<script src="{% static 'js/payments-detail.js' %}"></script>
 {% endblock %}

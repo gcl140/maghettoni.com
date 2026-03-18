@@ -62,3 +62,27 @@ class TenantNotification(models.Model):
 
     def __str__(self):
         return f"{self.title} → {self.tenant}"
+
+
+class EligibilityReminder(models.Model):
+    """Tracks which eligibility reminders have been sent to avoid duplicates."""
+    REMINDER_TYPES = [
+        ('halfway', 'Halfway Through'),
+        ('one_month', 'One Month Left'),
+        ('two_weeks', 'Two Weeks Left'),
+        ('daily', 'Daily (Last Week)'),
+    ]
+
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='eligibility_reminders')
+    reminder_type = models.CharField(max_length=20, choices=REMINDER_TYPES)
+    # Tie to the specific eligibility cycle so reminders reset after new payment
+    eligible_until = models.DateField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # One reminder per type per cycle — prevent duplicate sends
+        unique_together = ['tenant', 'reminder_type', 'eligible_until']
+        ordering = ['-sent_at']
+
+    def __str__(self):
+        return f"{self.reminder_type} → {self.tenant} (until {self.eligible_until})"

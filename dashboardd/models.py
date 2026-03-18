@@ -120,6 +120,11 @@ class Unit(models.Model):
     bathrooms = models.IntegerField(null=True, blank=True)
     square_feet = models.IntegerField(null=True, blank=True)
     monthly_rent = models.DecimalField(max_digits=10, decimal_places=2)
+    min_rental_months = models.PositiveIntegerField(
+        default=1,
+        help_text='Minimum number of months a tenant must pay upfront.',
+        validators=[MinValueValidator(1)],
+    )
     is_occupied = models.BooleanField(default=False)
     description = models.TextField(blank=True)
     amenities = models.JSONField(default=dict, blank=True)
@@ -131,7 +136,7 @@ class Unit(models.Model):
         return f"{self.property.name} - Unit {self.unit_number}"
 
 class Tenant(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='tenant_profile')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='tenant_profiles')
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='tenants')
     unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, null=True, blank=True, related_name='current_tenant')
     first_name = models.CharField(max_length=100)
@@ -141,15 +146,18 @@ class Tenant(models.Model):
     emergency_contact = models.CharField(max_length=100, blank=True)
     emergency_phone = models.CharField(max_length=20, blank=True)
     move_in_date = models.DateField()
-    move_out_date = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='tenant_profiles/', null=True, blank=True)
     notes = models.TextField(blank=True)
+    notifications_enabled = models.BooleanField(
+        default=True,
+        help_text='Send eligibility/move-out reminders for this tenancy. Disable when leaving.',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     STATUS_CHOICES = [
-        ('active', 'Hai'),
-        ('pending', 'Inasubiri'),
-        ('inactive', 'Haifanyi Kazi'),
+        ('active', 'Active'),
+        ('pending', 'Pending'),
+        ('inactive', 'Inactive'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
@@ -173,10 +181,10 @@ class Payment(models.Model):
     ]
     
     PAYMENT_STATUS = [
-        ('pending', 'Inasubiri'),
-        ('completed', 'Imekamilika'),
-        ('failed', 'Imeshindwa'),
-        ('refunded', 'Imerudishwa'),
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+        ('refunded', 'Refunded'),
     ]
     
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='payments')

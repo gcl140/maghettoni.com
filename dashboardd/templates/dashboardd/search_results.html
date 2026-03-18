@@ -18,7 +18,7 @@
                     Search Results
                 </h1>
                 <p class="text-gray-600">
-                    "{{ query }}" - {{ total_results }} matokeo yamepatikana
+                    "{{ query }}" — {{ total_results }} results found
                 </p>
             </div>
         </div>
@@ -27,23 +27,23 @@
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
                 <div class="text-2xl font-bold text-brown-700 mb-1">{{ special_results.total_properties }}</div>
-                <div class="text-sm text-gray-600">Mali</div>
+                <div class="text-sm text-gray-600">Properties</div>
             </div>
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
                 <div class="text-2xl font-bold text-brown-700 mb-1">{{ special_results.total_tenants }}</div>
-                <div class="text-sm text-gray-600">Wakazi</div>
+                <div class="text-sm text-gray-600">Tenants</div>
             </div>
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
                 <div class="text-2xl font-bold text-green-700 mb-1">{{ special_results.total_payments }}</div>
-                <div class="text-sm text-gray-600">Malipo</div>
+                <div class="text-sm text-gray-600">Payments</div>
             </div>
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
                 <div class="text-2xl font-bold text-brown-700 mb-1">{{ special_results.total_maintenance }}</div>
-                <div class="text-sm text-gray-600">Matengenezo</div>
+                <div class="text-sm text-gray-600">Maintenance</div>
             </div>
             <div class="bg-white rounded-xl p-4 border border-brown-200 text-center hover-lift">
                 <div class="text-2xl font-bold text-brown-700 mb-1">{{ special_results.total_units }}</div>
-                <div class="text-sm text-gray-600">Vyumba</div>
+                <div class="text-sm text-gray-600">Units</div>
             </div>
         </div>
     </div>
@@ -59,12 +59,12 @@
                         <i class="fas fa-home text-brown-600"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900">Mali</h2>
-                        <p class="text-sm text-gray-600">{{ properties|length }} mali zilizopatikana</p>
+                        <h2 class="text-lg font-bold text-gray-900">Properties</h2>
+                        <p class="text-sm text-gray-600">{{ properties|length }} properties found</p>
                     </div>
                 </div>
                 <a href="{% url 'property_list' %}" class="text-sm text-brown-600 hover:text-brown-800 font-medium">
-                    Angalia Zote <i class="fas fa-arrow-right ml-1"></i>
+                    View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>
             
@@ -91,7 +91,7 @@
                                 </span>
                                 <span class="text-gray-600">
                                     <i class="fas fa-door-open mr-1"></i>
-                                    {{ property.units }} vyumba
+                                    {{ property.units }} units
                                 </span>
                             </div>
                         </div>
@@ -117,8 +117,8 @@
                         <i class="fas fa-users text-brown-600"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900">Wakazi</h2>
-                        <p class="text-sm text-gray-600">{{ tenants|length }} wakazi walipatikana</p>
+                        <h2 class="text-lg font-bold text-gray-900">Tenants</h2>
+                        <p class="text-sm text-gray-600">{{ tenants|length }} tenants found</p>
                     </div>
                 </div>
             </div>
@@ -127,11 +127,11 @@
                 <table class="w-full">
                     <thead>
                         <tr class="text-left text-sm text-gray-600 border-b border-gray-200">
-                            <th class="pb-3">Jina</th>
-                            <th class="pb-3">Simu</th>
-                            <th class="pb-3">Mali</th>
-                            <th class="pb-3">Chumba</th>
-                            <th class="pb-3">Hali</th>
+                            <th class="pb-3">Name</th>
+                            <th class="pb-3">Phone</th>
+                            <th class="pb-3">Property</th>
+                            <th class="pb-3">Unit</th>
+                            <th class="pb-3">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -161,7 +161,7 @@
                                 {% if tenant.unit %}
                                 <span class="text-sm text-gray-900">{{ tenant.unit.unit_number }}</span>
                                 {% else %}
-                                <span class="text-xs text-gray-400">Hakuna</span>
+                                <span class="text-xs text-gray-400">None</span>
                                 {% endif %}
                             </td>
                             <td class="py-3">
@@ -189,8 +189,8 @@
                         <i class="fas fa-money-bill-wave text-green-600"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900">Malipo</h2>
-                        <p class="text-sm text-gray-600">{{ payments|length }} malipo yalipatikana</p>
+                        <h2 class="text-lg font-bold text-gray-900">Payments</h2>
+                        <p class="text-sm text-gray-600">{{ payments|length }} payments found</p>
                     </div>
                 </div>
             </div>
@@ -248,8 +248,8 @@
                         <i class="fas fa-tools text-brown-600"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900">Matengenezo</h2>
-                        <p class="text-sm text-gray-600">{{ maintenance_requests|length %} maombi ya matengenezo yalipatikana</p>
+                        <h2 class="text-lg font-bold text-gray-900">Maintenance</h2>
+                        <p class="text-sm text-gray-600">{{ maintenance_requests|length }} maintenance requests found</p>
                     </div>
                 </div>
             </div>
@@ -322,8 +322,8 @@
                         <i class="fas fa-door-open text-brown-600"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-gray-900">Vyumba</h2>
-                        <p class="text-sm text-gray-600">{{ units|length }} vyumba vilipatikana</p>
+                        <h2 class="text-lg font-bold text-gray-900">Units</h2>
+                        <p class="text-sm text-gray-600">{{ units|length }} units found</p>
                     </div>
                 </div>
             </div>
@@ -336,7 +336,7 @@
                         <span class="text-xs px-2 py-1 rounded-full
                             {% if unit.is_occupied %}bg-green-100 text-green-800
                             {% else %}bg-gray-100 text-gray-800{% endif %}">
-                            {% if unit.is_occupied %}Imejaza{% else %}Tupu{% endif %}
+                            {% if unit.is_occupied %}Occupied{% else %}Vacant{% endif %}
                         </span>
                     </div>
                     
@@ -355,7 +355,7 @@
                     
                     <div class="pt-3 border-t border-gray-100">
                         <p class="text-lg font-bold text-brown-700">TZS {{ unit.monthly_rent|floatformat:0 }}</p>
-                        <p class="text-xs text-gray-500">Kodi ya kila mwezi</p>
+                        <p class="text-xs text-gray-500">Monthly Rent</p>
                     </div>
                 </a>
                 {% endfor %}
@@ -369,18 +369,18 @@
             <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-search text-gray-400 text-3xl"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-3">Hakuna matokeo yaliyopatikana</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">No results found</h3>
             <p class="text-gray-600 mb-8 max-w-md mx-auto">
-                Hakuna chochote kilichopatikana kwa "{{ query }}". Jaribu kwa maneno mengine au angalia kwa aina maalum.
+                Nothing matched "{{ query }}". Try different keywords or browse by category.
             </p>
             <div class="flex flex-wrap justify-center gap-3">
                 <a href="{% url 'property_list' %}" class="px-4 py-2 bg-brown-600 text-white rounded-lg hover:bg-brown-700">
                     <i class="fas fa-home mr-2"></i>
-                    Angalia Mali Zote
+                    All Properties
                 </a>
                 <a href="{% url 'payments_list' %}" class="px-4 py-2 border border-brown-600 text-brown-600 rounded-lg hover:bg-brown-50">
                     <i class="fas fa-money-bill-wave mr-2"></i>
-                    Angalia Malipo Yote
+                    All Payments
                 </a>
             </div>
         </div>

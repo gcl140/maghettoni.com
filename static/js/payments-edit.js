@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!tenantId) {
       tenantUnitInfo.innerHTML =
-        '<p class="text-sm text-gray-500">Chagua mpangaji kwanza</p>';
+        '<p class="text-sm text-gray-500">Select a tenant first</p>';
       return;
     }
 
@@ -32,17 +32,17 @@ document.addEventListener("DOMContentLoaded", function () {
             '<div class="flex items-center">' +
             '<i class="fas fa-door-open text-brown-600 mr-3"></i>' +
             "<div>" +
-            '<p class="text-sm font-semibold text-gray-900">Chumba ' +
+            '<p class="text-sm font-semibold text-gray-900">Unit ' +
             data.unit.unit_number +
             "</p>" +
             '<p class="text-xs text-gray-600">' +
             data.unit.bedrooms +
-            " vyumba vya kulala • " +
+            " bed • " +
             data.unit.bathrooms +
-            " bafu</p>" +
-            '<p class="text-xs font-medium text-gray-800 mt-1">Kodi: TZS ' +
+            " bath</p>" +
+            '<p class="text-xs font-medium text-gray-800 mt-1">Rent: TZS ' +
             data.unit.monthly_rent +
-            "/mwezi</p>" +
+            "/mo</p>" +
             "</div>" +
             "</div>";
         } else {
@@ -50,8 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
             '<div class="flex items-center">' +
             '<i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>' +
             "<div>" +
-            '<p class="text-sm font-semibold text-gray-900">Hakuna chumba kilichowekwa</p>' +
-            '<p class="text-xs text-gray-600">Mpangaji huyu hajawekewa chumba bado</p>' +
+            '<p class="text-sm font-semibold text-gray-900">No unit assigned</p>' +
+            '<p class="text-xs text-gray-600">This tenant has not been assigned a unit yet</p>' +
             "</div>" +
             "</div>";
         }
@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
         isValid = false;
 
         Toastify({
-          text: "Kiasi cha malipo lazima kiwe nambari chanya!",
+          text: "Payment amount must be a positive number!",
           duration: 3000,
           close: true,
           gravity: "top",

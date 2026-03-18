@@ -43,8 +43,7 @@ Profile{% endblock %} {% block page_title %}Edit Profile{% endblock %}
         id="avatar-preview"
         class="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xl border-2 border-amber-400"
       >
-        {{ viewing_user.first_name|first|upper }}{{
-        viewing_user.last_name|first|upper }}
+        {{ viewing_user.first_name|first|upper }}{{ viewing_user.last_name|first|upper }}
       </div>
       {% endif %}
       <div>
@@ -106,13 +105,32 @@ Profile{% endblock %} {% block page_title %}Edit Profile{% endblock %}
     </div>
 
     <!-- About -->
-    <div class="mb-6">
+    <div class="mb-4">
       <label class="block text-sm font-medium text-gray-500 mb-1.5"
         >About</label
       >
       {{ form.about }} {% if form.about.errors %}
       <p class="text-xs text-red-400 mt-1">{{ form.about.errors.0 }}</p>
       {% endif %}
+    </div>
+
+    <!-- Preferred Language -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-500 mb-1.5">
+        <i class="fas fa-globe text-amber-500 mr-1"></i> Preferred Language
+      </label>
+      <div class="flex gap-3">
+        <label class="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl cursor-pointer hover:bg-amber-50 transition-colors has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
+          <input type="radio" name="preferred_language" value="en" {% if viewing_user.preferred_language == 'en' or not viewing_user.preferred_language %}checked{% endif %} class="accent-amber-600">
+          <span class="text-base">🇬🇧</span>
+          <span class="text-sm font-medium text-gray-700">EN</span>
+        </label>
+        <label class="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl cursor-pointer hover:bg-amber-50 transition-colors has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
+          <input type="radio" name="preferred_language" value="sw" {% if viewing_user.preferred_language == 'sw' %}checked{% endif %} class="accent-amber-600">
+          <span class="text-base">🇹🇿</span>
+          <span class="text-sm font-medium text-gray-700">SW</span>
+        </label>
+      </div>
     </div>
 
     <button

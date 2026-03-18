@@ -1,0 +1,124 @@
+{% extends 'tenant_portal/base.html' %}
+{% load static %}
+{% block title %}Edit Profile{% endblock %}
+{% block page_title %}Edit Profile{% endblock %}
+{% block breadcrumbs %}
+<li class="text-gray-300">/</li>
+<li><a href="{% url 'tenant_profile' %}" class="hover:text-amber-600 transition-colors">Profile</a></li>
+<li class="text-gray-300">/</li>
+<li class="text-gray-600 font-medium">Edit</li>
+{% endblock %}
+
+{% block content %}
+<div class="mx-auto">
+  <form method="post" enctype="multipart/form-data"
+        class="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 space-y-5">
+    {% csrf_token %}
+
+    <!-- Avatar preview -->
+    <div class="flex items-center gap-4">
+      {% if tenant.profile_picture %}
+      <img id="avatar-preview" src="{{ tenant.profile_picture.url }}"
+           class="w-16 h-16 rounded-full object-cover border-2 border-amber-400" alt="Avatar" />
+      {% else %}
+      <div id="avatar-preview"
+           class="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-xl border-2 border-amber-400">
+        {{ tenant.first_name|first|upper }}{{ tenant.last_name|first|upper }}
+      </div>
+      {% endif %}
+      <div>
+        <p class="text-xs text-gray-500 mb-1">Profile Photo</p>
+        {{ form.profile_picture }}
+      </div>
+    </div>
+
+    <!-- Personal info -->
+    <div>
+      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Personal Information</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1.5">First Name</label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}<p class="text-xs text-red-400 mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1.5">Last Name</label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}<p class="text-xs text-red-400 mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1.5">Email</label>
+          {{ form.email }}
+          {% if form.email.errors %}<p class="text-xs text-red-400 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1.5">Phone Number</label>
+          {{ form.phone }}
+          {% if form.phone.errors %}<p class="text-xs text-red-400 mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency contact -->
+    <div>
+      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Emergency Contact</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1.5">Contact Name</label>
+          {{ form.emergency_contact }}
+          {% if form.emergency_contact.errors %}<p class="text-xs text-red-400 mt-1">{{ form.emergency_contact.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1.5">Contact Phone</label>
+          {{ form.emergency_phone }}
+          {% if form.emergency_phone.errors %}<p class="text-xs text-red-400 mt-1">{{ form.emergency_phone.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div>
+      <label class="block text-xs font-medium text-gray-500 mb-1.5">Notes</label>
+      {{ form.notes }}
+      {% if form.notes.errors %}<p class="text-xs text-red-400 mt-1">{{ form.notes.errors.0 }}</p>{% endif %}
+    </div>
+
+    <!-- Preferred Language -->
+    <div>
+      <label class="block text-xs font-medium text-gray-500 mb-2">
+        <i class="fas fa-globe text-amber-500 mr-1"></i> Preferred Language
+      </label>
+      <div class="flex gap-3">
+        <label class="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl cursor-pointer hover:bg-amber-50 transition-colors has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
+          <input type="radio" name="preferred_language" value="en"
+                 {% if request.user.preferred_language == 'en' or not request.user.preferred_language %}checked{% endif %}
+                 class="accent-amber-600">
+          <span class="text-base">🇬🇧</span>
+          <span class="text-sm font-medium text-gray-700">EN</span>
+        </label>
+        <label class="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl cursor-pointer hover:bg-amber-50 transition-colors has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50">
+          <input type="radio" name="preferred_language" value="sw"
+                 {% if request.user.preferred_language == 'sw' %}checked{% endif %}
+                 class="accent-amber-600">
+          <span class="text-base">🇹🇿</span>
+          <span class="text-sm font-medium text-gray-700">SW</span>
+        </label>
+      </div>
+    </div>
+
+    <button type="submit"
+            class="w-full py-3 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+      <i class="fas fa-save"></i> Save Changes
+    </button>
+  </form>
+
+  <a href="{% url 'tenant_profile' %}"
+     class="block text-center mt-4 text-sm text-gray-400 hover:text-gray-500 transition-colors">
+    <i class="fas fa-arrow-left mr-1"></i> Back to Profile
+  </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/yuzzaz/edit-profile-modal.js' %}"></script>
+{% endblock %}

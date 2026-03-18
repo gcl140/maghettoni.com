@@ -8,9 +8,9 @@
   if (!dialog || !list || !bell) return;
 
   const colorMap = {
-    red: "bg-red-500/20 text-red-400",
-    amber: "bg-amber-500/20 text-amber-400",
-    blue: "bg-blue-500/20 text-blue-400",
+    red:   "background:#fee2e2;color:#ef4444",
+    amber: "background:#fef3c7;color:#f59e0b",
+    blue:  "background:#dbeafe;color:#3b82f6",
   };
 
   let currentPage = 1;
@@ -21,17 +21,21 @@
     const tag = item.url ? "a" : "div";
     const href = item.url ? `href="${item.url}"` : "";
     const dot = item.unread
-      ? '<span class="flex-shrink-0 w-2 h-2 rounded-full bg-blue-400 mt-1.5"></span>'
+      ? '<span style="flex-shrink:0;width:8px;height:8px;border-radius:9999px;background:#f97316;margin-top:6px"></span>'
       : "";
+    const itemStyle = item.unread
+      ? "background:#fff7ed;border:1px solid #fed7aa"
+      : "background:#f9fafb;border:1px solid #f3f4f6";
+    const iconStyle = colorMap[item.color] || colorMap.blue;
     return `
-      <${tag} ${href} class="flex items-start gap-3 p-3 rounded-lg transition-colors ${item.unread ? "bg-brown-600/60 hover:bg-brown-600" : "bg-brown-700/40 hover:bg-brown-700/60"}">
-        <div class="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${colorMap[item.color] || colorMap.blue}">
-          <i class="fas ${item.icon} text-sm"></i>
+      <${tag} ${href} style="display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:12px;${itemStyle};transition:background .15s">
+        <div style="flex-shrink:0;width:32px;height:32px;border-radius:9999px;display:flex;align-items:center;justify-content:center;${iconStyle}">
+          <i class="fas ${item.icon}" style="font-size:13px"></i>
         </div>
-        <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-white truncate">${item.title}</p>
-          <p class="text-xs text-brown-300 mt-0.5">${item.message}</p>
-          <p class="text-xs text-brown-500 mt-1">${item.created_at || ""}</p>
+        <div style="min-width:0;flex:1">
+          <p style="font-size:14px;font-weight:600;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</p>
+          <p style="font-size:12px;color:#6b7280;margin-top:2px">${item.message}</p>
+          <p style="font-size:11px;color:#9ca3af;margin-top:4px">${item.created_at || ""}</p>
         </div>
         ${dot}
       </${tag}>
@@ -41,14 +45,14 @@
   function renderAll(hasMore) {
     if (!allItems.length) {
       list.innerHTML =
-        '<p class="text-sm text-brown-300 text-center py-6">Hakuna taarifa mpya.</p>';
+        '<p class="text-sm text-gray-400 text-center py-8"><i class="fas fa-bell-slash block text-2xl mb-2 text-gray-300"></i>Hakuna taarifa mpya.</p>';
       return;
     }
     let html = allItems.map(itemHTML).join("");
     if (hasMore) {
       html += `
         <button id="notif-load-more"
-                class="w-full mt-2 py-2 text-xs text-brown-300 hover:text-white transition-colors text-center">
+                class="w-full mt-2 py-2 text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-center">
           <i class="fas fa-chevron-down mr-1"></i> Tazama Zaidi
         </button>`;
     }
@@ -82,7 +86,7 @@
     currentPage = 1;
     allItems = [];
     list.innerHTML =
-      '<p class="text-sm text-brown-300 text-center py-6"><i class="fas fa-spinner fa-spin mr-2"></i> Inapakia...</p>';
+      '<p class="text-sm text-gray-400 text-center py-6"><i class="fas fa-spinner fa-spin mr-2"></i> Inapakia...</p>';
     dialog.showModal();
 
     fetchPage(1)
@@ -92,7 +96,7 @@
       })
       .catch(() => {
         list.innerHTML =
-          '<p class="text-sm text-red-400 text-center py-6">Hitilafu. Jaribu tena.</p>';
+          '<p class="text-sm text-red-500 text-center py-6"><i class="fas fa-exclamation-circle mr-1"></i> Hitilafu. Jaribu tena.</p>';
       });
   });
 })();

@@ -41,7 +41,7 @@ def landlord_required(view_func):
     @login_required
     def _wrapped(request, *args, **kwargs):
         if not getattr(request.user, 'is_landlord', False):
-            messages.error(request, "Huna ruhusa ya kufikia ukurasa huu.")
+            messages.error(request, "You don't have permission to access this page.")
             return redirect('login')
         return view_func(request, *args, **kwargs)
     return _wrapped
@@ -62,22 +62,22 @@ def _send_tenant_invite(request, tenant):
 
     # ── Email (full details) ─────────────────────────────────────────────
     email_body = (
-        f"Habari {tenant.first_name},\n\n"
-        f"Umealikwa kwenye mfumo wa Maghettoni Tenant Portal na msimamizi wako.\n\n"
+        f"Hello {tenant.first_name},\n\n"
+        f"You have been invited to the Maghettoni Tenant Portal by your landlord.\n\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"  Jina la mtumiaji : {tenant.phone}\n"
-        f"  Nenosiri la muda : {invite.temp_password}\n"
+        f"  Username : {tenant.phone}\n"
+        f"  Temporary Password : {invite.temp_password}\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"Bonyeza kiungo hapa chini kukubali mwaliko na kuweka nenosiri jipya:\n"
+        f"Click the link below to accept your invitation and set a new password:\n"
         f"{link}\n\n"
-        f"Kiungo hiki kitaisha baada ya masaa 72.\n\n"
-        f"KUMBUKA: Usishirikishe mtu yeyote nenosiri hili.\n"
-        f"Ukishakubali mwaliko unaweza kubadilisha nenosiri lako wakati wowote.\n\n"
-        f"— Timu ya Maghettoni"
+        f"This link will expire in 72 hours.\n\n"
+        f"NOTE: Do not share this password with anyone.\n"
+        f"Once you accept the invite you can change your password at any time.\n\n"
+        f"— The Maghettoni Team"
     )
     try:
         _Email(
-            subject="Mwaliko wako wa Maghettoni Tenant Portal",
+            subject="Your Maghettoni Tenant Portal Invitation",
             body=email_body,
             to=[tenant.email],
         ).send(fail_silently=False)
@@ -87,11 +87,11 @@ def _send_tenant_invite(request, tenant):
     # ── SMS (concise — credentials + link) ──────────────────────────────
     if tenant.phone:
         sms_body = (
-            f"Habari {tenant.first_name}! Umealikwa kwenye Maghettoni Tenant Portal.\n"
+            f"Hello {tenant.first_name}! You have been invited to Maghettoni Tenant Portal.\n"
             f"Username: {tenant.phone}\n"
-            f"Nenosiri: {invite.temp_password}\n"
-            f"Kubali hapa: {link}\n"
-            f"(Kitaisha masaa 72. Usishirikishe nenosiri.)"
+            f"Password: {invite.temp_password}\n"
+            f"Accept here: {link}\n"
+            f"(Expires in 72 hours. Do not share your password.)"
         )
         try:
             send_sms(tenant.phone, sms_body)
@@ -415,7 +415,7 @@ def quick_search(request):
 
     for prop in properties:
         results.append({
-            'type': 'Mali',
+            'type': 'Property',
             'name': prop.name,
             'detail': prop.address,
             'url': reverse('property_detail', args=[prop.id]),
@@ -431,7 +431,7 @@ def quick_search(request):
 
     for tenant in tenants:
         results.append({
-            'type': 'Mpangaji',
+            'type': 'Tenant',
             'name': tenant.full_name(),
             'detail': tenant.phone,
             # 'url': '#',
@@ -448,7 +448,7 @@ def quick_search(request):
 
     for payment in payments:
         results.append({
-            'type': 'Malipo',
+            'type': 'Payment',
             'name': f"TZS {payment.amount}",
             'detail': payment.tenant.full_name(),
             # 'url': '#',
@@ -509,8 +509,11 @@ def property_list(request):
 @landlord_required
 def property_delete(request, property_id):
     property_obj = get_object_or_404(Property, id=property_id, owner=request.user)
-    
+
     if request.method == 'POST':
+        if property_obj.units_list.filter(is_occupied=True).exists():
+            messages.error(request, 'Cannot delete a property with occupied units. Move out all tenants first.')
+            return redirect('property_detail', property_id=property_id)
         property_obj.delete()
         messages.success(request, 'Property deleted successfully!')
         return redirect('property_list')
@@ -626,6 +629,7 @@ def property_edit(request, property_id=None):
         'existing_images': property_obj.images.all() if property_obj else [],
         'slots_remaining': max(0, 5 - property_obj.images.count()) if property_obj else 5,
         'google_maps_api_key': getattr(settings, 'GOOGLE_MAPS_API_KEY', ''),
+        'has_occupied_units': property_obj.units_list.filter(is_occupied=True).exists() if property_obj else False,
     }
     return render(request, 'properties/edit.html', context)
 
@@ -842,9 +846,9 @@ def tenants_export_csv(request):
         )
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="wapangaji.csv"'
+    response['Content-Disposition'] = 'attachment; filename="tenants.csv"'
     writer = csv.writer(response)
-    writer.writerow(['Jina Kamili', 'Barua Pepe', 'Simu', 'Mali', 'Chumba', 'Hali', 'Tarehe ya Kuingia', 'Tarehe ya Kutoka'])
+    writer.writerow(['Full Name', 'Email', 'Phone', 'Property', 'Unit', 'Status', 'Move-in Date'])
     for t in qs:
         writer.writerow([
             t.full_name() if hasattr(t, 'full_name') else f'{t.first_name} {t.last_name}',
@@ -854,7 +858,6 @@ def tenants_export_csv(request):
             t.unit.unit_number if t.unit else '',
             t.get_status_display(),
             t.move_in_date or '',
-            t.move_out_date or '',
         ])
     return response
 
@@ -871,7 +874,7 @@ def tenants_export_pdf(request):
             Q(phone__icontains=search)
         )
 
-    headers = ['Jina Kamili', 'Barua Pepe', 'Simu', 'Mali', 'Chumba', 'Hali', 'Tarehe ya Kuingia']
+    headers = ['Full Name', 'Email', 'Phone', 'Property', 'Unit', 'Status', 'Move-in Date']
     rows = []
     for t in qs:
         rows.append([
@@ -884,7 +887,7 @@ def tenants_export_pdf(request):
             str(t.move_in_date) if t.move_in_date else '',
         ])
 
-    buf = _build_pdf('Wapangaji', headers, rows)
+    buf = _build_pdf('Tenants', headers, rows)
     return HttpResponse(buf, content_type='application/pdf',
                         headers={'Content-Disposition': 'attachment; filename="wapangaji.pdf"'})
 
@@ -942,21 +945,46 @@ def tenant_delete(request, tenant_id):
 
 @landlord_required
 def tenant_detail(request, tenant_id):
+    import calendar as _cal
+    from datetime import date as _date
     tenant = get_object_or_404(Tenant, id=tenant_id, property__owner=request.user)
-    
+
     # Get related data
     payments = tenant.payments.all().order_by('-payment_date')[:5]
     maintenance_requests = tenant.maintenance_requests.all().order_by('-reported_date')[:5]
-    
+
     # Calculate stats
     total_payments = tenant.payments.filter(status='completed').aggregate(Sum('amount'))['amount__sum'] or 0
     pending_payments = tenant.payments.filter(status='pending').count()
     active_maintenance = tenant.maintenance_requests.filter(status__in=['pending', 'in_progress']).count()
-    
+
     # Calculate tenancy duration
     today = timezone.now().date()
     days_in_tenancy = (today - tenant.move_in_date).days if tenant.move_in_date else 0
-    
+
+    # Eligibility calculation
+    eligibility = None
+    if tenant.unit and tenant.unit.monthly_rent:
+        monthly_rent = tenant.unit.monthly_rent
+        months_paid = int(total_payments / monthly_rent) if monthly_rent else 0
+        eligible_until = None
+        if months_paid > 0 and tenant.move_in_date:
+            start = tenant.move_in_date
+            m = start.month + months_paid - 1
+            year = start.year + m // 12
+            month = m % 12 + 1
+            last_day = _cal.monthrange(year, month)[1]
+            eligible_until = _date(year, month, min(start.day, last_day))
+        days_left = (eligible_until - today).days if (eligible_until and eligible_until >= today) else 0
+        eligibility = {
+            'months_paid': months_paid,
+            'eligible_until': eligible_until,
+            'days_left': days_left,
+            'monthly_rent': monthly_rent,
+            'min_rental_months': tenant.unit.min_rental_months,
+            'min_amount': monthly_rent * tenant.unit.min_rental_months,
+        }
+
     context = {
         'tenant': tenant,
         'payments': payments,
@@ -966,6 +994,7 @@ def tenant_detail(request, tenant_id):
         'active_maintenance': active_maintenance,
         'days_in_tenancy': days_in_tenancy,
         'today': today,
+        'eligibility': eligibility,
     }
     return render(request, 'tenants/detail.html', context)
 
@@ -1026,18 +1055,18 @@ def tenant_edit(request, tenant_id=None):
             tenant.save()
 
             if is_edit:
-                _notify(request.user, f'Mkazi Amesasishwa: {tenant.full_name()}',
-                        f'Taarifa za {tenant.full_name()} zimebadilishwa.')
+                _notify(request.user, f'Tenant Updated: {tenant.full_name()}',
+                        f'{tenant.full_name()}\'s details have been updated.')
             else:
-                unit_label = f', chumba {tenant.unit.unit_number}' if tenant.unit else ''
-                _notify(request.user, f'Mkazi Mpya: {tenant.full_name()}',
-                        f'{tenant.full_name()} ameongezwa katika {tenant.property.name}{unit_label}.')
+                unit_label = f', unit {tenant.unit.unit_number}' if tenant.unit else ''
+                _notify(request.user, f'New Tenant: {tenant.full_name()}',
+                        f'{tenant.full_name()} has been added to {tenant.property.name}{unit_label}.')
                 # Send invite email to the new tenant
                 _send_tenant_invite(request, tenant)
                 messages.info(
                     request,
-                    f'Mwaliko umetumwa kwa {tenant.email}. '
-                    'Mpangaji anapaswa kukubali ndani ya masaa 72.'
+                    f'Invite sent to {tenant.email}. '
+                    'The tenant must accept within 72 hours.'
                 )
 
             messages.success(request, success_message)
@@ -1074,7 +1103,31 @@ def tenant_lease_print(request, tenant_id):
     lang = request.GET.get('lang', 'en')
     if lang not in ('en', 'sw'):
         lang = 'en'
-    return render(request, 'tenants/lease_print.html', {'tenant': tenant, 'lang': lang})
+    # Calculate eligibility from payments (same logic as tenant_detail)
+    eligibility = None
+    if tenant.unit and tenant.unit.monthly_rent:
+        from django.db.models import Sum as _Sum
+        import calendar as _lcal
+        from datetime import date as _date
+        monthly_rent = tenant.unit.monthly_rent
+        total_paid = tenant.payments.filter(status='completed').aggregate(
+            total=_Sum('amount')
+        )['total'] or 0
+        months_paid = int(total_paid / monthly_rent) if monthly_rent else 0
+        eligible_until = None
+        if months_paid > 0 and tenant.move_in_date:
+            start = tenant.move_in_date
+            m = start.month + months_paid - 1
+            yr = start.year + m // 12
+            mo = m % 12 + 1
+            last_day = _lcal.monthrange(yr, mo)[1]
+            eligible_until = _date(yr, mo, min(start.day, last_day))
+        eligibility = {'months_paid': months_paid, 'eligible_until': eligible_until}
+    return render(request, 'tenants/lease_print.html', {
+        'tenant': tenant,
+        'lang': lang,
+        'eligibility': eligibility,
+    })
 
 
 # Add this to views.py if you want dynamic unit filtering
@@ -1180,9 +1233,9 @@ def payments_export_csv(request):
         qs = qs.filter(status=status_filter)
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="malipo.csv"'
+    response['Content-Disposition'] = 'attachment; filename="payments.csv"'
     writer = csv.writer(response)
-    writer.writerow(['Mpangaji', 'Mali', 'Kiasi (TZS)', 'Tarehe ya Malipo', 'Tarehe ya Mwisho', 'Hali', 'Nambari ya Kumbukumbu'])
+    writer.writerow(['Tenant', 'Property', 'Amount (TZS)', 'Payment Date', 'Due Date', 'Status', 'Reference Number'])
     for p in qs:
         writer.writerow([
             p.tenant.full_name() if hasattr(p.tenant, 'full_name') else str(p.tenant),
@@ -1211,7 +1264,7 @@ def payments_export_pdf(request):
     if status_filter:
         qs = qs.filter(status=status_filter)
 
-    headers = ['Mpangaji', 'Mali', 'Kiasi (TZS)', 'Tarehe ya Malipo', 'Tarehe ya Mwisho', 'Hali', 'Kumbukumbu']
+    headers = ['Tenant', 'Property', 'Amount (TZS)', 'Payment Date', 'Due Date', 'Status', 'Reference']
     rows = []
     for p in qs:
         rows.append([
@@ -1224,9 +1277,9 @@ def payments_export_pdf(request):
             p.reference_number or '',
         ])
 
-    buf = _build_pdf('Malipo', headers, rows)
+    buf = _build_pdf('Payments', headers, rows)
     return HttpResponse(buf, content_type='application/pdf',
-                        headers={'Content-Disposition': 'attachment; filename="malipo.pdf"'})
+                        headers={'Content-Disposition': 'attachment; filename="payments.pdf"'})
 
 @landlord_required
 def payment_detail(request, payment_id):
@@ -1238,8 +1291,8 @@ def payment_detail(request, payment_id):
             payment.landlord_confirmed = True
             payment.payment_date = timezone.now().date()
             payment.save()
-            _notify(request.user, f'Malipo Yamekamilika: {payment.tenant.full_name()}',
-                    f'{payment.tenant.full_name()} amelipa TZS. {payment.amount:,.0f} '
+            _notify(request.user, f'Payment Completed: {payment.tenant.full_name()}',
+                    f'{payment.tenant.full_name()} paid TZS. {payment.amount:,.0f} '
                     f'({payment.property.name}).')
             messages.success(request, 'Payment marked as completed!')
             return redirect('payment_detail', payment_id=payment.id)
@@ -1249,13 +1302,13 @@ def payment_detail(request, payment_id):
                 payment.status = new_status
                 payment.save()
                 status_msgs = {
-                    'completed': f'Malipo Yamekamilika: {payment.tenant.full_name()}',
-                    'failed':    f'Malipo Yameshindwa: {payment.tenant.full_name()}',
-                    'refunded':  f'Malipo Yamerudishwa: {payment.tenant.full_name()}',
-                    'pending':   f'Malipo Yamerudi Kusubiri: {payment.tenant.full_name()}',
+                    'completed': f'Payment Completed: {payment.tenant.full_name()}',
+                    'failed':    f'Payment Failed: {payment.tenant.full_name()}',
+                    'refunded':  f'Payment Refunded: {payment.tenant.full_name()}',
+                    'pending':   f'Payment Reverted to Pending: {payment.tenant.full_name()}',
                 }
-                _notify(request.user, status_msgs.get(new_status, 'Hali ya Malipo Imebadilika'),
-                        f'TZS. {payment.amount:,.0f} — hali mpya: {payment.get_status_display()} '
+                _notify(request.user, status_msgs.get(new_status, 'Payment Status Changed'),
+                        f'TZS. {payment.amount:,.0f} — new status: {payment.get_status_display()} '
                         f'({payment.property.name}).')
                 messages.success(request, f'Status updated to {payment.get_status_display()}.')
             return redirect('payment_detail', payment_id=payment.id)
@@ -1355,12 +1408,12 @@ def payment_edit(request, payment_id=None):
         payment = get_object_or_404(Payment, id=payment_id, property__owner=request.user)
         is_edit = True
         title = "Edit Payment Record"
-        success_message = "Malipo yamebadilishwa kikamilifu! 💰"
+        success_message = "Payment updated successfully!"
     else:
         payment = None
         is_edit = False
         title = "Record New Payment"
-        success_message = "Malipo yamehifadhiwa kikamilifu! 💰"
+        success_message = "Payment recorded successfully!"
     
     if request.method == 'POST':
         form = PaymentForm(request.POST, instance=payment, user=request.user)
@@ -1374,12 +1427,12 @@ def payment_edit(request, payment_id=None):
             payment.save()
 
             if is_edit:
-                _notify(request.user, f'Malipo Yamesasishwa: {payment.tenant.full_name()}',
-                        f'Rekodi ya malipo ya TZS. {payment.amount:,.0f} imebadilishwa '
+                _notify(request.user, f'Payment Updated: {payment.tenant.full_name()}',
+                        f'Payment record of TZS. {payment.amount:,.0f} has been updated '
                         f'({payment.property.name}).')
             else:
-                _notify(request.user, f'Malipo Mapya: {payment.tenant.full_name()}',
-                        f'Malipo ya TZS. {payment.amount:,.0f} yameandikwa kwa '
+                _notify(request.user, f'New Payment: {payment.tenant.full_name()}',
+                        f'Payment of TZS. {payment.amount:,.0f} recorded for '
                         f'{payment.tenant.full_name()} — {payment.property.name}.')
 
             messages.success(request, success_message)
@@ -1470,9 +1523,9 @@ def maintenance_export_csv(request):
         qs = qs.filter(priority=priority_filter)
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="matengenezo.csv"'
+    response['Content-Disposition'] = 'attachment; filename="maintenance.csv"'
     writer = csv.writer(response)
-    writer.writerow(['Kichwa', 'Mali', 'Chumba', 'Mpangaji', 'Kipaumbele', 'Hali', 'Tarehe', 'Gharama (TZS)'])
+    writer.writerow(['Title', 'Property', 'Unit', 'Tenant', 'Priority', 'Status', 'Date', 'Cost (TZS)'])
     for r in qs:
         writer.writerow([
             r.title,
@@ -1503,7 +1556,7 @@ def maintenance_export_pdf(request):
     if priority_filter:
         qs = qs.filter(priority=priority_filter)
 
-    headers = ['Kichwa', 'Mali', 'Chumba', 'Mpangaji', 'Kipaumbele', 'Hali', 'Tarehe', 'Gharama (TZS)']
+    headers = ['Title', 'Property', 'Unit', 'Tenant', 'Priority', 'Status', 'Date', 'Cost (TZS)']
     rows = []
     for r in qs:
         rows.append([
@@ -1517,9 +1570,9 @@ def maintenance_export_pdf(request):
             f'{r.cost:,.0f}' if r.cost else '0',
         ])
 
-    buf = _build_pdf('Matengenezo', headers, rows)
+    buf = _build_pdf('Maintenance', headers, rows)
     return HttpResponse(buf, content_type='application/pdf',
-                        headers={'Content-Disposition': 'attachment; filename="matengenezo.pdf"'})
+                        headers={'Content-Disposition': 'attachment; filename="maintenance.pdf"'})
 
 @never_cache
 @landlord_required
@@ -1538,12 +1591,12 @@ def maintenance_request_detail(request, request_id):
             maintenance_request.save()
             if maintenance_request.status != old_status:
                 if maintenance_request.status == 'completed':
-                    _notify(request.user, f'Matengenezo Yamekamilika: {maintenance_request.title}',
-                            f'Ombi la "{maintenance_request.title}" katika '
-                            f'{maintenance_request.property.name} limekamilika.')
+                    _notify(request.user, f'Maintenance Completed: {maintenance_request.title}',
+                            f'Request "{maintenance_request.title}" at '
+                            f'{maintenance_request.property.name} is now complete.')
                 else:
-                    _notify(request.user, f'Matengenezo Yamebadilika: {maintenance_request.title}',
-                            f'"{maintenance_request.title}" — hali mpya: '
+                    _notify(request.user, f'Maintenance Status Changed: {maintenance_request.title}',
+                            f'"{maintenance_request.title}" — new status: '
                             f'{maintenance_request.get_status_display()} '
                             f'({maintenance_request.property.name}).')
             messages.success(request, 'Maintenance request updated!')
@@ -1589,13 +1642,13 @@ def maintenance_request_edit(request, request_id=None):
             maintenance_request.save()
 
             if is_edit:
-                _notify(request.user, f'Matengenezo Yamesasishwa: {maintenance_request.title}',
-                        f'Ombi "{maintenance_request.title}" limebadilishwa '
+                _notify(request.user, f'Maintenance Updated: {maintenance_request.title}',
+                        f'Request "{maintenance_request.title}" has been updated '
                         f'({maintenance_request.property.name}).')
             else:
                 priority_label = maintenance_request.get_priority_display()
-                _notify(request.user, f'Ombi Jipya la Matengenezo: {maintenance_request.title}',
-                        f'"{maintenance_request.title}" limewasilishwa na '
+                _notify(request.user, f'New Maintenance Request: {maintenance_request.title}',
+                        f'"{maintenance_request.title}" submitted by '
                         f'{maintenance_request.tenant.full_name()} — {maintenance_request.property.name} '
                         f'[{priority_label}].')
 
@@ -1824,11 +1877,7 @@ def unit_edit(request, property_id, unit_id=None):
 
     active_tenant = None
     if unit:
-        today = timezone.now().date()
-        active_tenant = (
-            unit.current_tenant.filter(move_out_date__isnull=True).first()
-            or unit.current_tenant.filter(move_out_date__gte=today).first()
-        )
+        active_tenant = unit.current_tenant.filter(status='active').first()
 
     context = {
         'form': form,

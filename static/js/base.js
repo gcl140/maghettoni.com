@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var savedLang = localStorage.getItem("mag-lang");
   var activeLang = savedLang || (getGTCookie() === "/en/sw" ? "sw" : "en");
   if (langLabel)
-    langLabel.textContent = activeLang === "sw" ? "Kiswahili" : "English";
+    langLabel.textContent = activeLang === "sw" ? "SW" : "EN";
   document.querySelectorAll(".lang-opt").forEach(function (btn) {
     if (btn.dataset.lang === activeLang)
       btn.classList.add("bg-gray-100", "font-semibold");
@@ -211,6 +211,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     localStorage.setItem("mag-lang", lang);
+    fetch("/home/set-language/", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || "",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ lang: lang }),
+    });
     if (lang === "sw") {
       setGTCookie("/en/sw");
     } else {
@@ -219,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.documentElement.lang = lang === "sw" ? "sw" : "en";
     if (langLabel) {
-      langLabel.textContent = lang === "sw" ? "Kiswahili" : "English";
+      langLabel.textContent = lang === "sw" ? "SW" : "EN";
     }
     location.reload();
   };
