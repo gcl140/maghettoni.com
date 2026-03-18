@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Tenant Portal{% endblock %} — Maghettoni</title>
     <link rel="icon" href="{% static 'images/fav.png' %}" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#3b1f0a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Maghettoni" />
+    <link rel="apple-touch-icon" href="{% static 'images/fav.png' %}" />
 
     <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
 
@@ -365,5 +371,6 @@
 
     <script src="{% static 'js/btn-loading.js' %}"></script>
     <script src="{% static 'js/tenant_portal/base.js' %}"></script>
+    <script src="{% static 'js/dashboardd-service-worker.js' %}" defer></script>
   </body>
 </html>
