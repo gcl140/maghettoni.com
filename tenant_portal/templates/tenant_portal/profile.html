@@ -252,39 +252,8 @@
 
 </div>
 
-<script>
-// Notification toggle per tenancy
-document.querySelectorAll('.notif-toggle').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    var tenancyId = this.dataset.tenancyId;
-    var label = this.querySelector('.notif-label');
-    var icon = this.querySelector('i');
-    fetch('/tenant-portal/tenancy/' + tenancyId + '/notifications/toggle/', {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': '{{ csrf_token }}',
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.ok) {
-        var enabled = data.enabled;
-        btn.dataset.enabled = enabled ? 'true' : 'false';
-        if (enabled) {
-          label.textContent = 'Reminders On';
-          icon.className = 'fas fa-bell';
-          btn.classList.remove('border-gray-200', 'bg-gray-50', 'text-gray-500', 'hover:bg-gray-100');
-          btn.classList.add('border-green-200', 'bg-green-50', 'text-green-700', 'hover:bg-green-100');
-        } else {
-          label.textContent = 'Reminders Off';
-          icon.className = 'fas fa-bell-slash';
-          btn.classList.remove('border-green-200', 'bg-green-50', 'text-green-700', 'hover:bg-green-100');
-          btn.classList.add('border-gray-200', 'bg-gray-50', 'text-gray-500', 'hover:bg-gray-100');
-        }
-      }
-    });
-  });
-});
-</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tenant_portal/profile.js' %}"></script>
 {% endblock %}
