@@ -10,7 +10,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
-from django.http import JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -180,8 +180,24 @@ def landing(request):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def register(request):
-    """Registration is invite-only / admin-onboarded.  Show info page."""
-    return render(request, 'yuzzaz/register_closed.html')
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        phone = request.POST.get('telephone', '').strip()
+        if not request.session.get(f'otp_verified_{phone}'):
+            messages.error(request, 'Please verify your phone number before submitting.')
+            return render(request, 'yuzzaz/register.html', {'form': form})
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = True
+            user.is_verified = False  # Pending admin approval
+            user.save()
+            request.session.pop(f'otp_verified_{phone}', None)
+            # Log them in and redirect to pending page
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('pending_approval')
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'yuzzaz/register.html', {'form': form})
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -210,11 +226,11 @@ def otp_send(request):
     recent_count = OTPVerification.objects.filter(
         phone=phone, created_at__gte=hour_ago
     ).count()
-    # if recent_count >= 3:
-    #     return JsonResponse(
-    #         {'error': msg(request, 'otp_rate_limited', data)},
-    #         status=429,
-    #     )
+    if recent_count >= 3:
+        return JsonResponse(
+            {'error': msg(request, 'otp_rate_limited', data)},
+            status=429,
+        )
 
     otp = OTPVerification.generate(phone)
     print(f"OTP requested for phone: {phone} is {otp.code}")
@@ -374,11 +390,8 @@ def login(request):
 
             # ── Verification gate ──────────────────────────────────────────
             if not user.is_verified:
-                messages.error(
-                    request,
-                    msg(request, 'account_not_verified'),
-                )
-                return render(request, 'yuzzaz/login.html')
+                auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                return redirect('pending_approval')
 
             auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             messages.success(request, msg(request, 'login_success'))
@@ -397,6 +410,79 @@ def logout(request):
     auth_logout(request)
     messages.success(request, msg(request, 'logged_out'))
     return redirect('login')
+
+
+@login_required
+def pending_approval(request):
+    if request.user.is_verified:
+        if request.user.tenant_profiles.exists():
+            return redirect('tenant_dashboard')
+        return redirect('dashboard')
+    return render(request, 'yuzzaz/pending_approval.html')
+
+
+@login_required
+def admin_approvals(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden('Access denied.')
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        action = request.POST.get('action')
+        user = get_object_or_404(User, pk=user_id, is_active=True, is_verified=False)
+        if action == 'approve':
+            user.is_verified = True
+            user.is_landlord = True
+            user.save(update_fields=['is_verified', 'is_landlord'])
+            messages.success(request, f'{user.get_full_name() or user.username} approved.')
+        elif action == 'reject':
+            name = user.get_full_name() or user.username
+            user.delete()
+            messages.warning(request, f'{name} rejected and removed.')
+        return redirect('admin_approvals')
+
+    pending = User.objects.filter(
+        is_verified=False, is_active=True, is_staff=False
+    ).order_by('-date_joined')
+    return render(request, 'yuzzaz/admin_approvals.html', {'pending': pending})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Flutter / mobile API login  (JSON, csrf_exempt)
+# ─────────────────────────────────────────────────────────────────────────────
+@csrf_exempt
+@require_POST
+def api_login(request):
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    identifier = data.get('username', '').strip()
+    password   = data.get('password', '')
+
+    from django.db.models import Q
+    user = User.objects.filter(
+        Q(username=identifier) | Q(email=identifier) | Q(telephone=identifier)
+    ).first()
+
+    if not user or not user.check_password(password):
+        return JsonResponse({'success': False, 'error': 'Invalid credentials'}, status=401)
+
+    if not user.is_active:
+        return JsonResponse({'success': False, 'error': 'Account not activated'}, status=403)
+
+    if not user.is_verified:
+        return JsonResponse({'success': False, 'error': 'Account not verified'}, status=403)
+
+    auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+    is_landlord = not user.tenant_profiles.exists()
+    return JsonResponse({
+        'success': True,
+        'is_landlord': is_landlord,
+        'username': user.get_full_name() or user.username,
+        'session_key': request.session.session_key,
+    })
 
 
 # ─────────────────────────────────────────────────────────────────────────────

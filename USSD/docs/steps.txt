@@ -1,0 +1,11 @@
+USSD callback quick curl test:
+curl -sS http://127.0.0.1:8000/ussd/callback/ && echo '\n---' && curl -sS -X POST http://127.0.0.1:8000/ussd/callback/ -H 'Content-Type: application/json' -d '{"sessionId":"s1","serviceCode":"*123#","phoneNumber":"255700000001","text":""}'
+
+Interactive phone-like terminal tester:
+python USSD/terminal_tester.py
+
+Optional args:
+python USSD/terminal_tester.py --url http://127.0.0.1:8000/ussd/callback/ --phone 255758523353 --service "*123#" --session s1
+
+Tester commands:
+:help   :show   :back   :reset   :new   :exit

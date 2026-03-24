@@ -46,11 +46,11 @@
     <div class="min-h-screen flex items-center justify-center p-4">
       <!-- Login Container -->
       <div
-      {% if "register" in request.path %}
+      {% if "register" in request.path or "admin/approvals" in request.path or "pending-approval" in request.path %}
       class=""
       {% else %}
       class="w-full max-w-lg bg-brown-800 rounded-2xl border border-gray-700 shadow-2xl p-8"
-        {% endif %}
+      {% endif %}
       >
         {% block content %}{% endblock %}
       </div>

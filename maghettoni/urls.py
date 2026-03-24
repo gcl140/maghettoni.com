@@ -54,6 +54,7 @@ def pwa_manifest(request):
 urlpatterns = [
     path('sw.js', service_worker, name='service_worker'),
     path('manifest.json', pwa_manifest, name='pwa_manifest'),
+    path('ussd/', include('USSD.urls')),
     path('', landing, name='landing'),
     path('admin/', admin.site.urls),
     path('home/', include('yuzzaz.urls')),

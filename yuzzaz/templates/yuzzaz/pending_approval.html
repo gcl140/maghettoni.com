@@ -1,0 +1,33 @@
+{% extends 'yuzzaz/base.html' %}
+{% load static %}
+{% block title %}Awaiting Approval — Maghettoni{% endblock %}
+{% block content %}
+<div class="text-center">
+  <div class="inline-flex items-center justify-center w-20 h-20 bg-brown-900 rounded-full mb-6 border border-amber-700/50">
+    <i class="fas fa-clock text-amber-400 text-3xl"></i>
+  </div>
+  <h1 class="text-3xl font-black text-white tracking-tight mb-2">Account Under Review</h1>
+  <p class="text-gray-300 text-lg mb-6">We've received your registration request.</p>
+
+  <div class="bg-brown-900/60 border border-gray-700 rounded-xl p-6 text-left mb-6">
+    <div class="flex items-start gap-3 mb-4">
+      <i class="fas fa-info-circle text-amber-400 mt-0.5"></i>
+      <div>
+        <p class="text-gray-200 font-medium mb-1">What happens next?</p>
+        <p class="text-gray-400 text-sm">Our team will review your account and reach out to you via phone or email. This typically takes 1–2 business days.</p>
+      </div>
+    </div>
+    {% if request.user.is_authenticated %}
+    <div class="border-t border-gray-700 pt-4 mt-4 text-sm text-gray-400 space-y-1">
+      {% if request.user.telephone %}<div><i class="fas fa-phone text-amber-500 mr-2"></i>{{ request.user.telephone }}</div>{% endif %}
+      {% if request.user.email %}<div><i class="fas fa-envelope text-amber-500 mr-2"></i>{{ request.user.email }}</div>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <a href="{% url 'logout' %}"
+     class="inline-flex items-center gap-2 px-6 py-3 bg-brown-900 border border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 rounded-lg font-medium transition-colors">
+    <i class="fas fa-sign-out-alt"></i> Sign Out
+  </a>
+</div>
+{% endblock %}

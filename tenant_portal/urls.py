@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, api
+from . import views, flutter_views
 
 urlpatterns = [
     # Dashboard
@@ -27,8 +27,12 @@ urlpatterns = [
     # Invite accept (public — no login required)
     path('invite/<uuid:token>/', views.invite_accept, name='tenant_invite_accept'),
 
-    # API
-    path('api/dashboard/', api.api_tenant_dashboard, name='api_tenant_dashboard'),
-    path('api/calendar/', api.api_tenant_calendar, name='api_tenant_calendar'),
-    path('api/notifications/', api.api_tenant_notifications, name='api_tenant_notifications'),
+    # API (Flutter + web JS)
+    path('api/dashboard/', flutter_views.api_tenant_dashboard, name='api_tenant_dashboard'),
+    path('api/calendar/', flutter_views.api_tenant_calendar, name='api_tenant_calendar'),
+    path('api/notifications/', flutter_views.api_tenant_notifications, name='api_tenant_notifications'),
+    path('api/maintenance/', flutter_views.api_tenant_maintenance, name='api_tenant_maintenance'),
+    path('api/profile/', flutter_views.api_tenant_profile, name='api_tenant_profile'),
+    path('api/profile/update/', flutter_views.api_tenant_update_profile, name='api_tenant_update_profile'),
+    path('api/payments/', flutter_views.api_tenant_payments, name='api_tenant_payments'),
 ]

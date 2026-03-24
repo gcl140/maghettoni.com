@@ -1,128 +1,119 @@
-{% extends 'yuzzaz/base.html' %} {% load static %} {% load widget_tweaks %} {%
-block title %}Register{% endblock %} {% block content %}
-<!-- Header -->
-<div class="text-center mb-8">
-  <div
-    class="inline-flex items-center justify-center w-16 h-16 bg-brown-900 rounded-full mb-4 border border-gray-600"
-  >
-    <i class="fas fa-user-plus text-white text-2xl"></i>
-  </div>
-  <h1 class="text-3xl font-black text-white tracking-tight">Create Account</h1>
-  <p class="text-gray-300 mt-2 text-lg">Join Maghettoni</p>
-</div>
+{% extends 'yuzzaz/base.html' %} {% load static %} {% load widget_tweaks %}
+{% block title %}Register — Maghettoni{% endblock %}
+{% block content %}
+<div class="w-full max-w-2xl mx-auto bg-brown-800 rounded-2xl border border-gray-700 shadow-2xl p-8">
 
-<!-- Register Form -->
-<form method="POST" action="{% url 'register' %}" class="space-y-6">
-  {% csrf_token %}
-
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- First Name -->
-    <div class="space-y-2">
-      <label for="id_first_name" class="block text-gray-300 font-medium">
-        <i class="fas fa-user mr-2 text-gray-400"></i>
-        First Name
-      </label>
-      {{ form.first_name|add_class:"w-full bg-brown-900 border border-gray-600
-      border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0
-      focus:border-l-brown-300 placeholder-gray-400" }} {%
-      if form.first_name.errors %}
-      <p class="text-red-400 text-sm mt-1">{{ form.first_name.errors.0 }}</p>
-      {% endif %}
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center justify-center w-16 h-16 bg-brown-900 rounded-full mb-4 border border-gray-600">
+      <i class="fas fa-user-plus text-white text-2xl"></i>
     </div>
-
-    <!-- Last Name -->
-    <div class="space-y-2">
-      <label for="id_last_name" class="block text-gray-300 font-medium">
-        <i class="fas fa-user mr-2 text-gray-400"></i>
-        Last Name
-      </label>
-      {{ form.last_name|add_class:"w-full bg-brown-900 border border-gray-600
-      border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0
-      focus:border-l-brown-300 placeholder-gray-400" }} {%
-      if form.last_name.errors %}
-      <p class="text-red-400 text-sm mt-1">{{ form.last_name.errors.0 }}</p>
-      {% endif %}
-    </div>
-
-    <!-- Telephone -->
-    <div class="space-y-2">
-      <label for="id_telephone" class="block text-gray-300 font-medium">
-        <i class="fas fa-phone mr-2 text-gray-400"></i>
-        Phone Number
-      </label>
-      {{ form.telephone|add_class:"w-full bg-brown-900 border border-gray-600
-      border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0
-      focus:border-l-brown-300 placeholder-gray-400" }} {%
-      if form.telephone.errors %}
-      <p class="text-red-400 text-sm mt-1">{{ form.telephone.errors.0 }}</p>
-      {% endif %}
-    </div>
-
-    <!-- Email -->
-    <div class="space-y-2">
-      <label for="id_email" class="block text-gray-300 font-medium">
-        <i class="fas fa-envelope mr-2 text-gray-400"></i>
-        Email (Optional)
-      </label>
-      {{ form.email|add_class:"w-full bg-brown-900 border border-gray-600
-      border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0
-      focus:border-l-brown-300 placeholder-gray-400" }} {%
-      if form.email.errors %}
-      <p class="text-red-400 text-sm mt-1">{{ form.email.errors.0 }}</p>
-      {% endif %}
-    </div>
-
-    <!-- Password -->
-    <div class="space-y-2">
-      <label for="id_password1" class="block text-gray-300 font-medium">
-        <i class="fas fa-key mr-2 text-gray-400"></i>
-        Password
-      </label>
-      {{ form.password1|add_class:"w-full bg-brown-900 border border-gray-600
-      border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0
-      focus:border-l-brown-300 placeholder-gray-400" }} {%
-      if form.password1.errors %}
-      <p class="text-red-400 text-sm mt-1">{{ form.password1.errors.0 }}</p>
-      {% endif %}
-    </div>
-
-    <!-- Confirm Password -->
-    <div class="space-y-2">
-      <label for="id_password2" class="block text-gray-300 font-medium">
-        <i class="fas fa-lock mr-2 text-gray-400"></i>
-        Confirm Password
-      </label>
-      {{ form.password2|add_class:"w-full bg-brown-900 border border-gray-600
-      border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0
-      focus:border-l-brown-300 placeholder-gray-400" }} {%
-      if form.password2.errors %}
-      <p class="text-red-400 text-sm mt-1">{{ form.password2.errors.0 }}</p>
-      {% endif %}
-    </div>
+    <h1 class="text-3xl font-black text-white tracking-tight">Create Account</h1>
+    <p class="text-gray-300 mt-2">Join Maghettoni as a landlord</p>
   </div>
 
-  <!-- Submit Button -->
-  <button
-    type="submit"
-    class="w-full bg-white text-brown-900 hover:bg-gray-200 py-3 rounded-lg font-bold transition-colors flex items-center justify-center space-x-2"
-  >
-    <i class="fas fa-user-plus"></i>
-    <span>Create Account</span>
-  </button>
-</form>
+  {% if messages %}
+  {% for message in messages %}
+  <div class="mb-4 px-4 py-3 rounded-lg {% if message.tags == 'error' %}bg-red-900/50 border border-red-700 text-red-300{% else %}bg-green-900/50 border border-green-700 text-green-300{% endif %}">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endif %}
 
-<!-- Additional Links -->
-<div class="mt-6 text-center">
-  <p class="text-gray-300 text-sm">
-    Already have an account?
-    <a
-      href="{% url 'login' %}"
-      class="text-white hover:text-gray-300 font-medium underline"
-    >
-      Log in here
-    </a>
-  </p>
+  <form method="POST" action="{% url 'register' %}" id="register-form" class="space-y-5">
+    {% csrf_token %}
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <!-- First Name -->
+      <div class="space-y-2">
+        <label class="block text-gray-300 font-medium"><i class="fas fa-user mr-2 text-gray-400"></i>First Name</label>
+        {{ form.first_name|add_class:"w-full bg-brown-900 border border-gray-600 border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0 focus:border-l-brown-300 placeholder-gray-400" }}
+        {% if form.first_name.errors %}<p class="text-red-400 text-sm">{{ form.first_name.errors.0 }}</p>{% endif %}
+      </div>
+
+      <!-- Last Name -->
+      <div class="space-y-2">
+        <label class="block text-gray-300 font-medium"><i class="fas fa-user mr-2 text-gray-400"></i>Last Name</label>
+        {{ form.last_name|add_class:"w-full bg-brown-900 border border-gray-600 border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0 focus:border-l-brown-300 placeholder-gray-400" }}
+        {% if form.last_name.errors %}<p class="text-red-400 text-sm">{{ form.last_name.errors.0 }}</p>{% endif %}
+      </div>
+
+      <!-- Email -->
+      <div class="space-y-2">
+        <label class="block text-gray-300 font-medium"><i class="fas fa-envelope mr-2 text-gray-400"></i>Email</label>
+        {{ form.email|add_class:"w-full bg-brown-900 border border-gray-600 border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0 focus:border-l-brown-300 placeholder-gray-400" }}
+        {% if form.email.errors %}<p class="text-red-400 text-sm">{{ form.email.errors.0 }}</p>{% endif %}
+      </div>
+
+      <!-- Password -->
+      <div class="space-y-2">
+        <label class="block text-gray-300 font-medium"><i class="fas fa-key mr-2 text-gray-400"></i>Password</label>
+        {{ form.password1|add_class:"w-full bg-brown-900 border border-gray-600 border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0 focus:border-l-brown-300 placeholder-gray-400" }}
+        {% if form.password1.errors %}<p class="text-red-400 text-sm">{{ form.password1.errors.0 }}</p>{% endif %}
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-gray-300 font-medium"><i class="fas fa-lock mr-2 text-gray-400"></i>Confirm Password</label>
+        {{ form.password2|add_class:"w-full bg-brown-900 border border-gray-600 border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0 focus:border-l-brown-300 placeholder-gray-400" }}
+        {% if form.password2.errors %}<p class="text-red-400 text-sm">{{ form.password2.errors.0 }}</p>{% endif %}
+      </div>
+
+    </div>
+
+    <!-- Phone + OTP — full width below the grid -->
+    <div class="space-y-2">
+      <label class="block text-gray-300 font-medium"><i class="fas fa-phone mr-2 text-gray-400"></i>Phone Number</label>
+      <div class="flex gap-2">
+        {{ form.telephone|add_class:"flex-1 min-w-0 bg-brown-900 border border-gray-600 border-l-4 border-l-brown-400 py-3 px-4 text-white focus:outline-none focus:ring-0 focus:border-l-brown-300 placeholder-gray-400" }}
+        <button type="button" id="send-otp-btn"
+          onclick="registerSendOTP()"
+          class="shrink-0 px-5 py-3 bg-brown-600 hover:bg-brown-500 text-white text-sm font-semibold border border-gray-600 rounded transition-colors whitespace-nowrap">
+          Send OTP
+        </button>
+      </div>
+      {% if form.telephone.errors %}<p class="text-red-400 text-sm">{{ form.telephone.errors.0 }}</p>{% endif %}
+
+      <!-- OTP entry (hidden until OTP sent) -->
+      <div id="otp-section" class="hidden mt-2 space-y-2">
+        <p class="text-gray-400 text-sm">Enter the 6-digit code sent to <span id="otp-phone-display" class="text-white font-medium"></span></p>
+        <div class="flex gap-2">
+          <input type="text" id="otp-input" maxlength="6" placeholder="000000"
+            class="flex-1 min-w-0 bg-brown-900 border border-gray-600 border-l-4 border-l-amber-500 py-3 px-4 text-white text-center text-xl tracking-widest focus:outline-none focus:ring-0 placeholder-gray-500" />
+          <button type="button" id="verify-otp-btn" onclick="registerVerifyOTP()"
+            class="shrink-0 px-5 py-3 bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold border border-amber-700 rounded transition-colors">
+            Verify
+          </button>
+        </div>
+        <p id="otp-error" class="text-red-400 text-sm hidden"></p>
+        <p id="otp-success" class="text-green-400 text-sm hidden"></p>
+        <button type="button" onclick="registerSendOTP(true)"
+          class="text-gray-400 hover:text-white text-xs underline">Resend OTP</button>
+      </div>
+
+      <!-- Verified indicator -->
+      <div id="phone-verified-indicator" class="hidden flex items-center gap-2 mt-1">
+        <i class="fas fa-check-circle text-green-400"></i>
+        <span class="text-green-400 text-sm font-medium">Phone verified!</span>
+      </div>
+    </div>
+
+    <!-- Submit (disabled until phone verified) -->
+    <button type="submit" id="submit-btn" disabled
+      class="w-full border-2 border-dashed border-gray-600 text-gray-500 cursor-not-allowed py-3 rounded-lg font-bold transition-all flex items-center justify-center gap-2"
+      data-ready-class="bg-white text-brown-900 hover:bg-gray-100 cursor-pointer border-solid border-white"
+      data-disabled-class="border-dashed border-gray-600 text-gray-500 bg-transparent cursor-not-allowed">
+      <i class="fas fa-lock text-sm"></i>
+      <span>Verify phone to create account</span>
+    </button>
+  </form>
+
+  <div class="mt-6 text-center">
+    <p class="text-gray-400 text-sm">
+      Already have an account?
+      <a href="{% url 'login' %}" class="text-white hover:text-gray-300 font-medium underline">Log in here</a>
+    </p>
+  </div>
 </div>
+{% endblock %}
 {% block scripts %}
 <script src="{% static 'js/yuzzaz/register.js' %}" defer></script>
-{% endblock %} {% endblock %}
+{% endblock %}

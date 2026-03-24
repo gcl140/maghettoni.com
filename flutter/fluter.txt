@@ -1,0 +1,30 @@
+# Install Flutter via Homebrew
+brew install --cask flutter
+
+# Verify
+flutter doctor
+
+cd /Users/giftchristian/Documents/programmin/maghettoni/flutter
+
+# Scaffold platform folders without overwriting your lib/ code
+flutter create --project-name maghettoni --org com.maghettoni . --no-overwrite
+
+# Install dependencies
+flutter pub get
+
+# Run (pick a device)
+flutter run
+
+flutter run -d chrome        # web browser
+flutter run -d android       # Android emulator/device
+flutter run -d ios           # iOS simulator (Mac only)
+
+flutter devices
+
+export PATH="$PATH:$HOME/flutter/bin"
+
+cd /Users/giftchristian/Documents/programmin/maghettoni/flutter
+flutter create --project-name maghettoni --org com.maghettoni . --no-overwrite
+flutter pub get
+ 
+flutter run -d chrome

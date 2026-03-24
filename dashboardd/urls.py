@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, api
+from . import views, flutter_views
 
 urlpatterns = [
     # Dashboard
@@ -66,21 +66,21 @@ urlpatterns = [
     # Dev only — remove before going live
     path('test-sms/', views.test_sms, name='test_sms'),
 
-    # JSON API
-    path('api/v1/properties/', api.api_properties, name='api_properties'),
-    path('api/v1/properties/<int:property_id>/', api.api_property_detail, name='api_property_detail'),
-    path('api/v1/tenants/', api.api_tenants, name='api_tenants'),
-    path('api/v1/tenants/<int:tenant_id>/', api.api_tenant_detail, name='api_tenant_detail'),
-    path('api/v1/payments/', api.api_payments, name='api_payments'),
-    path('api/v1/payments/<int:payment_id>/', api.api_payment_detail, name='api_payment_detail'),
-    path('api/v1/maintenance/', api.api_maintenance, name='api_maintenance'),
-    path('api/v1/maintenance/<int:request_id>/', api.api_maintenance_detail, name='api_maintenance_detail'),
+    # JSON API (Flutter + web JS)
+    path('api/v1/properties/', flutter_views.api_properties, name='api_properties'),
+    path('api/v1/properties/<int:property_id>/', flutter_views.api_property_detail, name='api_property_detail'),
+    path('api/v1/tenants/', flutter_views.api_tenants, name='api_tenants'),
+    path('api/v1/tenants/<int:tenant_id>/', flutter_views.api_tenant_detail, name='api_tenant_detail'),
+    path('api/v1/payments/', flutter_views.api_payments, name='api_payments'),
+    path('api/v1/payments/<int:payment_id>/', flutter_views.api_payment_detail, name='api_payment_detail'),
+    path('api/v1/maintenance/', flutter_views.api_maintenance, name='api_maintenance'),
+    path('api/v1/maintenance/<int:request_id>/', flutter_views.api_maintenance_detail, name='api_maintenance_detail'),
 
     # Notifications
-    path('api/v1/notifications/', api.api_notifications, name='api_notifications'),
-    path('api/v1/calendar/', api.api_landlord_calendar, name='api_landlord_calendar'),
+    path('api/v1/notifications/', flutter_views.api_notifications, name='api_notifications'),
+    path('api/v1/calendar/', flutter_views.api_landlord_calendar, name='api_landlord_calendar'),
 
     # SMS reminders
-    path('api/v1/payments/<int:payment_id>/remind/', api.api_payment_remind, name='api_payment_remind'),
-    path('api/v1/maintenance/<int:request_id>/notify/', api.api_maintenance_notify, name='api_maintenance_notify'),
+    path('api/v1/payments/<int:payment_id>/remind/', flutter_views.api_payment_remind, name='api_payment_remind'),
+    path('api/v1/maintenance/<int:request_id>/notify/', flutter_views.api_maintenance_notify, name='api_maintenance_notify'),
 ]

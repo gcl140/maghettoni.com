@@ -1,6 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
-from . import views
+from . import views, flutter_views
 
 
 urlpatterns = [
@@ -20,6 +20,8 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('company-profile/', views.company_profile, name='company_profile'),
     path('set-language/', views.set_language_preference, name='set_language_preference'),
+    path('pending-approval/', views.pending_approval, name='pending_approval'),
+    path('admin/approvals/', views.admin_approvals, name='admin_approvals'),
 
     path('send-gift-text/', views.send_gift_a_text, name='send_gift_text'),
     path('send-lissa-text/', views.send_lissa_text, name='send_lissa_text'),
@@ -27,4 +29,8 @@ urlpatterns = [
     # OTP endpoints (used by the landing page assessment form)
     path('otp/send/', views.otp_send, name='otp_send'),
     path('otp/verify/', views.otp_verify, name='otp_verify'),
+
+    # Flutter / mobile API
+    path('api/login/', flutter_views.api_login, name='api_login'),
+    path('api/logout/', flutter_views.api_logout, name='api_logout'),
 ]

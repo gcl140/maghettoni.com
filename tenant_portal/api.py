@@ -28,11 +28,15 @@ def api_tenant_dashboard(request):
     today = date.today()
     next_due = _next_due_date(tenant)
 
-    recent_payments = list(
-        Payment.objects.filter(tenant=tenant).order_by('-payment_date')[:5].values(
-            'id', 'amount', 'payment_date', 'status', 'reference_number'
-        )
-    )
+    recent_qs = Payment.objects.filter(tenant=tenant).order_by('-payment_date')
+    try:
+        limit = int(request.GET['limit'])
+        recent_qs = recent_qs[:limit]
+    except (KeyError, ValueError, TypeError):
+        recent_qs = recent_qs[:5]  # default 5 for dashboard
+    recent_payments = list(recent_qs.values(
+        'id', 'amount', 'payment_date', 'status', 'reference_number'
+    ))
     for p in recent_payments:
         p['amount'] = float(p['amount'])
         p['payment_date'] = str(p['payment_date'])
@@ -113,6 +117,27 @@ def api_tenant_calendar(request):
         'today': today.day if (today.year == year and today.month == month) else None,
         'eligible_until_day': eligible_until_day,
     })
+
+
+@_tenant_api_guard
+@require_GET
+def api_tenant_payments(request):
+    tenant = _get_tenant(request.user)
+    qs = Payment.objects.filter(tenant=tenant).order_by('-payment_date')
+    try:
+        limit = int(request.GET['limit'])
+        qs = qs[:limit]
+    except (KeyError, ValueError, TypeError):
+        pass  # no limit — fetch all
+    payments = list(qs.values(
+        'id', 'amount', 'payment_date', 'due_date',
+        'payment_method', 'status', 'reference_number',
+    ))
+    for p in payments:
+        p['amount'] = float(p['amount'])
+        p['payment_date'] = str(p['payment_date'])
+        p['due_date'] = str(p['due_date'])
+    return JsonResponse({'payments': payments})
 
 
 @_tenant_api_guard
